@@ -1,0 +1,51 @@
+\chapter{Refinamiento del modelo espectral y de los factores}
+\section{Parámetros documentales del tubo}
+La documentación de producto de Philips describe un tubo de la familia MRC 200+ GS 0407 con ángulo de ánodo de $11^\circ$ \citep{product0407}. El manual de servicio del MRC 200 0407 confirma directamente este ángulo en Z-1; la hipótesis histórica de $12^\circ$ deja de representar el tubo identificado. El documento corresponde a C20 FlexArm: la correspondencia exacta con la instalación debe confirmarse antes de trasladar otros parámetros geométricos. El cambio se aplica a un perfil de investigación separado.
+
+Los valores de filtración expresados como cobre equivalente no se interpretan automáticamente como espesores físicos de Cu. El modelo conserva por separado aluminio fijo efectivo, aluminio añadido y cobre añadido. No se convierten entre sí mediante una equivalencia constante independiente de energía.
+
+\section{Ajuste del aluminio efectivo mediante calidad del haz}
+Se utilizan observaciones instrumentales de primera capa hemirreductora suministradas para estudiar la compatibilidad del espectro. Se dispone de cinco calidades nominales: 50, 60, 80, 100 y 125 kVp, con cuatro observaciones a 80 kVp. No se dispone de una curva de atenuación completa ni de incertidumbres asociadas. Los valores se utilizan como restricciones exploratorias del modelo, sin identificar su información con una caracterización espectral completa.
+
+La filtración añadida de esas observaciones no está especificada. Por ello, el ajuste requiere aceptar explícitamente Cu añadido cero. Se mantiene ánodo W y ángulo de $11^\circ$, y se busca un espesor equivalente de Al entre 1 y 8 mm minimizando
+\begin{equation}
+J(a)=\frac1N\sum_{q\in\mathcal A}\left[\frac{H_{1,\mathrm{calc}}(V_{q,\mathrm{med}},a)}{H_{1,q,\mathrm{obs}}}-1\right]^2.
+\end{equation}
+Las observaciones se agrupan por calidad nominal y cada grupo tiene el mismo peso. Así se evita que las repeticiones a 80 kVp dominen el ajuste. Se utiliza tensión medida media por grupo; 50, 60, 80 y 100 kVp participan en el ajuste y 125 kVp se reserva como comprobación interna. No se aplica ponderación por incertidumbre porque sus valores no están establecidos.
+
+\input{datos/resultado_ajuste}
+
+El espesor ajustado representa aluminio efectivo dentro del modelo y de la hipótesis de Cu nulo. No identifica por separado filtración inherente, cubierta, colimador y otros componentes. La concordancia de HVL no demuestra unicidad del espectro ni valida la dosis superficial. Es necesario confirmar filtros, tubo y condiciones de las observaciones antes de adoptar el perfil como caracterización de instalación.
+
+
+
+\begin{figure}[htbp]\centering\input{figuras/impacto_factores}
+\caption{Cambio del factor combinado al pasar al perfil condicionado de $11^\circ$ y Al efectivo ajustado. Son diferencias entre modelos, no incertidumbres ni mejoras de exactitud demostradas. Se reutilizan los cinco resultados tabulados de esta memoria.}\label{fig:impacto_factores}\end{figure}
+
+\section{Integración de nuevas calidades}
+Se conserva la ecuación 13 del informe de Benmakhlouf y el producto de respuestas monoenergéticas antes del promedio con pesos de kerma. La nueva tabla contiene 13 tensiones, dos familias de Al total (espesor efectivo ajustado y ese espesor más 1 mm Al), siete espesores de Cu (0; 0,1; 0,2; 0,3; 0,4; 0,6; 0,9 mm) y cinco lados de campo (5; 10; 20; 25; 35 cm). Resultan 182 espectros y 910 filas.
+
+Las nuevas filas son calculadas y no constituyen medidas de retrodispersión. En particular, extender el modelo a filtros de cobre no equivale a validarlo con observaciones basales cuya filtración está pendiente de confirmar. Se mantienen el medio de agua, la incidencia normal y las limitaciones de geometría del formalismo original.
+
+
+
+\begin{figure}[htbp]\centering\input{figuras/malla_dataset}
+\caption{Estructura de la tabla calculada ampliada. Se separan el número de espectros y el número de filas, que incluyen el eje de campo. La cobertura de la rejilla no establece validez experimental para cada combinación.}\label{fig:malla_dataset}\end{figure}
+
+\section{Interpolación de la corrección conjunta}
+El nuevo dataset interpola directamente $C$, en vez de multiplicar dos interpolantes independientes. Para conservar la interfaz del motor devuelve $B_{\mathrm{interp}}$ y $f_{\mathrm{eff}}=C_{\mathrm{interp}}/B_{\mathrm{interp}}$. Su producto conserva la interpolación elegida para la corrección conjunta.
+
+La política se activa mediante metadatos del nuevo conjunto. Los datos publicados y los datasets anteriores conservan su tratamiento previo. La mejora elimina una aproximación algebraica entre nodos, pero no elimina el error de interpolación de una función física ni habilita extrapolación.
+
+\begin{figure}[htbp]\centering\input{figuras/consulta_C}
+\caption{Políticas de interpolación conservadas explícitamente por dataset. La vía combinada opera sobre $C$, manteniendo $f_{\rm eff}=C/B$ por compatibilidad del motor. No sustituye una evaluación del error entre nodos.}\label{fig:consulta_C}\end{figure}
+
+\section{Impacto e interpretación}
+En las cinco condiciones basales examinadas y para un lado de 10 cm, el cambio del combinado respecto al modelo anterior es aproximadamente del 2,0 al 2,8 por ciento. No es un cambio predicho de PSD para cualquier procedimiento: el máximo acumulado depende de calidades, campos, registro y superposición.
+
+La extracción de los datos, sus unidades, las hipótesis y las huellas de los archivos fuente permanecen en los registros técnicos de procedencia. Este desarrollo utiliza esas observaciones exclusivamente como información para refinar los factores. No modifica automáticamente la calibración del indicador de kerma, la transmisión de mesa ni la geometría del paciente.
+
+La implementación supera 49 pruebas focalizadas y se han comprobado los 910 nodos de la tabla. No se ha realizado una validación experimental de dosis ni un nuevo mapa clínico completo. El perfil anterior se conserva para comparación y la alternativa ajustada permanece identificada como investigación condicionada.
+
+
+\FloatBarrier

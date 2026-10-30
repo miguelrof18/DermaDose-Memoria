@@ -1,0 +1,390 @@
+\chapter{Símbolos, unidades y definiciones operativas}
+\begin{longtable}{p{27mm}p{80mm}p{29mm}}
+\caption{Notación principal de la memoria.}\\
+\toprule Símbolo & Definición & Unidad\\\midrule\endfirsthead
+\toprule Símbolo & Definición & Unidad\\\midrule\endhead
+\bottomrule\endfoot
+$e$ & Evento de irradiación. & Índice.\\
+$i$ & Elemento superficial o bin, según contexto explícito. & Índice.\\
+$\vect p_i$ & Centroide o punto representativo del elemento. & mm.\\
+$A_i$ & Área del elemento superficial. & mm$^2$.\\
+$\vect s_e$ & Posición del foco. & mm.\\
+$\vect b_e$ & Dirección unitaria del eje del haz. & Adimensional.\\
+$\vect u_e,\vect v_e$ & Direcciones transversales del haz. & Adimensional.\\
+$r_e$ & Distancia euclídea foco--punto. & mm.\\
+$t_e$ & Profundidad axial respecto al foco. & mm.\\
+$d_{r,e}$ & Distancia foco--referencia del indicador de kerma. & mm.\\
+$d_{f,e}$ & Distancia del plano donde se declaran dimensiones de campo. & mm.\\
+$w_e,h_e$ & Dimensiones de campo en su plano declarado. & mm.\\
+$A_\perp$ & Área de sección del haz normal al eje a profundidad local. & cm$^2$.\\
+$s$ & Lado de campo cuadrado o de igual área. & cm.\\
+$\Ka$ & Kerma en aire en el punto de referencia intervencionista. & Gy.\\
+$P_{KA}$ & Producto kerma-área. & Gy m$^2$ interno.\\
+$M_e$ & Máscara de primera entrada. & 0 o 1.\\
+$CF$ & Corrección de calibración del indicador. & Adimensional.\\
+$P$ & Perfil relativo normalizado del haz. & Adimensional.\\
+$T$ & Transmisión aplicada si se cruza mesa. & Adimensional.\\
+$B$ & Factor de retrodispersión evaluado en aire. & Adimensional.\\
+$f$ & Conversión superficial agua--aire de la fuente. & Adimensional.\\
+$C$ & Corrección conjunta superficial, $Bf$. & Adimensional.\\
+$f_{\mathrm{eff}}$ & Cociente derivado $C/B$ para interfaz del motor. & Adimensional.\\
+$Q$ & Calidad del haz, con parámetros y modelo declarados. & Descriptor.\\
+$\Phi(E)$ & Fluencia diferencial de fotones. & Área$^{-1}$ energía$^{-1}$.\\
+$\mu/\rho$ & Coeficiente másico de atenuación total. & cm$^2$/g.\\
+$\mu_{\mathrm{en}}/\rho$ & Coeficiente másico de absorción de energía. & cm$^2$/g.\\
+$w_i$ & Peso de kerma espectral no normalizado. & Proporcional a kerma.\\
+$H_1,H_2$ & Primera y segunda capa hemirreductora adicional. & mm Al.\\
+$h$ & Coeficiente de homogeneidad $H_1/H_2$. & Adimensional.\\
+PSD & Máximo de dosis acumulada según soporte declarado. & Gy.\\
+\end{longtable}
+\section{Conversiones que requieren control}
+Se mantienen $1$ cm $=10$ mm, $1$ cm$^2=100$ mm$^2$, $1$ Gy $=1000$ mGy y $1$ Gy cm$^2=10^{-4}$ Gy m$^2$. La multiplicación por energía en keV es coherente para pesos relativos si toda la integral utiliza esa escala. Para obtener kerma absoluto desde fluencia sería necesaria la conversión a joule y la convención de masa; esa operación no se utiliza para normalizar el mapa desde SpekPy.
+
+El símbolo kVp expresa tensión de pico, no una energía media de los fotones. Una HVL no es un espesor de Al físicamente presente en el equipo y un espesor equivalente de atenuación a una calidad no es una sustitución universal de un material por otro.
+
+\chapter{Configuración y ejecución reproducible}
+\section{Organización de carpetas}
+La configuración espectral del desarrollo está en \codigo{config/equipo_philips_azurion_espectral_investigacion.json}. Desde esa carpeta, sus rutas relativas apuntan a \codigo{../skindose_verifier/data/derived_azurion_spekpy} y al STL bajo \codigo{../skindose_verifier/data/}. El dataset contiene CSV y metadatos, mientras el informe de paciente permanece fuera de esos recursos.
+
+Si el JSON se copia a \codigo{ejemplos rdsr/ejemplo07}, deben ajustarse las rutas respecto a esa ubicación. Con el paquete en una carpeta hermana denominada \codigo{DermaDose}, la ruta del dataset pasa a ser \codigo{../../DermaDose/skindose_verifier/data/derived_azurion_spekpy}. El nombre exacto debe verificarse en la instalación.
+
+El lanzador histórico puede seleccionar el primer JSON de la carpeta. No se debe colocar \codigo{metadata.json} del dataset como si fuera un perfil de equipo, ni confiar en un orden accidental entre configuraciones. Una ejecución explícita con \codigo{--config} hace inequívoca la elección.
+
+\section{Fragmento del proveedor superficial}
+El bloque siguiente es parte de un JSON completo. No puede ejecutarse como perfil autónomo: faltan versión, geometría, paciente y factores de equipo.
+\begin{lstlisting}
+"surface_factors": {
+  "provider": "tabulated_water",
+  "dataset_directory": "../skindose_verifier/data/derived_azurion_spekpy",
+  "inherent_al_mm": 3.1,
+  "target": "W",
+  "aluminium_policy": "fixed_plus_event",
+  "field_shape_policy": "equal_area",
+  "out_of_domain": "error",
+  "incident_kerma_basis": "free_in_air_without_backscatter",
+  "quality_basis": "event_kvp_filtration_proxy_at_surface",
+  "provenance": "Research spectrum assumptions; not measured HVL",
+  "allow_water_phantom_approximation": true
+}
+\end{lstlisting}
+La clave Al describe aquí la hipótesis fija. No se cambia a 4,1 mm para eventos que ya declaran 1 mm añadido, porque la política lo sumaría de nuevo. El perfil de equipo y el dataset deben mantenerse coherentes.
+
+\section{Inspección sin malla y cálculo}
+Desde la raíz del paquete, esta llamada permite estudiar recuentos y filtración sin calcular dosis:
+\begin{lstlisting}
+python -m skindose_verifier.azurion RUTA_RDSR.dcm --fixed-al-mm 3.1
+\end{lstlisting}
+El argumento de Al es una hipótesis explícita de inspección y no modifica el DICOM. El resultado no indica que el procedimiento esté físicamente validado.
+
+Consultar las filas distribuidas no requiere SpekPy; regenerarlas sí. El cálculo normal requiere dependencias del paquete, STL accesible y transformaciones válidas:
+\begin{lstlisting}
+python -m skindose_verifier run RUTA_RDSR.dcm \
+  --config config/equipo_philips_azurion_espectral_investigacion.json \
+  --out resultados_espectrales --stage skin_dose
+\end{lstlisting}
+La barra de continuación pertenece a una terminal tipo Unix. En PowerShell puede escribirse todo en una línea y utilizar \codigo{.venv\Scripts\python.exe}. El comando no garantiza éxito si persisten geometría inválida o consultas fuera de dominio.
+
+\section{Regeneración con procedencia propia}
+Una regeneración debe elegir una carpeta nueva. Los parámetros siguientes reproducen las hipótesis de investigación, no una caracterización:
+\begin{lstlisting}
+python -m pip install -r requirements-spectral.txt
+python -m skindose_verifier.spectral benchmark \
+  --anode-angle 12 --out comparacion_nueva.json
+python -m skindose_verifier.spectral build \
+  --out tablas_espectrales_nuevas \
+  --kvps 46,50,60,70,80,90,100,110,120,125,130,140,150 \
+  --al 3.1,4.1 --cu 0,0.1,0.4 --fields 5,10,20,25,35 \
+  --anode-angle 12
+\end{lstlisting}
+La dependencia se fija en \codigo{spekpy==2.5.4}. Al utilizar datos medidos se revisarán parámetros y versiones de forma coordinada, manteniendo evidencia de los cambios.
+
+\section{Datos de HVL medida}
+El formato mínimo es una lista de objetos con \codigo{kvp}, \codigo{total_al_mm}, \codigo{cu_mm} y \codigo{hvl1_mm_al}. La asociación con Al total corresponde al modelo que se contrasta. El registro experimental completo conservará instrumento, incertidumbre y condiciones, ya que el esquema mínimo no lo sustituye.
+
+No se incluye una HVL numérica ficticia. La llamada añade \codigo{--measured-hvl medidas_hvl.json --hvl-tolerance 0.05}. La tolerancia sigue siendo una elección de trabajo. Se rechazan medidas duplicadas o sin correspondencia con los ejes y se marcan las calidades no medidas.
+
+\section{Clasificación de incidencias}
+\begin{longtable}{p{43mm}p{49mm}p{46mm}}
+\caption{Diagnóstico conceptual de incidencias observadas.}\\
+\toprule Mensaje o síntoma & Significado & Acción fundamentada\\\midrule\endfirsthead
+\toprule Mensaje o síntoma & Significado & Acción fundamentada\\\midrule\endhead
+\bottomrule\endfoot
+Falta versión. & JSON de metadatos o perfil incompleto. & Usar configuración completa y trasladar datos de malla a paciente.\\
+Malla inexistente. & Ruta relativa incorrecta o archivo no disponible. & Resolver respecto al JSON y verificar archivo real.\\
+Falta metadata.json. & Directorio de dataset mal referenciado. & Apuntar a carpeta con CSV y metadato correspondiente.\\
+Material filtrante indeterminado. & Declaración no soportada o versión antigua del lector. & Revisar códigos; no suponer filtración total cero.\\
+Fuera de dominio. & Consulta exterior a la tabla elegida. & Generar datos compatibles o limitar uso; no recortar coordenadas sin justificación.\\
+Distancia no positiva. & Geometría insuficiente del evento. & Resolver origen; toda sustitución requiere hipótesis registrada.\\
+Simplificación no admisible. & Reducción rompe controles de superficie. & Conservar alternativa válida y registrar caras reales.\\
+Triángulos fragmentados. & Posible sombreado por caras; pueden coexistir diferencias de dosis. & Regenerar visor y contrastar datos numéricos.\\
+Ejecución prolongada. & Preparación, trazado, métricas o escritura costosos. & Medir fase, memoria y progreso antes de diagnosticar bloqueo.\\
+\end{longtable}
+
+\chapter{Reproducción de los estudios de esta edición}
+\section{Entorno y límites}
+Los estudios utilizan Python 3.12.14, SpekPy 2.5.4, NumPy 2.3.5 y SciPy 1.17.0. La batería focalizada se ejecutó con pydicom 3.0.2, Trimesh 5.2.0, Rtree 1.4.1, Plotly 6.9.0 y pytest 9.1.1. No son necesariamente las versiones de la auditoría histórica ni del ordenador del usuario.
+
+La copia revisada no contiene todos los recursos del repositorio, entre ellos el STL XCAT completo para repetir la demostración. El script necesita una copia funcional del paquete y sus datos. El ZIP de esta memoria no es una distribución ejecutable completa de DermaDose.
+
+\section{Estudio espectral}
+Desde el proyecto LaTeX puede ejecutarse:
+\begin{lstlisting}
+python scripts/estudio_espectral.py --repo RUTA_DERMADOSE --out datos_reproducidos
+\end{lstlisting}
+El script genera espectros de 80 kVp para tres filtraciones, cuatro comparaciones de referencia, dieciséis cálculos de resolución energética, nueve consultas interiores y nueve escenarios de sensibilidad. Conserva versiones. No utiliza pacientes ni modifica las tablas.
+
+Las tablas de esta memoria proceden de sus CSV y JSON. El redondeo mostrado es de presentación, no una declaración de incertidumbre. Los archivos mantienen mayor precisión para revisión y recálculo.
+
+\begin{longtable}{p{67mm}p{70mm}}
+\caption{Archivos de evidencia incluidos.}\\
+\toprule Archivo & Contenido\\\midrule\endfirsthead
+\toprule Archivo & Contenido\\\midrule\endhead
+\bottomrule\endfoot
+\codigo{datos/comparacion_referencia.json} & Cuatro condiciones, factores, HVL y parámetros.\\
+\codigo{datos/convergencia_espectral.csv} & Diferencias por paso energético.\\
+\codigo{datos/interpolacion_derivada.csv} & Nueve consultas interiores y generación directa.\\
+\codigo{datos/sensibilidad_hipotesis.csv} & Escenarios de Al y ángulo.\\
+\codigo{datos/espectros_80kv.csv} & Fluencia y kerma normalizados.\\
+\codigo{datos/entorno.json} & Versiones ejecutadas.\\
+\codigo{verificacion/pruebas_focalizadas.json} & Comando, alcance y 47 pruebas superadas.\\
+\codigo{verificacion/inspeccion_azurion_agregada.json} & Recuentos y carencias geométricas, sin identificadores de eventos.\\
+\codigo{verificacion/cobertura_espectral_agregada.json} & 101 consultas a lado de referencia 10 cm.\\
+\codigo{verificacion/inventario_fuentes.json} & Tamaño y SHA-256 de archivos locales revisados.\\
+\end{longtable}
+La inspección del RDSR se distribuye como resultado agregado, pero no se incluye el DICOM. Un tercero sin la entrada no puede repetir ese inventario exacto, aunque sí revisar la política de lectura. Esta restricción se comunica expresamente.
+
+\section{Compilación LaTeX}
+El archivo principal es \codigo{memoria.tex}. Se usa pdfLaTeX, BibTeX, TikZ y PGFPlots. El procedimiento recomendado es \codigo{latexmk -pdf memoria.tex}, disponible en TeX Live o MiKTeX. En Overleaf se puede cargar el ZIP y seleccionar ese archivo, manteniendo rutas relativas.
+
+Las figuras son vectoriales y editables. No se ejecuta Python durante la compilación: los datos de PGFPlots están incluidos. Los scripts permiten reproducir estudios y no son un requisito para visualizar la memoria. Se incorpora una alternativa mínima de formato numérico y carga de idioma para entornos sin todos los paquetes opcionales.
+
+\chapter{Matriz de contraste documental}
+\section{Fuentes y alcance de lectura}
+Las dos memorias internas proporcionan el antecedente y sus resultados históricos. La ampliación se contrasta con las funciones, tablas y metadatos inventariados. La revisión de bibliografía fue dirigida a los apartados pertinentes; no se afirma lectura exhaustiva de todas las tesis ni auditoría de sus códigos.
+
+\begin{longtable}{p{9mm}p{43mm}p{49mm}p{37mm}}
+\caption{Función de las diecinueve fuentes aportadas. Numeración de archivos de trabajo.}\\
+\toprule N.º & Fuente & Uso & Restricción\\\midrule\endfirsthead
+\toprule N.º & Fuente & Uso & Restricción\\\midrule\endhead
+\bottomrule\endfoot
+01 & Omar et al., 2016. & Reconstrucción y datos RDSR. & Su cálculo de órganos no está implementado aquí.\\
+02 & Takata et al., 2018. & Transporte GPU sobre TC. & No se transfieren tiempos o precisión.\\
+03 & Grupo de trabajo de dosimetría en RI. & Objetivos profesionales. & Sin fecha identificada; no norma técnica.\\
+04 & Gañán Mora et al., 2024. & Validación con RDSR y medidas. & No se han ejecutado sus irradiaciones en DermaDose.\\
+05 & Malchair et al., 2020. & Diversidad de soluciones y validación. & No se replica su búsqueda sistemática.\\
+06 & Johnson et al., 2011. & Correspondencia paciente--fantoma. & No valida el registro XCAT local.\\
+07 & Fernández Bosman, 2023. & PyMCGPU-IR y transporte. & Revisión dirigida, sin auditoría del código.\\
+08 & Omar, 2020. & Modelado del haz y Monte Carlo. & No caracteriza esta instalación.\\
+09 & García Balcaza, 2024. & Transporte y dosimetría ocupacional. & Objetivo distinto de dosis cutánea de entrada.\\
+10 & Rana et al., 2012. & Representación y rendimiento. & No se atribuye GPU a DermaDose.\\
+11 & Krajinović et al., 2021. & Validación de SkinCare. & Exactitud propia del trabajo citado.\\
+12 & Texto sobre RDSR tradicional y Enhanced. & Diferencias de codificación y temporalidad. & Copia sin edición identificada; contraste con estándar oficial.\\
+13 & VERIDIC D9.143, 2020. & Aceptación y control de calidad. & No se declara conformidad.\\
+14 & AAPM TG357/EFOMP, 2021. & Definiciones y límites físicos. & No da incertidumbre a este código.\\
+15 & Rana et al., 2014. & Resolución y triángulos. & Implementación diferente.\\
+16 & Rana et al., 2016, biplano. & Acumulación de dos tubos y calibración con retrodispersión. & Captura parcial; método contrastado con resumen primario, no texto completo.\\
+17 & Bolch et al., 2010. & Fantomas y reconstrucción. & No valida el activo XCAT.\\
+18 & ICRP 145, 2020. & Referencias de malla. & No es el contorno XCAT del proyecto.\\
+19 & Benmakhlouf et al., informe 2011. & Fuente de ecuaciones y factores. & Discrepancia lateral del fantoma conservada.\\
+\end{longtable}
+La fuente 16 es una captura parcial de un visor, no el artículo completo de catorce páginas. Se inspeccionó visualmente y se recuperó su identificación y resumen primario en PubMed; el uso se limita al método descrito en ese resumen. El texto de la fuente 12 distingue la codificación temporal de RDSR tradicional y Enhanced; esa distinción no implica que el lector actual soporte Enhanced RDSR. Su edición no se identifica en la copia, por lo que las afirmaciones normativas se vinculan al estándar oficial.
+
+\section{Contraste oficial adicional}
+Se consultaron las instrucciones Azurion Release 1.2, sección 16.21.5, y ClarityIQ, nota 41. Se mantuvo la diferencia entre familia de equipo e instalación. Se verificaron publicaciones primarias de SpekPy, definiciones NIST y estructura del evento DICOM. La fecha de consulta no se utiliza como año editorial.
+
+El artículo asociado de Benmakhlouf se cita como publicación relacionada; el informe aportado es la fuente reproducible de las tablas utilizadas. Los PDF se inventarían, pero no se redistribuyen íntegros en el proyecto LaTeX.
+
+\chapter{Calidades calculadas: extracto de auditoría}
+La tabla permite revisar las 78 calidades sin reproducir las 390 filas. Se muestra lado de 10 cm; las cinco dimensiones se conservan en el CSV fuente. Al es total del espectro y $f_{\mathrm{eff}}=C/B$. El blanco es W y el ángulo $12^\circ$ en todas las filas.
+
+La HVL1 es calculada. La presencia de una fila en este anexo no significa que sea una medida del Azurion ni un nodo clínico publicado por Benmakhlouf. Este conjunto histórico no incluye 0,9 mm Cu; la alternativa condicionada de 910 filas sí lo incluye.
+\small\input{datos/tabla_78}\normalsize
+
+\chapter{Criterios de coherencia para futuras revisiones}
+\section{Afirmaciones sustentadas}
+El código distingue filtro no insertado de dato ausente en las condiciones implementadas, genera espectros con parámetros registrados y calcula una corrección combinada desde datos monoenergéticos. El dataset conserva medio, dominio y procedencia. Las pruebas y estudios incluidos permiten revisar esas afirmaciones.
+
+La cobertura de los 101 eventos se ha comprobado respecto a calidad a un campo de referencia de 10 cm, con Al fijo de 3,1 mm. Esa condición no puede omitirse ni traducirse a éxito de un mapa completo. Geometría inválida y registro siguen siendo problemas separados.
+
+\section{Afirmaciones que necesitan nueva evidencia}
+La filtración fija y el ángulo de ánodo no se han determinado experimentalmente para esta instalación. Existen observaciones instrumentales de HVL utilizadas en un ajuste condicionado, pero falta una caracterización espectral independiente y completa. No se cubre toda la familia Azurion ni se conoce la precisión clínica del conjunto. La reducción no garantiza siempre exactamente 150\,000 caras y su validez topológica no demuestra fidelidad anatómica.
+
+Una próxima revisión debe sustituir hipótesis por medidas y actualizar perfil y dataset de forma coordinada. Las cifras históricas solo se reemplazarán por nuevas ejecuciones cuando se conserve su protocolo. Los cambios de entorno pueden modificar tiempos sin cambiar física.
+
+\section{Condiciones para interpretar una futura PSD}
+Una PSD deberá acompañarse de medio, etapa, base de kerma, calibración, fuente de factores, dominio, tratamiento de eventos inválidos y referencia anatómica. Se indicará si es máximo de caras o promedio superficial y con qué resolución.
+
+La incertidumbre se declarará completa o parcial según sus componentes reales. Cuando falten componentes no se informará incertidumbre total nula. La separación entre datos, hipótesis y propuestas forma parte del resultado científico porque determina el alcance de su utilización.
+
+\chapter{Guía de configuración auxiliar JSON}
+\label{ap:json}
+\section{Función y relación con las otras entradas}
+El JSON es el perfil versionado que completa el RDSR: identifica el sistema de adquisición que se modela, declara geometría y convenciones de coordenadas, selecciona la representación de la superficie y aporta factores o tablas de respuesta. No contiene la secuencia de imágenes de TC ni sustituye el archivo STL/OBJ/PLY de la piel. El RDSR aporta por evento dosis e información de irradiación; la malla aporta la forma superficial; el JSON aporta la interpretación geométrica y los parámetros del modelo. Las rutas relativas se resuelven desde la carpeta del JSON.
+
+La tabla resume el contrato de configuración implementado en la copia revisada. Las claves marcadas como obligatorias son requisitos del cargador o de la etapa concreta; las opcionales solo son necesarias cuando se activa la función correspondiente. Un valor presente en el ejemplo Azurion de esta memoria no debe copiarse automáticamente: varios valores son hipótesis de investigación sin caracterización de una instalación.
+
+\section{Campos de primer nivel}
+\begin{longtable}{p{37mm}p{22mm}p{78mm}}
+\caption{Claves de primer nivel del perfil auxiliar.}\label{tab:json-top}\\
+\toprule Clave & Estado & Significado y forma de rellenado\\\midrule\endfirsthead
+\toprule Clave & Estado & Significado y forma de rellenado\\\midrule\endhead
+\bottomrule\endfoot
+\codigo{version} & Obligatoria & Identificador libre e inmutable de esta revisión del perfil. Cambiarlo cuando cambien geometría, factores o supuestos; no se usa como versión del software.\\
+\codigo{manufacturer}, \codigo{model} & Obligatorias & Fabricante y modelo que deben coincidir con las etiquetas DICOM del RDSR. En este proyecto se compara el texto; confirmar el modelo exacto de la sala, no solo la familia comercial.\\
+\codigo{geometry} & Obligatoria & Geometría del sistema, coordenadas de mesa, campo y convención de rotaciones; véase la Tabla~\ref{tab:json-geometry}.\\
+\codigo{patient} & Obligatoria & Superficie a calcular: plano, elipse o malla; define resolución y, para malla, unidad y transformaciones. Véase la Tabla~\ref{tab:json-patient}.\\
+\codigo{factors} & Obligatoria & Factores de calibración y transmisión de mesa requeridos para la etapa seleccionada. Cada factor debe tener procedencia e identificador; véase la Tabla~\ref{tab:json-factors}.\\
+\codigo{factors_by_mode} & Opcional & Sobrescribe factores según el código DICOM de tipo de evento. La clave debe coincidir exactamente con el código que devuelve el lector; no usar nombres descriptivos supuestos.\\
+\codigo{dose_medium} & Condicional & Medio del resultado absorbido. Para el proveedor de factores superficiales de agua debe ser \codigo{water}; solo declarar otro valor si el modelo implementado lo admite.\\
+\codigo{surface_factors} & Opcional & Activa el cálculo de factores superficiales: proveedor, dataset, hipótesis de Al, forma de campo y procedencia. Es incompatible con los factores heredados \codigo{bsf} y \codigo{f\_skin}.\\
+\codigo{tube_output} & Opcional & Curva independiente de rendimiento del tubo por mAs y distancia de referencia. Sirve a una comprobación de coherencia del kerma en el punto de referencia; no reemplaza el kerma por evento del RDSR ni es el núcleo del mapa.\\
+\codigo{rdsr_relative_standard_uncertainty} & Opcional & Incertidumbre estándar relativa asignada al $K_{a,r}$ del RDSR, como fracción (p. ej., 0,05 significa 5\,\%), no como porcentaje entero. Si no se conoce, dejar nulo/omitir; no equivale a incertidumbre total.\\
+\codigo{allow_uniform_sweep} & Opcional & Permite explícitamente el barrido uniforme cuando se usa una modalidad que lo requiere. No debe activarse para ocultar ausencia de eventos o para representar un procedimiento real sin respaldo.\\
+\codigo{sweep_samples} & Condicional & Número entero de muestras del barrido uniforme, al menos 2. Debe justificarse su suficiencia temporal.\\
+\codigo{allow_synthetic_device_override} & Opcional & Booleano, falso por defecto. Autoriza una adaptación sintética de geometría si fabricante/modelo difieren; no se permite para el perfil Azurion.\\
+\codigo{allow_historical_factor_fallback} & Opcional & Booleano, falso por defecto. Autoriza sustituir el conjunto de factores de toda la ejecución por factores históricos sintéticos ante un dominio incompatible. No se permite para el perfil Azurion.\\
+\codigo{dose_area_thresholds_gy} & Opcional & Umbrales de dosis, en Gy, para resúmenes de área superficial. Elegir y documentar su finalidad; no alteran el cálculo punto a punto.\\
+\codigo{validation_status} & Sugerido & Etiqueta documental, por ejemplo hipótesis de investigación o caracterización medida. No valida por sí sola la configuración.\\
+\codigo{azurion_profile} & Opcional & Metadatos y políticas de investigación específicos de Azurion. Las banderas registran si filtración, geometría o calibración están caracterizadas; no aportan esas mediciones por sí mismas.\\
+\codigo{phantom} & Opcional & Alias de fantoma \codigo{XCAT50}, \codigo{ICRP\_AM} o \codigo{ICRP\_AF}. Para ICRP se necesita una malla. El modelo efectivo de superficie se expresa en \codigo{patient}.\\
+\end{longtable}
+
+\section{Geometría del equipo}
+\begin{longtable}{p{42mm}p{26mm}p{70mm}}
+\caption{Contenido del objeto \codigo{geometry}. Las longitudes se expresan en mm.}\label{tab:json-geometry}\\
+\toprule Campo & Unidad/valores & Descripción y criterio\\\midrule\endfirsthead
+\toprule Campo & Unidad/valores & Descripción y criterio\\\midrule\endhead
+\bottomrule\endfoot
+\codigo{source\_to\_isocenter\_mm} & mm & Distancia fuente--isocentro del modelo. Debe corresponder al sistema y plano que se procesa.\\
+\codigo{source\_to\_detector\_mm} & mm & Distancia fuente--detector; el validador requiere que sea mayor que la distancia fuente--isocentro.\\
+\codigo{source\_to\_irp\_mm} & mm & Distancia fuente--punto de referencia de kerma que se usa en la geometría del cálculo. Contrastar con la definición del equipo/RDSR.\\
+\codigo{field\_reference} & \codigo{detector} o \codigo{isocenter} & Plano al que se refieren las dimensiones del campo configuradas/interpretadas. No confundir el tamaño del detector con la apertura colimada.\\
+\codigo{primary\_sign}, \codigo{secondary\_sign} & $+1$ o $-1$ & Signo que adapta los sentidos angulares DICOM al sistema de coordenadas del modelo. Establecerlo con una convención y una prueba geométrica conocida.\\
+\codigo{rotation\_order} & Dos órdenes admitidos & \codigo{primary\_then\_secondary} o \codigo{secondary\_then\_primary}; la composición de rotaciones tridimensionales depende del orden.\\
+\codigo{table\_coordinates} & \codigo{isocenter} o \codigo{legacy} & Convención de las coordenadas de mesa que debe concordar con el triplete escogido por el lector del RDSR.\\
+\codigo{table\_origin\_mm} & Vector de 3 mm & Traslación del origen de la mesa en el sistema del modelo. Obtenerlo de una referencia geométrica definida, no de la posición visual del STL.\\
+\codigo{table\_matrix} & Matriz $3\times3$ & Cambio de base para los ejes de mesa; debe ser ortonormal y de determinante $+1$ o $-1$. Declarar filas/columnas según la convención del código.\\
+\codigo{table\_plane\_z\_mm} & mm & Coordenada del plano de mesa en el marco adoptado.\\
+\codigo{table\_half\_width\_mm}, \codigo{table\_half\_length\_mm} & mm & Semianchos y semilongitudes del rectángulo de mesa modelado; positivos.\\
+\codigo{isocenter\_mm} & Vector de 3 mm & Origen del isocentro en el marco del cálculo; si se omite en la geometría del plano, el cargador usa el origen.\\
+\codigo{planes} & Mapa por plano & Geometría común con sobrescrituras para cada identificador de plano adquirido. Todo plano usado debe estar definido.\\
+\end{longtable}
+La geometría no se deduce íntegramente de que el fabricante y el modelo coincidan. Cuando se introduzcan distancias configuradas para sustituir valores ausentes o inválidos del RDSR, deben marcarse como hipótesis y registrarse con su origen.
+
+\section{Paciente, resolución y malla}
+\begin{longtable}{p{43mm}p{26mm}p{69mm}}
+\caption{Campos del objeto \codigo{patient}.}\label{tab:json-patient}\\
+\toprule Campo & Unidad/valores & Descripción y criterio\\\midrule\endfirsthead
+\toprule Campo & Unidad/valores & Descripción y criterio\\\midrule\endhead
+\bottomrule\endfoot
+\codigo{type} & \codigo{plane}, \codigo{ellipse}, \codigo{mesh} & Modelo de superficie que consume el motor. Para la anatomía segmentada se selecciona \codigo{mesh}.\\
+\codigo{resolution\_mm} & mm & Paso espacial de muestreo para los modelos analíticos; debe ser positivo. En la malla STL actual se evalúa un punto por cara, por lo que el número de caras determina las muestras.\\
+\codigo{mesh\_path} & Ruta & Ruta absoluta o relativa al JSON hacia STL, OBJ o PLY. El STL no almacena de forma fiable su unidad ni su orientación anatómica.\\
+\codigo{mesh\_unit} & \codigo{mm}, \codigo{cm}, \codigo{m} & Unidad de coordenadas original de la malla, necesaria para escalarla a mm. Declararla desde la exportación de Slicer.\\
+\codigo{mesh\_axes\_matrix} & Matriz $3\times3$ & Rotación/reflexión ortonormal desde los ejes de la malla hasta los ejes del cálculo. Registrar y verificar la transformación con referencias anatómicas; no adivinarla por el nombre RAS/LPS.\\
+\codigo{mesh\_origin\_mm} & Vector de 3 mm & Traslación local tras convertir unidades y ejes; precede a las inclinaciones y a la colocación del paciente sobre la mesa.\\
+\codigo{thickness\_mm} & mm & Argumento de contexto para factores dependientes de espesor; no calcula transporte ni atenuación dentro del paciente y no se deduce de la malla.\\
+\codigo{origin\_on\_table\_mm} & Vector de 3 mm & Desplazamiento del paciente respecto de la mesa, aplicado tanto a modelos analíticos como a mallas.\\
+\codigo{tilt\_x\_deg}, \codigo{tilt\_y\_deg} & grados & Rotaciones aplicadas a puntos y normales también en mallas. Son parámetros explícitos; no realizan registro automático.\\
+\codigo{mesh\_max\_edge\_mm} & mm o nulo & Longitud máxima objetivo para refinamiento local de caras; al subdividir puede aumentar el número de triángulos.\\
+\codigo{mesh\_refinement\_roi\_mm} & caja 3D & Región opcional de refinamiento, expresada en coordenadas del marco de cálculo.\\
+\codigo{mesh\_max\_faces} & entero & Límite de caras para el refinamiento; no es un objetivo garantizado de simplificación.\\
+\codigo{length\_mm}, \codigo{width\_mm}, \codigo{z\_mm}, \codigo{normal} & mm/vector & Parámetros del modelo \codigo{plane}; la normal admitida es vertical $+z$ o $-z$.\\
+\codigo{semi\_axis\_x\_mm}, \codigo{semi\_axis\_z\_mm} & mm & Semiejes de la sección elíptica; \codigo{length\_mm} fija su extensión longitudinal.\\
+\end{longtable}
+Una malla destinada al mapa debe ser una única superficie conectada, cerrada, con caras consistentes y volumen positivo. Revisar orientación, unidades, origen, ejes y correspondencia con la posición del paciente antes de usarla. Exportar geometría desde Slicer no constituye registro de la malla con los ángulos, mesa e isocentro del RDSR.
+
+\section{Factores y tablas}
+Cada factor contiene \codigo{provenance} e \codigo{identifier}, y exactamente una forma: un escalar positivo \codigo{value}, o una tabla \codigo{axes} más \codigo{grid}. En una tabla, el orden de los ejes determina el orden de las dimensiones de \codigo{grid}; los nodos deben crecer estrictamente y todos sus valores deben ser positivos. La interpolación está acotada: fuera del dominio se produce un error, no una extrapolación silenciosa.
+
+\begin{longtable}{p{43mm}p{26mm}p{69mm}}
+\caption{Factores reconocidos y ejes tabulares disponibles.}\label{tab:json-factors}\\
+\toprule Clave/eje & Uso & Interpretación y contenido\\\midrule\endfirsthead
+\toprule Clave/eje & Uso & Interpretación y contenido\\\midrule\endhead
+\bottomrule\endfoot
+\codigo{cf} & Etapa calibrada & Factor de corrección/calibración del indicador. El origen y el montaje al que aplica deben documentarse.\\
+\codigo{table\_total} & Etapa calibrada & Transmisión total de mesa. No combinar con \codigo{table\_normal} ni \codigo{table\_angular}.\\
+\codigo{table\_normal}, \codigo{table\_angular} & Etapa calibrada & Componentes multiplicativos de transmisión normal y angular; usar ambos juntos cuando ese modelo esté caracterizado.\\
+\codigo{beam\_profile} & Perfil del haz & Factor relativo del perfil espacial, cuando esté incluido en el modelo.\\
+\codigo{bsf}, \codigo{f\_skin} & Alternativa heredada & Factores de retrodispersión y conversión superficial. No se pueden mezclar con \codigo{surface\_factors}.\\
+\codigo{kvp} & Eje de tabla & Tensión pico del evento en kV.\\
+\codigo{filtration\_mm\_cu} & Eje de tabla & Filtración de cobre añadida en mm Cu; no representa Al ni una equivalencia entre materiales.\\
+\codigo{field\_area\_cm2} & Eje de tabla & Área de campo en cm$^2$.\\
+\codigo{table\_angle\_deg} & Eje de tabla & Ángulo de mesa en grados.\\
+\codigo{patient\_thickness\_mm} & Eje de tabla & Espesor de paciente en mm.\\
+\codigo{skin\_angle\_deg} & Eje de tabla & Ángulo cutáneo en grados.\\
+\codigo{field\_fraction\_x}, \codigo{field\_fraction\_y} & Ejes de tabla & Fracciones del campo en las direcciones $x$ e $y$.\\
+\codigo{relative\_standard\_uncertainty} & Metadato de factor & Incertidumbre estándar relativa como fracción. La salida del programa identifica un presupuesto parcial; no implica incertidumbre total ni necesariamente incorpora toda tabla superficial.\\
+\end{longtable}
+
+En \codigo{factors\_by\_mode}, la estructura interna es la misma y las claves del modo corresponden al código de tipo de irradiación extraído del RDSR. Para rendimientos, \codigo{tube\_output} incluye una distancia de referencia en mm y un factor \codigo{yield\_gy\_per\_mas}; esta comparación es independiente solo si su rendimiento procede de una caracterización distinta del mismo $K_{a,r}$ que se comprueba.
+
+\section{Proveedor superficial y supuestos de calidad}
+\begin{longtable}{p{44mm}p{26mm}p{68mm}}
+\caption{Claves del bloque \codigo{surface\_factors}.}\label{tab:json-surface}\\
+\toprule Clave & Valores admitidos & Qué declara\\\midrule\endfirsthead
+\toprule Clave & Valores admitidos & Qué declara\\\midrule\endhead
+\bottomrule\endfoot
+\codigo{provider} & \codigo{benmakhlouf\_2011}, \codigo{tabulated\_water} & Fuente de pares de factores. El segundo proveedor requiere el directorio de una tabla compatible; el primero usa los datos publicados integrados.\\
+\codigo{dataset\_directory} & Ruta & Obligatoria para \codigo{tabulated\_water}; apunta a la carpeta con datos y \codigo{metadata.json}. Se resuelve desde el JSON. No se añade al proveedor publicado.\\
+\codigo{inherent\_al\_mm} & Valor tabulado & Familia de Al inherente elegida. El cargador no la infiere del RDSR ni interpola entre familias no disponibles.\\
+\codigo{target} & \codigo{W} & Blanco de tungsteno que debe concordar con la tabla seleccionada.\\
+\codigo{aluminium\_policy} & \codigo{reject\_additional}, \codigo{fixed\_plus\_event} & Decide cómo tratar Al añadido declarado en el RDSR: rechazarlo para esta familia o sumarlo a la hipótesis fija si la familia resultante está tabulada.\\
+\codigo{field\_shape\_policy} & \codigo{square\_only}, \codigo{equal\_area} & Rechaza campos rectangulares o permite aproximarlos por un cuadrado de igual área. La segunda opción es una aproximación, no una medición de campo cuadrado.\\
+\codigo{out\_of\_domain} & \codigo{error} & Única política implementada; los puntos fuera de tabla detienen el cálculo.\\
+\codigo{incident\_kerma\_basis} & \codigo{free\_in\_air\_without\_backscatter} & Declara la base de kerma para evitar duplicar retrodispersión.\\
+\codigo{quality\_basis} & \codigo{event\_kvp\_filtration\_proxy\_at\_surface} & Identifica que kVp y filtración del evento son un proxy de calidad espectral en la superficie, no una reconstrucción completa del espectro local.\\
+\codigo{allow\_water\_phantom\_approximation} & \codigo{true} & Declara el traslado aproximado de factores de fantoma de agua a la superficie del paciente.\\
+\codigo{provenance} & Texto & Procedencia, método, supuestos, versión y límites de validez del conjunto. Debe decir si los datos son publicados, calculados o medidos.\\
+\end{longtable}
+La etiqueta Azurion y sus banderas no caracterizan por sí solas el equipo. Para rellenar el perfil con uso físico deben establecerse, por separado, las distancias y convenciones del plano, la filtración fija y añadida, la calibración, el rendimiento, la orientación de la malla y su registro con el paciente. El ejemplo espectral de esta memoria debe leerse como configuración experimental condicionada, no como perfil universal validado.
+
+\chapter{Guía de lectura del informe estructurado de dosis (RDSR)}
+\label{ap:rdsr}
+\section{Qué representa el RDSR}
+El RDSR de rayos X es un objeto DICOM de informe estructurado que organiza información de irradiación y dosis en un árbol de contenido codificado; no es una tabla plana de etiquetas ni una imagen de TC. DICOM define plantillas extensibles con información general del procedimiento, totales acumulados y datos por evento, además de contexto del equipo, geometría y referencias. Qué elementos aparecen depende del equipo, la versión de exportación y la plantilla que use el fabricante. La presencia en el estándar no garantiza que todo RDSR los incluya. El lector del proyecto acepta la SOP Class \codigo{X-Ray Radiation Dose SR Storage} (UID \codigo{1.2.840.10008.5.1.4.1.1.88.67}) y un subconjunto de los códigos definidos en las plantillas DICOM; no valida todas las variantes SR ni lee un TC asociado como superficie anatómica~\citep{dicom}.
+
+En términos de contenido, pueden encontrarse identificación del paciente, estudio e irradiador; fecha y contexto del procedimiento; resúmenes acumulados por plano o tipo de irradiación; contenedores de eventos con dosis, parámetros del haz, filtración, colimación, ángulos, distancias y posición de mesa; además de método/calibración y datos de referencia. Los identificadores personales no son necesarios para el cálculo de DermaDose. La malla segmentada, su escala y su registro anatómico se suministran aparte.
+
+\section{Campos de evento que interpreta DermaDose}
+La tabla presenta el significado DICOM (código de concepto), el campo interno y la función. Los códigos identifican el concepto aunque cambie la etiqueta de texto del fabricante. El lector normaliza las unidades reconocidas y conserva auditoría de lecturas; un campo opcional ausente no debe rellenarse automáticamente con cero.
+\begin{longtable}{p{42mm}p{30mm}p{66mm}}
+\caption{Elementos por evento relevantes para DermaDose.}\label{tab:rdsr-event}\\
+\toprule Concepto DICOM (código) & Campo interno y unidad & Significado, uso o límite\\\midrule\endfirsthead
+\toprule Concepto DICOM (código) & Campo interno y unidad & Significado, uso o límite\\\midrule\endhead
+\bottomrule\endfoot
+\codigo{Irradiation Event X-Ray Data} (113706) & Contenedor & Agrupa los datos del evento; el lector requiere al menos uno. El UID de evento impide contar dos veces el mismo identificador.\\
+\codigo{Irradiation Event UID} (113769) & \codigo{uid} & Identificador único del evento; obligatorio para distinguirlo y auditarlo.\\
+\codigo{Acquisition Plane} (113764) & \codigo{plane} & Plano/adquisición al que pertenece el evento; requerido para asociar la geometría.\\
+\codigo{Irradiation Event Type} (113721) & \codigo{mode} & Tipo codificado del evento; opcional. Puede seleccionar una entrada de \codigo{factors\_by\_mode}.\\
+\codigo{DateTime Started} (111526) & \codigo{timestamp} & Inicio del evento; útil para orden y auditoría, no determina por sí solo su duración total.\\
+\codigo{Dose (RP)} (113738) & \codigo{ka\_r\_gy}, Gy & Kerma en aire reportado en el punto de referencia del equipo; el lector convierte Gy, mGy o uGy. No es dosis absorbida en piel. El subárbol que define el punto debe contrastarse con el modelo de equipo.\\
+\codigo{Dose Area Product} (122130) & \codigo{kap\_gy\_m2}, Gy m$^2$ & Producto kerma-área por evento. Se normalizan unidades DICOM compatibles; apoya balances y comprobaciones, no equivale a dosis local.\\
+\codigo{KVP} (113733) & \codigo{kvp}, kV & Tensión pico del tubo del evento; útil como eje de calidad, pero no equivale a energía monoenergética.\\
+\codigo{X-Ray Filters} (113771), tipo (113772) & Auditoría de filtros & Contenedor y tipo de filtro aplicados. El lector distingue códigos de material y requiere identificación inequívoca.\\
+\codigo{Filter Material} (113757) & Material de filtro & El lector reconoce Cu (SCT 66925006 o SRT C-127F9) y Al (SRT C-120F9). No supone que Al y Cu sean intercambiables.\\
+\codigo{Filter Thickness Minimum} (113758), \codigo{Maximum} (113773) & mm & Espesor mínimo y máximo del filtro. Si ambos aparecen deben coincidir; un intervalo no uniforme produce error. Si solo hay un extremo, se conserva como valor declarado. Filtros Cu reconocidos se suman. Al se conserva por separado.\\
+\codigo{No filter} (111609) & Estado de filtro & Solo un código explícito permite interpretar ausencia de filtro añadido. Si no hay declaración del filtro, el estado es desconocido, no cero.\\
+\codigo{Exposure} (113736) & \codigo{exposure\_mas}, mAs & Carga eléctrica reportada; se convierten unidades mA·s y uA·s. Es dato auxiliar para rendimiento; no sustituye $K_{a,r}$.\\
+\codigo{Exposure Time} (113824), \codigo{X-Ray Tube Current} (113734) & ms; mA & Duración y corriente opcionales. El programa deliberadamente no infiere mAs multiplicando corriente por tiempo: la emisión pulsada impide esa equivalencia general.\\
+\codigo{Positioner Primary Angle} (112011), \codigo{Secondary Angle} (112012) & grados & Ángulos actuales del soporte del tubo usados para la dirección del haz.\\
+\codigo{Positioner Primary End Angle} (113739), \codigo{Secondary End Angle} (113740) & grados & Ángulos finales si se reportan, relevantes en barridos; no sustituyen los ángulos iniciales.\\
+\codigo{Table X/Y/Z Position} (128766/128767/128768) & Triplete \codigo{isocenter}, mm & Posición de mesa expresada respecto al isocentro. El lector requiere triplete completo para esa convención.\\
+\codigo{Table Longitudinal/Lateral/Height Position} (113751/113752/113753) & Triplete \codigo{legacy}, mm & Convención alternativa de posición de mesa. El perfil JSON debe usar la misma convención.\\
+\codigo{Distance Source Detector} (113750) & \codigo{sid\_mm}, mm & Distancia fuente--detector.\\
+\codigo{Distance Source Isocenter} (113748) & \codigo{sod\_mm}, mm & Distancia fuente--isocentro en el código del lector. El nombre interno \codigo{sod} no significa distancia fuente--superficie del paciente.\\
+\codigo{Distance Source Reference Point} (113737) & \codigo{srp\_mm}, mm & Distancia fuente--punto de referencia. No asumir que sea idéntica al isocentro; revisar el punto de referencia del equipo.\\
+\codigo{Collimated Field Width/Height} (113789/113788) & mm & Dimensiones del campo colimado reportadas. Cuando no están disponibles, no se deben sustituir sin evidencia por dimensiones físicas del detector.\\
+\codigo{Collimated Field Area} (113790) & m$^2$ o cm$^2$ & Área colimada. Si el informe no contiene ancho y alto pero sí área, el lector construye un campo cuadrado equivalente; la forma rectangular original se pierde en esa aproximación.\\
+\end{longtable}
+Los requisitos geométricos del validador de evento incluyen $K_{a,r}$, ángulos primario/secundario, posición completa de mesa, SID, distancia fuente--isocentro, distancia al punto de referencia y ancho/alto de campo. Para las etapas calibrada y de dosis superficial también se exige calidad del haz identificable y los factores correspondientes. El código puede aceptar sustituciones de geometría configuradas en perfiles específicos de investigación, pero deben tratarse como hipótesis y quedar auditables.
+
+\section{Totales, cabecera y elementos auxiliares}
+El lector obtiene fabricante (DICOM (0008,0070)) y modelo (DICOM (0008,1090)) para compararlos con el JSON. Lee los totales acumulados de $K_{a,r}$ y producto kerma-área cuando aparecen y emite una advertencia si no concuerdan dentro del 2\,\% con la suma de todos los eventos reconocidos. Una diferencia no prueba por sí sola un error: puede haber alcance distinto, planos separados, eventos no leídos o redondeo. Conserva además SHA-256 del archivo para identificar la entrada exacta sin publicar su nombre de paciente.
+
+En RDSR Philips pueden aparecer dimensiones del detector y posiciones de obturadores bajo el esquema privado \codigo{99PHI-IXR-XPER}. El lector los conserva como datos de auditoría/proxy, no los equipara automáticamente con el campo colimado. Son valores dependientes del fabricante y no forman parte de un contrato universal entre equipos.
+
+\section{Lo que el RDSR no garantiza y lista de comprobación}
+La ausencia de una secuencia TC, una malla, una orientación RAS/LPS, el espesor cutáneo o una transformación paciente--isocentro es normal: esa información se debe obtener de las imágenes y de la segmentación o caracterizar por separado. Tampoco se puede concluir que la filtración es cero cuando no se declara, que la geometría del equipo es la del modelo nominal, o que el $K_{a,r}$ reportado sea directamente la dosis máxima de piel.
+
+Antes de calcular, comprobar que el fichero sea un RDSR de rayos X compatible, que fabricante/modelo y plano correspondan al JSON, que los filtros estén identificados por material y espesor o declarados explícitamente ausentes, que las unidades y tripletes de mesa sean coherentes, que el campo colimado no se haya sustituido por el tamaño del detector, y que la malla se encuentre en el mismo marco geométrico. Revisar finalmente las advertencias de totales, los eventos fuera del dominio de las tablas y la procedencia/validez experimental de cada factor. La estructura RDSR se define en DICOM PS3.3/PS3.16; las plantillas de evento y los códigos de distancia citados en este anexo delimitan el subconjunto consultado~\citep{dicom}.

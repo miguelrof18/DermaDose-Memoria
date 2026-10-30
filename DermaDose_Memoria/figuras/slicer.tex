@@ -1,0 +1,15 @@
+\begin{tikzpicture}[font=\small,node distance=7mm and 8mm]
+\node[panel,text width=4cm](a){\textbf{1 · Seleccionar TC}\\HU, cobertura, espaciado y ejes};
+\node[proceso,text width=4cm,right=of a](b){\textbf{2 · Contorno binario}\\Umbral inicial $-350$ HU; mayor componente; relleno};
+\node[proceso,text width=4cm,right=of b](c){\textbf{3 · Superficie original}\\Limpieza, orientación y comprobación};
+\draw[flujo](a)--(b);\draw[flujo](b)--(c);
+\node[proceso,text width=4cm,below=12mm of c](d){\textbf{4 · Intentar simplificación}\\Objetivo: \num{150000} caras; preservar topología};
+\draw[flujo](c)--(d);
+\node[aviso,text width=4cm,left=of d](e){\textbf{5 · ¿Reducción válida?}\\Cierre, conectividad, degeneración y volumen};
+\draw[flujo](d)--(e);
+\node[proceso,text width=4cm,left=of e](v){\textbf{Sí: malla reducida}\\No: conservar original válida con aviso};
+\draw[flujo](e)--(v);
+\node[panel,text width=12.8cm,below=12mm of e](out){\textbf{6 · Revisión visual y exportación}\\STL + JSON de metadatos (RAS, mm, caras reales); lectura de comprobación antes de confirmar.};
+\draw[flujo](v.south)--++(0,-5mm)-|(out.north west);
+\node[nota,text width=13cm,below=6mm of out]{Un contorno cerrado puede estar truncado, incluir mesa o excluir una extremidad. La validez topológica no demuestra fidelidad anatómica.};
+\end{tikzpicture}

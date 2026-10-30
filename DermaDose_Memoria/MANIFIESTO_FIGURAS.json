@@ -1,0 +1,573 @@
+{
+  "edition": "2026-10-29",
+  "pages": 106,
+  "figures": 32,
+  "revised": 17,
+  "added": 15,
+  "renderer": "pdfLaTeX / TikZ / PGFPlots",
+  "figures_inventory": [
+    {
+      "figure": "3.1",
+      "page_pdf": 20,
+      "source": "figuras/distancia_pka.tex",
+      "status": "Nueva",
+      "objective": "Relacionar divergencia, inverso del cuadrado y producto kerma-área."
+    },
+    {
+      "figure": "3.2",
+      "page_pdf": 22,
+      "source": "figuras/ecuacion.tex",
+      "status": "Nueva",
+      "objective": "Leer la ecuación del motor por función física y por unidades."
+    },
+    {
+      "figure": "3.3",
+      "page_pdf": 25,
+      "source": "figuras/mesa.tex",
+      "status": "Nueva",
+      "objective": "Distinguir cruce del segmento, transmisión escalar y endurecimiento futuro."
+    },
+    {
+      "figure": "3.4",
+      "page_pdf": 26,
+      "source": "figuras/superposicion.tex",
+      "status": "Rehecha",
+      "objective": "Mostrar suma espacial y diferencia entre máximo de suma y suma de máximos."
+    },
+    {
+      "figure": "4.1",
+      "page_pdf": 27,
+      "source": "figuras/coordenadas.tex",
+      "status": "Nueva",
+      "objective": "Distinguir cambio de base, unidades y registro anatómico."
+    },
+    {
+      "figure": "4.2",
+      "page_pdf": 28,
+      "source": "figuras/geometria.tex",
+      "status": "Rehecha",
+      "objective": "Separar distancia axial de distancia foco-punto."
+    },
+    {
+      "figure": "4.3",
+      "page_pdf": 29,
+      "source": "figuras/areas_campo.tex",
+      "status": "Nueva",
+      "objective": "Separar campo normal, huella oblicua y argumento tabulado."
+    },
+    {
+      "figure": "4.4",
+      "page_pdf": 29,
+      "source": "figuras/primera_entrada.tex",
+      "status": "Nueva",
+      "objective": "Ilustrar oclusión, caras de salida y primera intersección."
+    },
+    {
+      "figure": "4.5",
+      "page_pdf": 30,
+      "source": "figuras/centroides.tex",
+      "status": "Nueva",
+      "objective": "Mostrar error de clasificación en una cara parcialmente irradiada."
+    },
+    {
+      "figure": "4.6",
+      "page_pdf": 31,
+      "source": "figuras/metricas.tex",
+      "status": "Nueva",
+      "objective": "Explicar ponderación por área e histograma acumulado."
+    },
+    {
+      "figure": "5.1",
+      "page_pdf": 32,
+      "source": "figuras/flujo.tex",
+      "status": "Rehecha",
+      "objective": "Integrar las tres entradas, cálculo por evento y salidas auditables."
+    },
+    {
+      "figure": "5.2",
+      "page_pdf": 34,
+      "source": "figuras/estados_filtro.tex",
+      "status": "Nueva",
+      "objective": "Separar ausencia declarada, material conocido e información indeterminada."
+    },
+    {
+      "figure": "6.1",
+      "page_pdf": 37,
+      "source": "figuras/slicer.tex",
+      "status": "Rehecha",
+      "objective": "Mostrar segmentación, validación y conservación de la original si falla reducción."
+    },
+    {
+      "figure": "7.1",
+      "page_pdf": 41,
+      "source": "figuras/monoenergeticos.tex",
+      "status": "Nueva",
+      "objective": "Visualizar dependencia energética y de campo de B y C nodales."
+    },
+    {
+      "figure": "7.2",
+      "page_pdf": 42,
+      "source": "figuras/dominio.tex",
+      "status": "Nueva",
+      "objective": "Mostrar familias discretas de Al y límites de Cu sin extrapolación."
+    },
+    {
+      "figure": "8.1",
+      "page_pdf": 45,
+      "source": "figuras/filtracion.tex",
+      "status": "Rehecha",
+      "objective": "Representar Al fijo y capas añadidas sin equivalencias materiales constantes."
+    },
+    {
+      "figure": "9.1",
+      "page_pdf": 48,
+      "source": "figuras/espectral.tex",
+      "status": "Rehecha",
+      "objective": "Explicar generación de espectro, producto nodal, dominio e integración."
+    },
+    {
+      "figure": "9.2",
+      "page_pdf": 51,
+      "source": "figuras/espectros_grafico.tex",
+      "status": "Rehecha",
+      "objective": "Comparar distribuciones de fotones y de kerma con normalización explícita."
+    },
+    {
+      "figure": "9.3",
+      "page_pdf": 52,
+      "source": "figuras/kernel_integracion.tex",
+      "status": "Nueva",
+      "objective": "Mostrar el integrando cuyo área da el combinado espectral."
+    },
+    {
+      "figure": "10.1",
+      "page_pdf": 54,
+      "source": "figuras/convergencia.tex",
+      "status": "Rehecha",
+      "objective": "Mostrar estabilidad numérica histórica, sin identificarla con exactitud física."
+    },
+    {
+      "figure": "11.1",
+      "page_pdf": 58,
+      "source": "figuras/validacion.tex",
+      "status": "Rehecha",
+      "objective": "Separar niveles y evidencia necesaria para cada tipo de evaluación."
+    },
+    {
+      "figure": "11.2",
+      "page_pdf": 60,
+      "source": "figuras/incertidumbre.tex",
+      "status": "Rehecha",
+      "objective": "Relacionar fuentes físicas, geométricas, numéricas y de adecuación."
+    },
+    {
+      "figure": "13.1",
+      "page_pdf": 68,
+      "source": "figuras/ponderacion.tex",
+      "status": "Rehecha",
+      "objective": "Conectar fluencia, energía, kerma normalizado y respuesta superficial."
+    },
+    {
+      "figure": "13.2",
+      "page_pdf": 69,
+      "source": "figuras/retrodispersion.tex",
+      "status": "Rehecha",
+      "objective": "Distinguir primarios, retorno disperso y región superficial central."
+    },
+    {
+      "figure": "13.3",
+      "page_pdf": 70,
+      "source": "figuras/kerma_dosis.tex",
+      "status": "Rehecha",
+      "objective": "Explicar transferencia inicial y depósito con transporte a través de límites."
+    },
+    {
+      "figure": "13.4",
+      "page_pdf": 71,
+      "source": "figuras/promedios.tex",
+      "status": "Rehecha",
+      "objective": "Demostrar la no conmutatividad con ejemplo algebraico verificable."
+    },
+    {
+      "figure": "13.5",
+      "page_pdf": 71,
+      "source": "figuras/hvl.tex",
+      "status": "Rehecha",
+      "objective": "Distinguir HVL1 y HVL2 adicional con igual HVL1 para curvas diferentes."
+    },
+    {
+      "figure": "13.6",
+      "page_pdf": 72,
+      "source": "figuras/discretizacion.tex",
+      "status": "Rehecha",
+      "objective": "Separar error de forma, error de muestreo y error de registro."
+    },
+    {
+      "figure": "14.1",
+      "page_pdf": 74,
+      "source": "figuras/ajuste_hvl.tex",
+      "status": "Rehecha",
+      "objective": "Distinguir grupos de ajuste, grupo reservado y residuos sin errores supuestos."
+    },
+    {
+      "figure": "14.2",
+      "page_pdf": 75,
+      "source": "figuras/impacto_factores.tex",
+      "status": "Nueva",
+      "objective": "Visualizar cambio entre perfiles sin convertirlo en incertidumbre o exactitud."
+    },
+    {
+      "figure": "14.3",
+      "page_pdf": 75,
+      "source": "figuras/malla_dataset.tex",
+      "status": "Nueva",
+      "objective": "Separar 182 espectros de 910 filas con eje de campo."
+    },
+    {
+      "figure": "14.4",
+      "page_pdf": 76,
+      "source": "figuras/consulta_C.tex",
+      "status": "Nueva",
+      "objective": "Comparar políticas combinada y separada, respetando versiones de datasets."
+    }
+  ],
+  "checks": {
+    "overfull_boxes": 0,
+    "undefined_references": 0,
+    "raster_images": 0
+  },
+  "files": [
+    {
+      "path": "INVENTARIO_FIGURAS.md",
+      "sha256": "a6a42b369161f4c34605773d4082e4cd599b716b13972f5ca53018d069f877bf"
+    },
+    {
+      "path": "LEEME.md",
+      "sha256": "efa0a6c2eca537c92ff1b3b4b5527672d246ee3be1ef14300ad1550268d0220e"
+    },
+    {
+      "path": "MANIFIESTO_FIGURAS.json",
+      "sha256": "b29017c579a65841836e6fa8c769ecdace89a6dc987df9f17252d571ba73156e"
+    },
+    {
+      "path": "bibliografia.bib",
+      "sha256": "244835b6ea8476f61e87e39a486932f3815af62763fe04af0a73dc8eb0b8b105"
+    },
+    {
+      "path": "capitulos/01_alcance.tex",
+      "sha256": "fbbf8e6377371e4dd9e1609b19fa9d5a6996c38d944a1b20eb33f655fc412f6f"
+    },
+    {
+      "path": "capitulos/02_contexto.tex",
+      "sha256": "50228fc3b03a091b49baf33ea66c4fbb8aad8facd0149675dcf40bc990eb940d"
+    },
+    {
+      "path": "capitulos/03_fisica.tex",
+      "sha256": "df6cc357ffe74aab58d468b0abd64ba45cbe21a193e4b3acaac749a8f2540fac"
+    },
+    {
+      "path": "capitulos/04_geometria.tex",
+      "sha256": "0ed6617f9031a57b7021a5581504c2b5d2901dc6c8c563820f8e55bf193eae59"
+    },
+    {
+      "path": "capitulos/05_software.tex",
+      "sha256": "5e049d4cf46929e3c62d3103575bd3d90f8fb7267fd4ab3d15893168cae02af2"
+    },
+    {
+      "path": "capitulos/06_superficies.tex",
+      "sha256": "4cc8b5d31b84e402818f1b85514b7280cae60c01ed6794768aa0d9c691b08841"
+    },
+    {
+      "path": "capitulos/07_benmakhlouf.tex",
+      "sha256": "06701cee7089f2de46e66bc7a88588348c55fa497add4f5c34624db3cdc1a040"
+    },
+    {
+      "path": "capitulos/08_azurion.tex",
+      "sha256": "0b8ff4681b04a79ce0813936e58c65fbf8bfa2e657ce8588684ceb451c8fe51f"
+    },
+    {
+      "path": "capitulos/09_espectros.tex",
+      "sha256": "22a0d0524c2ddfff1f20ff358657a3a41ceb3522dceaf70642a0a545beadee47"
+    },
+    {
+      "path": "capitulos/10_resultados.tex",
+      "sha256": "deb0e0a6aea3f2ef96d48bd7fd54aee72204be16e5ece60ee8e86dabae68b8a7"
+    },
+    {
+      "path": "capitulos/11_validacion.tex",
+      "sha256": "063fbba8eb7541f7b9883e895c1f9f6afd87be765a8092b3b38f103a87eccf08"
+    },
+    {
+      "path": "capitulos/12_discusion.tex",
+      "sha256": "ec5feb5adea8ddb376ed5eea15e24676a87118d8ece2aa27c25bcdf6e1dc90cd"
+    },
+    {
+      "path": "capitulos/13_conclusiones.tex",
+      "sha256": "2338cfa14632b1cce31b0d5fa6e8934dd3558ec408e338b496cb36017cc7b85d"
+    },
+    {
+      "path": "capitulos/anexos.tex",
+      "sha256": "433dc1e11d03b371cb35afd9c4a2c68d116076dd4a0c9d104581f544e3e936e1"
+    },
+    {
+      "path": "capitulos/atlas.tex",
+      "sha256": "512f7037fd247f3825b849868c270ff4e5cba4bf7f018c6fd77c4887aa993f5e"
+    },
+    {
+      "path": "capitulos/auditoria.tex",
+      "sha256": "0f9a7242598f305b245037c4698091a78c90741949f554ffe2145728d912cdb9"
+    },
+    {
+      "path": "capitulos/refinamiento_factores.tex",
+      "sha256": "bb6104324e68f0ac3ee86ce09f46e974e0207d4b1ec9ca3700dc37882c6afe4d"
+    },
+    {
+      "path": "datos/comparacion_referencia.json",
+      "sha256": "8231a9b365ae4b19e1db4c56f59ced6f351016f2c203e3f7e1774886e69f0333"
+    },
+    {
+      "path": "datos/convergencia_espectral.csv",
+      "sha256": "444af080d5e77e8d8368566ead52f96830b32fcca224edab6dd7bf429c1c153b"
+    },
+    {
+      "path": "datos/entorno.json",
+      "sha256": "bb7467f9fc344e8c84c1d4e3c256be66988317e188eb24bf5ca37726983573fe"
+    },
+    {
+      "path": "datos/espectro_cu_0p0.csv",
+      "sha256": "79401dc8b2dd40ecd93499a8a35a74d4972733575b7d365fd5a68cd14239fcee"
+    },
+    {
+      "path": "datos/espectro_cu_0p1.csv",
+      "sha256": "8752876f6c2af6e59c4852e702a2cf64967b2349f15dade0dd088af4395bffde"
+    },
+    {
+      "path": "datos/espectro_cu_0p4.csv",
+      "sha256": "d100de3d5179ec732c716079d4369f227b13aee0b28b6ac1453557573ad5e709"
+    },
+    {
+      "path": "datos/espectros_80kv.csv",
+      "sha256": "2e6d26449ae2d7685a6915a285b14d6b9ac0fb729922d429a7e2a40d33224b1e"
+    },
+    {
+      "path": "datos/interpolacion_derivada.csv",
+      "sha256": "23893e87e89ad4a7a85708f3fc18b563b5c1ed480cdbb24df483f46e84502c72"
+    },
+    {
+      "path": "datos/kernel_integracion.csv",
+      "sha256": "e1eb6528ac313d582d0745fe5a4d984803eaf95548c844577c2a203c51700e4f"
+    },
+    {
+      "path": "datos/mono_s20.csv",
+      "sha256": "9473bd587e7c97839ab60aff8ecb936ee3acfad07d5516b29df8a26502e8ed53"
+    },
+    {
+      "path": "datos/mono_s35.csv",
+      "sha256": "c08b2ca5bf71bd1e54c673a6eb6406e5c46775b90b916189a6f197c605688fc0"
+    },
+    {
+      "path": "datos/mono_s5.csv",
+      "sha256": "d181bc1cc690773fe958c7bbca0d524e27e438edd3ea87ccf6a70df1bf1a69f0"
+    },
+    {
+      "path": "datos/resultado_ajuste.tex",
+      "sha256": "0a2fcef99964362912a67d8883563c07510b088d9ee6b5a7ef6ed949b627a569"
+    },
+    {
+      "path": "datos/sensibilidad_hipotesis.csv",
+      "sha256": "3ad363a0549ae46454b070c71393c3895e38eb32f4960f014cfc06d092186eec"
+    },
+    {
+      "path": "datos/tabla_78.tex",
+      "sha256": "b0ef82d0e21dae7cf1f11da0870865d7c56e627553fcf3faed09457de5f5d17b"
+    },
+    {
+      "path": "datos/tabla_convergencia.tex",
+      "sha256": "917f4c640d48dabba7a4a2fc1a078bda20376c0d36e69f0237b79dac970cbef6"
+    },
+    {
+      "path": "datos/tabla_hvl.tex",
+      "sha256": "359b3fb27a7395c1829df7477bbf92f82979f76f4f4e05f05e884c12a37c3388"
+    },
+    {
+      "path": "datos/tabla_interpolacion.tex",
+      "sha256": "3e0ca44dd9f3d02087a9db7aab0380dceec636dfa38a47d2f7944056cd22686b"
+    },
+    {
+      "path": "datos/tabla_referencia.tex",
+      "sha256": "a5f9b60acbe7e3402ae220f77e2ae4994d9bc10ecee7b41b22093cfe0ea86b52"
+    },
+    {
+      "path": "datos/tabla_sensibilidad.tex",
+      "sha256": "e5cae77069c9ef4d050494f872969c4f84a2ef6fd3c07a58653e0d05b804fdfe"
+    },
+    {
+      "path": "datos_fuente/benmakhlouf_2011/metadata.json",
+      "sha256": "3f83c476f5f63622a822456827b5501710af7752cf2402a107feaf71ff8ae943"
+    },
+    {
+      "path": "datos_fuente/benmakhlouf_2011/table1_monoenergetic.csv",
+      "sha256": "dbfb57e99c602dff0ec8b3c59888f6e42ddbc291fda6c5e04ae30b1e875c2a08"
+    },
+    {
+      "path": "datos_fuente/benmakhlouf_2011/table2_comparison.csv",
+      "sha256": "9057eca585b3e2b4b00d70198353f77fba434f0042ac85533a6f48af52a94880"
+    },
+    {
+      "path": "datos_fuente/benmakhlouf_2011/table3_clinical.csv",
+      "sha256": "1289fb1dadeae2785306744a834d29d945f8302c7a391fd6ef8f451458c7086b"
+    },
+    {
+      "path": "datos_fuente/benmakhlouf_2011/table4_mammography.csv",
+      "sha256": "ed20fd018e30ec3051940ae5f02639218caa8a161abaa0d75e414dec03713b04"
+    },
+    {
+      "path": "datos_fuente/derived_azurion_spekpy/derived_clinical.csv",
+      "sha256": "fb6740fd06f408c8fb0768bdb52ce7c547394214225d1f75cd6da1d07906b7d9"
+    },
+    {
+      "path": "datos_fuente/derived_azurion_spekpy/metadata.json",
+      "sha256": "746189316f45976009dc19aa2c4f8f26f67a4d7dc5bd0764da204d6991bd594f"
+    },
+    {
+      "path": "figuras/ajuste_hvl.tex",
+      "sha256": "4f58284b773e1a8b4cec12663175960451a09407754673638a9b7705ab3e664c"
+    },
+    {
+      "path": "figuras/areas_campo.tex",
+      "sha256": "969e42c032ec11ccd4e484a25c16146c2ce2f61c01f7c3f7a33ccfc7cbc74e9c"
+    },
+    {
+      "path": "figuras/centroides.tex",
+      "sha256": "534b6cd2fe352937e89f974962b27fba41f8a95595d3ea1b5a02bd3c35cadbee"
+    },
+    {
+      "path": "figuras/consulta_C.tex",
+      "sha256": "d5ce70ca6e55fce96080344b79cc262f14280ee814b673e58aa6d23c528ad0b9"
+    },
+    {
+      "path": "figuras/convergencia.tex",
+      "sha256": "a39e1b224609129dc0102d5e76d0e8aa95c5d3f09e39fa7379cc42c8e8435788"
+    },
+    {
+      "path": "figuras/coordenadas.tex",
+      "sha256": "a5d4bbdd30b815b7c53658e764bbe45819552cb1b5182d025ec9bd75ab9e4a5c"
+    },
+    {
+      "path": "figuras/discretizacion.tex",
+      "sha256": "5e5ba242be4170bea7157d7dd8a398991b100a28fc44d2ca0c8e16f20a88f21e"
+    },
+    {
+      "path": "figuras/distancia_pka.tex",
+      "sha256": "b36777295f1d91805fb07ec015a1853b3087fe952501a3f5542cdc11f38915a7"
+    },
+    {
+      "path": "figuras/dominio.tex",
+      "sha256": "59ce34ec899bc10fc23c4be1f2dbcde476bc338914d3ef50bc6a22b1a6e517cd"
+    },
+    {
+      "path": "figuras/ecuacion.tex",
+      "sha256": "7b5ee0f508c543458def68f0d0edd59d666aff90401b6229fed4f05554a028e9"
+    },
+    {
+      "path": "figuras/espectral.tex",
+      "sha256": "5cc151bd1c2baf884499c07419ae7e9504bac7043aeb3603695b5b2d4f2152dd"
+    },
+    {
+      "path": "figuras/espectros_grafico.tex",
+      "sha256": "38e9cc0dc0f2f4c62cc09fd3026e51e25fef98c69fef97ff8767de198713b517"
+    },
+    {
+      "path": "figuras/estados_filtro.tex",
+      "sha256": "56528f4b1f2147127c2a3702a080ea75741b20402e7f600bbf77b93f72a2a76f"
+    },
+    {
+      "path": "figuras/filtracion.tex",
+      "sha256": "72c9ab2f7cb98d7d4d46b20d3ebc2998596119a42df3e18bf2eb0d9cfac4c8a1"
+    },
+    {
+      "path": "figuras/flujo.tex",
+      "sha256": "0ce9014ef463184ce83bb4fca681fb0e5fb369762c515442cf490ff394e440dc"
+    },
+    {
+      "path": "figuras/geometria.tex",
+      "sha256": "a1dffdf44d6438615737ea0f20ba5abc55a4f2dc32f38ea02e1701ef5104c72c"
+    },
+    {
+      "path": "figuras/hvl.tex",
+      "sha256": "f97a38b593cff7939cc95a98418e0d94196c21734ec9fa518c7d7e4fd3d3c89c"
+    },
+    {
+      "path": "figuras/impacto_factores.tex",
+      "sha256": "c2ca7f4e4778fbbd4716426593c83c7e7274ef019e9b7f1d479ef5be9b658dd6"
+    },
+    {
+      "path": "figuras/incertidumbre.tex",
+      "sha256": "8343a8c4daa58644f229125695ee893b9fe2f5a98b010aec009d21cd2a0bb9a3"
+    },
+    {
+      "path": "figuras/kerma_dosis.tex",
+      "sha256": "da6178ba35de23175c35dbc615393bd9d6ce52955ef0b1d413ac36211133cbab"
+    },
+    {
+      "path": "figuras/kernel_integracion.tex",
+      "sha256": "1dd731b037cbb7bd0893855a7b2ef0268fff87c39a8ad26162dbbab1d4a4eea3"
+    },
+    {
+      "path": "figuras/malla_dataset.tex",
+      "sha256": "705bb1d93577d6695dc72ca0a098cdf17aff16cac035ba2ba1b855e7bacf0ebf"
+    },
+    {
+      "path": "figuras/mesa.tex",
+      "sha256": "2e94faa6dcfee5a020699e9021e67c0b031b7c8709e6dc7b84c0316f15c61904"
+    },
+    {
+      "path": "figuras/metricas.tex",
+      "sha256": "f089d0af9971344a9379c0029a92d19209e406d30b44e93e553969f173723b56"
+    },
+    {
+      "path": "figuras/monoenergeticos.tex",
+      "sha256": "06a4154c18abda7107a4360ce72488af9a487b7941974e83569c4ed13c6784e1"
+    },
+    {
+      "path": "figuras/ponderacion.tex",
+      "sha256": "3dea0e6d3516ee490fe919e2094f63efe5baa3057857f9b815294c6073d3ddfa"
+    },
+    {
+      "path": "figuras/primera_entrada.tex",
+      "sha256": "ce9123b145cf1488b263167469f3e209ba09bb3c0e6562aa1818a076f79c7d69"
+    },
+    {
+      "path": "figuras/promedios.tex",
+      "sha256": "62f2e832c13b8f7d407094bbffba8f89ce7c2e45ea0a41bf943502f9f1f4e2a5"
+    },
+    {
+      "path": "figuras/retrodispersion.tex",
+      "sha256": "4abbdf7fe722e219cb8646de86acee81f849e065e81697cb73aa298f5006a0a9"
+    },
+    {
+      "path": "figuras/slicer.tex",
+      "sha256": "9f4699909f493e41099d8969b18201d1f4fcb73e1da6ec3bd9e63a066f3bad32"
+    },
+    {
+      "path": "figuras/superposicion.tex",
+      "sha256": "0bd74cd72dcb28d6044e160d058ca1983258996bdb32814a76ee5d357babece2"
+    },
+    {
+      "path": "figuras/validacion.tex",
+      "sha256": "02bed3b4038a2b7ecf4bb0a0f232f9ba2fc8e26b738b9d56921df38d20258a44"
+    },
+    {
+      "path": "memoria.tex",
+      "sha256": "5d8e805105903420713b9ce00a8341a018a805b247b21bcdeb6c98eecd9fe3ba"
+    },
+    {
+      "path": "scripts/estudio_espectral.py",
+      "sha256": "cf973e20e9e87227fa9d1f0ed7c385e29a855a1851bef4ed984e03deeaa97426"
+    },
+    {
+      "path": "scripts/generar_tablas.py",
+      "sha256": "7363450fdce0178c0b02631408a374e71c39d991aac9b4ac5f0a739c819db9af"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+\begin{tikzpicture}[font=\small,node distance=10mm and 10mm]
+\node[panel,text width=6cm](a){\textbf{A · Escala y calidad del haz}\\Indicador de kerma, espectro y transmisión efectiva};
+\node[panel,text width=6cm,right=of a](b){\textbf{B · Geometría y registro}\\Distancias, ángulos, contorno y posición del paciente};
+\node[panel,text width=6cm,below=of a](c){\textbf{C · Discretización numérica}\\Caras, paso energético y consulta entre nodos};
+\node[aviso,text width=6cm,right=of c](d){\textbf{D · Adecuación del modelo}\\Agua, campo central, incidencia normal y bordes};
+\node[proceso,text width=12.6cm,below=14mm of $(c.south)!.5!(d.south)$](out){\textbf{Evaluar cada magnitud y su localización}\\PSD · áreas · medias locales · posición del máximo\\Cambios de máscara pueden ser discontinuos; no toda variación admite una derivada local.};
+\draw[flujo](a.west)--++(-4mm,0)|-(out.west);
+\draw[flujo](b.east)--++(4mm,0)|-(out.east);
+\draw[flujo](c.south)--++(0,-5mm)-|(out.north west);
+\draw[flujo](d.south)--++(0,-5mm)-|(out.north east);
+\node[nota,text width=13cm,below=6mm of out]{Las fuentes pueden estar correlacionadas. La suma cuadrática exige un modelo de incertidumbre y covarianzas; no se supone aquí por el dibujo.};
+\end{tikzpicture}

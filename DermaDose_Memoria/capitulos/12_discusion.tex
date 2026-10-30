@@ -1,0 +1,75 @@
+\chapter{Discusión crítica y líneas futuras}
+\section{Qué resuelve la ampliación espectral}
+La ampliación elimina la necesidad de extrapolar directamente familias clínicas para determinadas combinaciones Al/Cu y permite estudiar 46 kVp mediante una base monoenergética apropiada. También hace más explícita la relación entre calidad del haz y corrección superficial. El cambio más importante es de trazabilidad: se conoce qué espectro calculado y qué datos de respuesta producen cada fila.
+
+El coste de esa flexibilidad es incorporar parámetros del generador que requieren evidencia. El acuerdo con una tabla histórica puede comprobar la implementación, pero no identificar por sí solo el espectro de una sala. Las diferencias pequeñas en $C$ no autorizan a ignorar discrepancias de HVL ni a concluir que la filtración asumida sea correcta.
+
+La vía elegida conserva el transporte en agua del informe original. No añade la dependencia anatómica del paciente. El perfil Azurion debe interpretarse como especialización de lectura y configuración, no como un gemelo físico completo del equipo.
+
+\section{Por qué no se adopta una mezcla automática con factores históricos}
+Las constantes históricas cumplen una función de demostración y regresión geométrica. Usarlas selectivamente ante un fallo de dominio produciría un mapa con transiciones de procedencia difíciles de interpretar. Podría incluso generar cambios de dosis que dependiesen de un límite de tabla más que de un cambio físico continuo del haz.
+
+La decisión actual de bloquear en Azurion mantiene el problema visible. Si en el futuro se admite una combinación de fuentes, deberá definirse una jerarquía física, condiciones de uso, continuidad y auditoría por evento, además de validación. No bastaría un mecanismo informático de ``si falla, usar constante''.
+
+El proveedor espectral propio tampoco debe reemplazar siempre una medida válida de la instalación. Cuando existan factores experimentales compatibles y trazables, la elección se basará en calidad de evidencia y mensurando. Mantener intacto el dataset publicado permite comparar vías sin alterar su significado histórico.
+
+\section{Prioridad del registro frente a la apariencia}
+La corrección del sombreado responde a un problema de legibilidad: elimina facetas de iluminación. No corrige la colocación anatómica ni una sombra mal calculada. Una representación más continua puede resultar visualmente convincente aunque la región irradiada esté desplazada.
+
+Por tanto, la interpretación del visor debe apoyarse en marcadores geométricos y salidas numéricas, no en plausibilidad visual aislada. La posición del XCAT no se ha modificado en la actualización del visor. La siguiente mejora geométrica debe ser una transformación medida y comprobable, con pruebas de signos y distancias.
+
+Las superficies derivadas de TC ofrecen una oportunidad para reducir discrepancias de forma, pero también introducen una cadena de segmentación y registro. La comodidad de generar un STL no equivale a disponer de una superficie de procedimiento. Será necesario documentar postura, fecha de TC, anatomía truncada y deformación por apoyo.
+
+\section{Prioridades de desarrollo numérico}
+El estudio de nueve puntos interiores indica que la interpolación del dataset merece más atención que reducir el paso energético en los cuatro casos examinados. Se propone construir pruebas que separen kVp, Cu y lado, comparando consulta de columnas frente a interpolación directa de $C$. La ampliación de nodos se decidirá con un criterio de error predefinido y puntos de verificación reservados.
+
+Se recomienda extender el benchmark a todas las filas clínicas disponibles y comunicar sesgos por región del dominio. La tabla original incluye redondeo y observaciones documentales que pueden limitar una comparación decimal exacta. Una prueba que únicamente exija diferencias pequeñas en cuatro casos no identifica todos los errores de transcripción o interpolación.
+
+La base monoenergética de paso 5 keV impone otra discretización distinta. Refinar el espectro a \num{0.125} keV no crea nuevos datos de transporte. Si se necesitase resolver estructuras de respuesta no representadas, harían falta datos monoenergéticos adicionales o cálculos independientes, con su propia procedencia.
+
+\section{Prioridades de rendimiento}
+La optimización debe seguir una medición por etapas: importación y limpieza, construcción de índice, preselección, primera entrada, factores, métricas, escritura y actualización del visor. Un porcentaje alto de CPU demuestra actividad, pero no identifica el cuello de botella ni permite estimar cuánto falta.
+
+Las mejoras propuestas incluyen progreso por evento, tiempos acumulados por fase, memoria máxima y una salida que distinga cálculo en curso de exportación. El mensaje debe informar trabajo realizado sin prometer un tiempo restante cuando el coste varía con ángulo y candidatos. Un modo que omita métricas locales costosas requiere una opción explícita y una descripción de las salidas omitidas; no se considera implementado por esta memoria.
+
+Para intersecciones se evaluarán BVH o Embree en comparación con la ruta actual, con casos de aristas, autosombra y normales. El uso de GPU se decidirá después de un benchmark equivalente, incluyendo transferencias y tolerancias de precisión. La literatura muestra posibilidades de aceleración, pero no proporciona una ganancia garantizada para este código o su carga \citep{rana2012,takata2018}.
+
+La acumulación por bloques o disco puede reducir la presión de memoria al conservar muchos eventos. También se estudiará una malla gráfica más ligera con correspondencia explícita respecto a la malla de cálculo. No se debe sacrificar la consulta del máximo o mostrar valores suavizados como si pertenecieran a caras realmente calculadas.
+
+\section{Programa de caracterización del Azurion}
+Se propone una secuencia con productos revisables, en lugar de marcar de una sola vez un perfil como caracterizado. La tabla siguiente establece dependencias lógicas; no asigna fechas ficticias ni presume disponibilidad de instrumental.
+\begin{longtable}{p{12mm}p{33mm}p{57mm}p{36mm}}
+\caption{Plan de continuación propuesto y evidencia para avanzar.}\\
+\toprule
+Fase & Objetivo & Producto verificable & Condición de avance\\\midrule\endfirsthead
+\toprule Fase & Objetivo & Producto verificable & Condición de avance\\\midrule\endhead
+\bottomrule\endfoot
+1 & Identidad de instalación. & Ficha de tubo, versión, limitador, mesa y configuración. & Correspondencia documental y física revisada.\\
+2 & Lectura del RDSR. & Corpus anonimizado, matriz de campos y eventos problemáticos. & Unidades y semántica verificadas por caso.\\
+3 & Calidad del haz. & Curvas de atenuación, HVL1/HVL2 e incertidumbres. & Modelo contrastado en calidades reservadas.\\
+4 & Calibración de kerma. & $CF$ por modo/calidad y trazabilidad instrumental. & Definición libre de doble conteo.\\
+5 & Mesa y colchoneta. & Transmisión y contraste de endurecimiento por trayecto. & Representación coherente con $C$.\\
+6 & Coordenadas y registro. & Transformación, signos, referencias y repetibilidad. & Errores de localización cuantificados.\\
+7 & Factores ampliados. & Dataset versionado, dominio y pruebas de interpolación. & Cobertura del uso previsto sin extrapolación oculta.\\
+8 & Validación en fantomas. & Dosis y mapas de referencia independientes. & Criterios previos e incertidumbre compatibles.\\
+9 & Evaluación de uso. & Casos representativos y revisión de limitaciones residuales. & Alcance aprobado para una finalidad concreta.\\
+\end{longtable}
+
+La caracterización del espectro no debe retrasar indefinidamente otras comprobaciones. Las medidas de geometría y el diagnóstico del evento con distancias nulas pueden avanzar como tareas independientes. La calibración de kerma y la mesa deben conservar definiciones compatibles para integrarse después sin rehacer toda la cadena.
+
+\section{Extensiones físicas justificadas por evidencia}
+Una primera extensión es introducir el endurecimiento de mesa en los factores de los rayos que la atraviesan. Otra es estudiar incidencia oblicua y posición respecto al borde, donde la respuesta central de agua puede no representar la distribución local. Los campos alargados justificarían datos de forma o una política de equivalencia contrastada.
+
+Para hueso cercano a superficie, espesores pequeños, salida o dispersión fuera del campo, la aproximación multiplicativa puede resultar insuficiente. En esos casos se evaluará transporte adicional o kernels espaciales, comparando primero situaciones simples. La elección debe responder a una discrepancia observada y a una necesidad del uso, no a añadir complejidad sin posibilidad de validarla.
+
+La reconstrucción temporal de movimientos requiere datos con resolución suficiente. Un RDSR con un único valor por evento no permite inferir cómo cambió continuamente el campo. Si se incorporan logs del equipo o seguimiento del paciente, habrá que validar sincronización, referencias y reparto de kerma antes de acumularlos sobre una superficie.
+
+\section{Trazabilidad de futuras versiones}
+Cada perfil de equipo debería declarar identidad, fecha, responsables de revisión, parámetros medidos, incertidumbres, dominio de uso y documento de caracterización. Cada dataset debe tener identificador, versión, archivos y huellas, definición de columnas, generador, parámetros y estado de validación. La procedencia textual no sustituye los registros de medida, pero permite localizarlos.
+
+Los cambios de versión de SpekPy, de tabla o de política de filtración deben tratarse como cambios del modelo, con comparación de resultados. Una actualización que solo modifica iluminación se verifica por otra vía y no exige repetir toda una campaña dosimétrica. Esta proporcionalidad evita tanto omitir pruebas relevantes como repetir trabajos sin relación con el cambio.
+
+\section{Balance científico del estado actual}
+El proyecto dispone de una cadena explícita y contrastable para estudiar dosis superficial, y la adaptación Azurion hace visibles datos antes confundidos. La tabla derivada aporta cobertura de calidades bajo hipótesis documentadas. Los nuevos estudios cuantifican comportamiento numérico y delimitan su alcance.
+
+El principal límite sigue siendo la correspondencia entre la representación y la instalación: calidad del haz medida, transmisión, calibración y posición. No se dispone de una incertidumbre clínica completa ni de validación externa propia. La etapa siguiente debe transformar esas ausencias en campañas concretas con referencias independientes, manteniendo el mismo nivel de trazabilidad que ya se exige a las tablas.

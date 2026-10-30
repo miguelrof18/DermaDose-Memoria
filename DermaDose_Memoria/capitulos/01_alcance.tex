@@ -1,0 +1,48 @@
+\chapter{Contexto científico y objetivos del proyecto}
+\label{chap:contexto_objetivos}
+\section{Necesidad de una estimación espacial}
+En intervencionismo, la dosis cutánea depende de la secuencia de proyecciones, la posición del paciente y la coincidencia de campos. Dos procedimientos con igual kerma acumulado pueden concentrar la irradiación en una zona o repartirla entre regiones distintas. La distribución espacial aporta por tanto información que no contiene un único indicador integrado \citep{aapm2021,malchair2020}.
+
+La motivación clínica del mapeo no convierte automáticamente el mapa en un predictor de lesión. La respuesta tisular depende de dosis, distribución, tiempo y factores individuales; DermaDose no incorpora un modelo radiobiológico. Su problema actual es dosimétrico y geométrico. La presentación de resultados debe evitar traducir una escala de colores a un diagnóstico.
+
+
+\section{Familias metodológicas}
+Pueden distinguirse modelos basados en traslado del kerma y correcciones, reconstrucciones anatómicas con transporte de partículas y medidas directas de distribución. La primera familia reduce el coste y facilita interpretar cada factor; la segunda puede incorporar heterogeneidades y dispersión espacial; la tercera depende de la respuesta, calibración y colocación de los detectores. Estas familias pueden complementarse en una estrategia de validación.
+
+DermaDose pertenece actualmente a la primera. Su malla es una frontera geométrica donde se evalúa la entrada. No es una discretización volumétrica de tejidos. El factor de retrodispersión resume una respuesta calculada en agua; no genera trayectorias en el cuerpo representado.
+
+\begin{table}[htbp]\centering\small
+\caption{Comparación conceptual de enfoques. No expresa un ranking de exactitud.}
+\begin{tabularx}{\textwidth}{p{30mm}YYY}\toprule
+Enfoque & Representación & Fortalezas & Condiciones que exige\\\midrule
+Factores y superficie & Contorno y rayos geométricos. & Trazabilidad algebraica, acumulación sencilla. & Factores compatibles y registro fiable.\\
+Transporte anatómico & Materiales, volúmenes y espectro. & Dispersión y dosis en profundidad. & Física, geometría y puntuación validadas; coste computacional.\\
+Dosimetría directa & Detector sobre fantoma o superficie. & Referencia experimental localizada. & Calibración, dependencia energética y angular, perturbación y registro.\\\bottomrule
+\end{tabularx}
+\end{table}
+
+
+\section{Justificación y pregunta del trabajo}
+Los indicadores de exposición disponibles en un procedimiento no describen por sí solos la distribución espacial sobre la piel. La pregunta del trabajo es cómo reconstruir, de manera trazable y reproducible, la contribución de cada evento y su acumulación sobre una superficie anatómica, manteniendo explícitas las hipótesis de geometría y respuesta dosimétrica. El caso de aplicación es el angiógrafo Philips Azurion del Hospital Universitario Marqués de Valdecilla, identificado con tubo MRC 200 0407.
+
+\section{Objetivo general}
+Desarrollar y verificar un calculador de dosis superficial independiente del fabricante que utilice informes RDSR, una superficie tridimensional y una descripción complementaria del equipo, y adaptarlo documental y computacionalmente al Philips Azurion con MRC 200 0407 para sustentar el estudio de procedimientos intervencionistas del hospital.
+
+La independencia se refiere a la implementación y a la trazabilidad del cálculo. No elimina la necesidad de conocer y caracterizar el equipo ni permite asumir compatibilidad automática con cualquier sistema.
+
+\section{Objetivos específicos y resultados evaluables}
+\begin{enumerate}[leftmargin=*]
+\item Leer y normalizar los eventos RDSR, conservando unidades, identidad y procedencia; diferenciar información ausente, valores inválidos y declaración explícita de ausencia de filtro.
+\item Reconstruir la geometría del haz y su primera entrada sobre una malla, incorporar las transformaciones de coordenadas declaradas y acumular las contribuciones sin irradiar artificialmente la superficie de salida.
+\item Disponer de superficies de referencia y de un procedimiento de segmentación y exportación desde TC mediante DermaDose Surface, con control de integridad y resolución de la malla.
+\item Implementar factores dosimétricos con definiciones físicas compatibles, dominios de interpolación explícitos y trazabilidad bibliográfica. Integrar los datos monoenergéticos de Benmakhlouf con espectros SpekPy para las calidades modeladas.
+\item Adaptar la descripción del Azurion al MRC 200 0407: identidad, ángulo anódico, límites del conjunto y separación de filtración fija y añadida. Distinguir datos documentales, parámetros medidos e hipótesis nominales.
+\item Producir mapas y métricas de máximo superficial que puedan revisarse y reproducirse, acompañados de la configuración efectiva, las tablas seleccionadas y las limitaciones de interpretación.
+\item Verificar propiedades físicas y regresiones mediante pruebas y un caso reproducible de principio a fin. Delimitar estas comprobaciones frente a la validación experimental independiente.
+\item Establecer una metodología para analizar datos de procedimientos de Valdecilla: comprobar elegibilidad y calidad de las entradas, describir indicadores y máximos estimados, y estudiar su variabilidad según el procedimiento. La aplicación a una cohorte y las conclusiones estadísticas requieren datos y resultados propios documentados.
+\end{enumerate}
+
+\section{Alcance e interpretación de los resultados}
+El cálculo se basa en una superficie, geometría de rayos y factores de referencia en agua. No incorpora transporte anatómico de partículas ni un modelo radiobiológico de lesión. El máximo obtenido es una magnitud del modelo y depende del registro anatómico, la calibración, la filtración, la transmisión y la resolución. La verificación de software no establece por sí sola exactitud clínica.
+
+Los resultados que se presentan como alcanzados son las capacidades implementadas y las verificaciones documentadas. La aplicación hospitalaria constituye el contexto de uso y un objetivo evaluable; no se atribuyen a una cohorte inexistente tasas de superación de umbrales ni conclusiones clínicas. La separación entre resultados y requisitos pendientes permite presentar una herramienta técnicamente definida sin ocultar sus límites.

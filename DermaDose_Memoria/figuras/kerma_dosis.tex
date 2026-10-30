@@ -1,0 +1,15 @@
+\begin{tikzpicture}[font=\small,x=1cm,y=1cm]
+\fill[gris](0,0)rectangle(14,3.5);
+\draw[azul,dashed,thick](4,.4)rectangle(10,3.1);
+\node[rotulo,anchor=west]at(4,3.8){Volumen de evaluación $V$, masa $m$};
+\draw[rayo](.3,2.6)--(5.1,2.6) node[pos=.35,above]{Fotón incidente};
+\node[circle,fill=ocre,inner sep=2pt]at(5.1,2.6){};
+\draw[-{Latex},ocre,very thick](5.1,2.6)--(7,1.8)--(8.4,1.4)--(11.2,.7);
+\node[nota,anchor=west]at(10.4,1.7){Energía cargada\\que sale};
+\draw[-{Latex},ocre,thick](2,.6)--(4.9,1.1);
+\node[nota,anchor=south west]at(.2,.9){Energía cargada que entra};
+\foreach \x/\y in {5.8/2.3,7/1.8,8.4/1.4}\draw[ocre](\x,\y)circle(2pt);
+\node[panel,text width=5.8cm,anchor=north west]at(0,-.6){\textbf{Kerma $K$}\\Energía cinética inicial transferida a partículas cargadas por unidad de masa.};
+\node[proceso,text width=5.8cm,anchor=north west]at(7.4,-.6){\textbf{Dosis $D$}\\Energía neta impartida en $V$ por unidad de masa. El transporte cruza sus límites.};
+\node[nota,text width=13cm,anchor=north west]at(0,-3.0){$D\simeq K_{\rm col}$ requiere condiciones compatibles de equilibrio. Las distancias del esquema no representan alcance electrónico ni profundidad cutánea.};
+\end{tikzpicture}

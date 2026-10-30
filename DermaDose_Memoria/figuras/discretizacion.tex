@@ -1,0 +1,15 @@
+\begin{tikzpicture}[font=\small,x=1cm,y=1cm]
+\foreach \x/\titulo in {0/{A · Forma},5/{B · Muestreo},10/{C · Registro}}\node[rotulo,anchor=west]at(\x,3){\titulo};
+\draw[azul,line width=1.4pt](0,0)..controls(1,2.7)and(3,2.7)..(4,0);
+\draw[turquesa,thick](0,0)--(1,1.5)--(2,2)--(3,1.5)--(4,0);
+\draw[cota](.8,1.2)--(.8,1.53);
+\node[nota,text width=4cm,anchor=north west]at(0,-.5){Planos frente a contorno curvo. Simplificar puede cambiar distancias.};
+\draw[azul!50,fill=gris](5,0)--(9,0)--(7,2.3)--cycle;
+\draw[ocre,very thick,dashed](7.25,-.2)--(7.25,2.6);
+\node[circle,fill=turquesa,inner sep=2pt]at(7,.77){};
+\node[nota,text width=4cm,anchor=north west]at(5,-.5){El centroide no describe exactamente una cara cruzada por el borde.};
+\draw[azul,thick](10,0)..controls(11,2.7)and(13,2.7)..(14,0);
+\draw[ocre,dashed,thick](10.5,0)..controls(11.5,2.7)and(13.5,2.7)..(14.5,0);
+\draw[->,ocre](12,2.35)--(12.5,2.35);
+\node[nota,text width=4cm,anchor=north west]at(10,-.5){Misma forma, otra posición: cambia huella y superposición.};
+\end{tikzpicture}

@@ -1,0 +1,87 @@
+\chapter{Geometría del haz y discretización superficial}
+\section{Sistemas de referencia}
+La reconstrucción utiliza marcos de equipo, mesa y superficie. El sistema interno de la superficie adopta $x$ hacia la izquierda del paciente, $y$ craneal y $z$ anterior. El archivo de malla puede utilizar otros ejes, por lo que la transformación de importación debe declararse. Un STL no contiene una convención anatómica ni unidades inequívocas.
+
+La transformación puede expresarse como $\vect p_{\mathrm{int}}=R_{\mathrm{malla}}\vect p_{\mathrm{archivo}}+\vect o_{\mathrm{malla}}$, junto con el factor de escala de unidad cuando procede. La traslación relativa paciente--mesa se aplica de manera coherente con el desplazamiento del equipo. Los signos de las rotaciones y su orden deben pertenecer a un perfil identificado, no deducirse de la apariencia visual.
+
+En el cálculo de malla, mantener la superficie en su marco y llevar el foco a ese marco evita reconstruir el índice de intersección para cada desplazamiento de mesa. La transformación cambia las coordenadas del problema, sin cambiar la intersección física que se desea resolver. Una caché solo puede reutilizar resultados si la geometría relevante coincide.
+
+
+
+\begin{figure}[htbp]\centering\input{figuras/coordenadas}
+\caption{Relación entre convenciones de coordenadas. Los triedros son simbólicos: la transformación cambia componentes y unidades; el registro establece la posición física. No se propone una matriz automática para cualquier STL.}\label{fig:coordenadas}\end{figure}
+
+\section{Foco, eje y campo rectangular divergente}
+Sea $\vect b_e$ el eje unitario, y $\vect u_e,\vect v_e$ sus direcciones transversales. Para $\vect\Delta=\vect p-\vect s_e$, la profundidad axial es $t_e=\vect\Delta\cdot\vect b_e$. Si las dimensiones $w_e,h_e$ se declaran a distancia $d_{f,e}$, las condiciones de campo son
+\begin{equation}\label{eq:field}
+0<t_e\leq\mathrm{SID}_e,\qquad
+|\vect\Delta\cdot\vect u_e|\leq\frac{w_e t_e}{2d_{f,e}},\qquad
+|\vect\Delta\cdot\vect v_e|\leq\frac{h_e t_e}{2d_{f,e}}.
+\end{equation}
+La configuración distingue referencia en detector o isocentro. La profundidad $t_e$ controla la apertura; la distancia euclídea $r_e$ controla el inverso del cuadrado. Son iguales solo sobre el eje.
+\begin{figure}[htbp]\centering\resizebox{.96\textwidth}{!}{\input{figuras/geometria}}
+\caption{Distancias axial y euclídea en un haz divergente. El contorno es esquemático y no representa el registro XCAT de trabajo.}\end{figure}
+
+La sección normal al haz a esa profundidad es
+\begin{equation}
+A_{\perp,e}(\vect p)=\frac{w_e h_e}{100}\left(\frac{t_e}{d_{f,e}}\right)^2\quad[\mathrm{cm^2}],
+\end{equation}
+con dimensiones originales en mm. Esta área se usa como argumento de los factores. No es el área de la huella sobre una piel inclinada, ni la suma de áreas de triángulos irradiados.
+
+
+
+\begin{figure}[htbp]\centering\input{figuras/areas_campo}
+\caption{Tres áreas con funciones distintas. La relación de proyección de la huella supone un haz localmente paralelo y un plano; no se extrapola directamente a una superficie curva o a un haz de divergencia finita.}\label{fig:areas_campo}\end{figure}
+
+\section{Orientación y primera intersección}
+Una normal dirigida al foco es una condición necesaria de entrada, pero no suficiente. Un brazo puede ocultar parte del tronco y una concavidad puede contener caras orientadas al foco que no reciben el haz primario directamente. La máscara combina preselección por campo y orientación con la primera intersección positiva del rayo.
+
+El trazado utiliza Trimesh y un índice R-tree sobre la geometría. Es un algoritmo geométrico en CPU, sin transporte fotónico ni electrónica secundaria. La selección de primera entrada excluye las superficies de salida y las caras ocultas. Las tolerancias cerca de vértices y aristas merecen ensayos propios, porque una decisión de intersección degenerada puede cambiar la máscara.
+
+Las normales también proporcionan el ángulo de incidencia. No se multiplica automáticamente la dosis por un coseno. El cambio de orientación altera la región interceptada y el área geométrica; una corrección angular dosimétrica debe estar sustentada por medidas o por un cálculo compatible. En el proveedor de agua estudiado, la transferencia local de datos de incidencia normal sigue siendo una aproximación.
+
+
+
+\begin{figure}[htbp]\centering\input{figuras/primera_entrada}
+\caption{Primera intersección positiva en un corte esquemático. Una normal orientada al foco no basta para excluir oclusión. No se simula transmisión a través de la primera región corporal.}\label{fig:primera_entrada}\end{figure}
+
+\section{Malla de cálculo y punto representativo}
+Cada cara triangular dispone de centroide, normal y área. La dosis evaluada en el centroide se considera representativa de toda la cara. La regla es simple y permite sumar áreas, pero introduce error en bordes abruptos de campo o de mesa: un triángulo parcialmente cubierto puede contarse completamente dentro o fuera.
+
+La calidad de muestreo depende del tamaño local, forma y distribución de caras. Dos mallas de \num{150000} triángulos pueden tener distinta resolución en la región irradiada. Por ello, el número de triángulos es un presupuesto de cálculo y no una especificación de exactitud. Conviene acompañarlo de distribución de aristas, áreas, calidad de forma y prueba de convergencia.
+
+El parámetro \codigo{mesh_max_edge_mm} subdivide caras largas y mantiene el poliedro de origen. No recupera una curvatura que el STL no representaba. El parámetro general \codigo{resolution_mm} no subdivide por sí solo una malla importada. La distinción evita interpretar una configuración nominal de 5 mm como garantía sobre todos sus elementos.
+
+
+
+\begin{figure}[htbp]\centering\input{figuras/centroides}
+\caption{Ejemplo de muestreo binario en una cara cruzada por el campo. La zona turquesa muestra la porción geométrica iluminada; el punto azul representa el centroide. No se calcula intersección parcial de área en la regla descrita.}\label{fig:centroides}\end{figure}
+
+\section{Subdivisión frente a simplificación}
+La subdivisión aumenta el muestreo conservando cada plano triangular. La simplificación elimina caras y puede modificar la forma. Ambas operaciones requieren evaluaciones diferentes. Para la primera interesan estabilidad de PSD, áreas e integral; para la segunda deben añadirse distancias entre superficies, cambios de volumen y conservación de rasgos relevantes para sombras y distancias.
+
+Una simplificación topológicamente válida puede desplazar el contorno. A la inversa, una malla visualmente parecida puede contener agujeros o caras invertidas que invalidan la primera entrada. Los controles de cierre y conectividad son necesarios, pero no demuestran fidelidad anatómica ni ausencia completa de autointersecciones.
+
+\section{Mesa, movimiento y barridos}
+La mesa se representa mediante un plano rectangular acotado. El cruce se evalúa en el segmento foco--punto y se verifica que ocurra antes de la superficie. Un único plano no distingue raíles, soportes ni accesorios, y la colchoneta se resume en el factor efectivo cuando así se haya definido.
+
+Las coordenadas de mesa del RDSR pueden pertenecer a convenciones distintas. Referenciar el primer evento permite trabajar con desplazamientos relativos en un perfil de investigación, pero no establece el origen anatómico absoluto. Un mapa situado en una región inesperada del XCAT exige revisar registro y convenciones; no puede explicarse automáticamente como una distribución clínica real.
+
+Un evento con ángulo inicial y final diferentes se bloquea por defecto si no existe perfil temporal. La opción de barrido uniforme divide el kerma en muestras angulares equiespaciadas. Conserva el kerma integrado, pero supone reparto uniforme y no recupera tasas instantáneas, cambios de colimación ni movimientos no registrados. Es una hipótesis de investigación explícita.
+
+\section{Métricas ponderadas por área}
+La media superficial es $\overline D=\sum_i A_iD_i/\sum_i A_i$. La integral aproximada es $I_D=\sum_i A_iD_i$, con unidad de dosis por área integrada. El histograma acumulado dosis--área se define por
+\begin{equation}
+A(D\geq d)=\sum_i A_i\,\mathbf1(D_i\geq d).
+\end{equation}
+Su dominio debe declarar toda la superficie o solo la irradiada. Dar el mismo peso estadístico a cada triángulo sesgaría la descripción cuando sus áreas son desiguales.
+
+Los percentiles $D_{2\%}$, $D_{5\%}$ y $D_{10\%}$ se obtienen a partir de área acumulada. La media local nominal de 1 cm$^2$ usa vecindades sobre el grafo de caras; no atraviesa entre extremidades próximas en el espacio. El área real aceptada por el algoritmo puede diferir del objetivo y se informa como tal. No equivale a integrar exactamente la respuesta de un dosímetro de 1 cm$^2$.
+
+\begin{figure}[htbp]\centering\input{figuras/metricas}
+\caption{Histograma acumulado dosis--área de un ejemplo adimensional. Los saltos se ponderan con área y el umbral incluye la igualdad. El dibujo no representa una distribución clínica.}\label{fig:metricas}\end{figure}
+\FloatBarrier
+
+\section{Convención algebraica auditada}
+Para vectores columna, \codigo{primary_then_secondary} implementa $R_y(\alpha)R_x(\beta)$ y \codigo{secondary_then_primary} implementa $R_x(\beta)R_y(\alpha)$. La matriz de la derecha actúa primero sobre el vector. Los nombres no sustituyen esta definición: la correspondencia con rotaciones intrínsecas del soporte debe verificarse con el equipo. No se ha invertido el orden durante la revisión sin evidencia geométrica de la instalación.
+La malla se convierte a mm, cambia de base y recibe \codigo{mesh_origin_mm} en su marco local. Posteriormente recibe las inclinaciones del paciente y su colocación respecto a la mesa. La región de refinamiento se interpreta antes de estas últimas transformaciones.

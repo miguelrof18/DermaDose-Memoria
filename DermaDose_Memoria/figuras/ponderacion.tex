@@ -1,0 +1,7 @@
+\begin{tikzpicture}[font=\small,node distance=7mm]
+\node[panel,text width=12.8cm](a){\textbf{1 · Contar fotones} \hfill $\Phi(E)$\\Describe el reparto de partículas por área e intervalo de energía.};
+\node[proceso,text width=12.8cm,below=of a](b){\textbf{2 · Pesar por energía} \hfill $\Psi(E)=E\Phi(E)$\\Cada fotón contribuye según su energía.};
+\node[proceso,text width=12.8cm,below=of b](c){\textbf{3 · Pesar por absorción energética en aire}\\$w(E)=\Psi(E)(\mu_{\rm en}/\rho)_{\rm aire}(E)$; normalizar $p_K(E)=w(E)/\int w\,dE$.};
+\node[aviso,text width=12.8cm,below=of c](d){\textbf{4 · Promediar la respuesta superficial}\\$C(Q,s)=\int p_K(E)C(E,s)\,dE$; la escala absoluta sigue viniendo del RDSR.};
+\foreach \u/\v in {a/b,b/c,c/d}\draw[flujo](\u)--(\v);
+\end{tikzpicture}

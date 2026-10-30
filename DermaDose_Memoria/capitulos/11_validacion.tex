@@ -1,0 +1,119 @@
+\chapter{Incertidumbre y programa de validación}
+\section{Verificación, caracterización y validación}
+La verificación responde a si las ecuaciones y políticas elegidas se implementan correctamente. La caracterización aporta parámetros de una instalación. La validación compara predicciones con referencias externas para un uso previsto. Un cálculo puede superar la primera y seguir pendiente de las otras dos.
+
+En DermaDose hay evidencia de lectura controlada, algebra, selección geométrica y consulta tabulada. Hay también hipótesis de equipo y anatomía que condicionan cualquier mapa. La siguiente fase debe producir datos externos capaces de comprobar esos supuestos. El programa escalonado de la figura~\ref{fig:valid} evita comenzar con un procedimiento complejo donde varias causas de discrepancia sean inseparables.
+\begin{figure}[htbp]\centering\input{figuras/validacion}
+\caption{Niveles de evaluación propuestos. Cada nivel necesita evidencia propia y no se obtiene automáticamente del anterior.}\label{fig:valid}\end{figure}
+
+\section{Definir el mensurando antes del ensayo}
+Debe especificarse si se compara kerma incidente en aire, kerma superficial de agua o dosis absorbida en una región definida. También se fijarán plano, profundidad, área de promediado, tamaño de campo y presencia de mesa. Una comparación entre una PSD puntual numérica y una lectura integrada por una cámara necesita modelar o acotar esa diferencia de soporte.
+
+Para mapas, hay que definir registro, resolución del detector y regla de muestreo. Una película sobre un cilindro no representa directamente un plano de malla sin transformación. Las coordenadas de dosímetros deben expresarse en el mismo marco que los centroides, con incertidumbre de posición incluida. Un máximo medido entre pocos puntos es el máximo de esos puntos, no necesariamente el de toda la superficie.
+
+El uso previsto determinará qué discrepancias son relevantes. El seguimiento aproximado de regiones irradiadas y una decisión basada en un umbral de dosis exigen evaluaciones distintas. Las tolerancias deben establecerse antes de observar el resultado y justificarse con incertidumbre de referencia y necesidades del uso.
+
+\section{Presupuesto de incertidumbre}
+Para un punto donde la máscara no cambia y un producto de factores independientes, una aproximación de primer orden sería
+\begin{equation}\label{eq:unc}
+u_r^2(D)\simeq u_r^2(\Ka)+4u_r^2(d_r)+4u_r^2(r)+u_r^2(CF)+u_r^2(P)+u_r^2(T)+u_r^2(C),
+\end{equation}
+con covarianzas adicionales cuando las entradas no sean independientes. La expresión es ilustrativa: $d_r$ y $r$ pueden compartir parámetros geométricos, y la máscara puede cambiar discontinuamente. Aplicarla sin evaluar esas dependencias subestimaría o contaría dos veces componentes.
+
+La incertidumbre del modelo de superficie no se reduce a una escala de dosis. Una traslación puede cambiar el punto del máximo y la superposición de campos. La dispersión de una PSD entre realizaciones mezcla variación del valor y cambio de localización; conviene informar ambos, además de mapas de variabilidad.
+
+En el dataset derivado, $f_{\mathrm{eff}}=C/B$ no es independiente de $B$. Asignar incertidumbres independientes a ambas columnas y combinarlas sin covarianza sería inconsistente. La propagación debería partir de espectro, datos monoenergéticos y parámetros comunes, o trabajar directamente con $C$ y su dependencia documentada.
+
+\begin{table}[htbp]\centering\small
+\caption{Componentes que deben evaluarse para el uso de investigación en Azurion.}
+\begin{tabularx}{\textwidth}{p{30mm}YY}\toprule
+Componente & Obtención propuesta & Situación actual\\\midrule
+Indicador $\Ka$ & Cámara trazable, correcciones ambientales y calidad. & No caracterizado en la sala para esta memoria.\\
+Calidad espectral & kVp, HVL1, HVL2 y contraste del modelo. & HVL instrumental disponible para ajuste condicionado; caracterización independiente pendiente.\\
+Mesa y colchoneta & Cociente transmitido/incidente por calidad y ángulo. & Transmisión sintética de \num{0.8}.\\
+Geometría del equipo & Verificación de signos, distancias, campo y mesa. & Perfil de investigación; un evento inválido.\\
+Registro anatómico & Puntos de referencia, medidas de distancia y repetibilidad. & Colocación XCAT hipotética.\\
+Superficie & Sensibilidad a segmentación, reducción y truncamiento. & Controles geométricos; fidelidad no cuantificada.\\
+Interpolación & Consultas interiores frente a generación directa. & Nueve puntos estudiados; sin cota global.\\
+Adecuación física & Comparación en fantomas y transporte independiente. & Agua plana aplicada localmente; pendiente.\\\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{figure}[htbp]\centering\input{figuras/incertidumbre}
+\caption{Fuentes de variación y adecuación que condicionan el resultado. Los cuatro bloques no se suponen estadísticamente independientes.}\end{figure}
+
+La incertidumbre numérica observada no debe añadirse automáticamente como si fuese una desviación estándar gaussiana. Una diferencia entre refinamientos es evidencia de sensibilidad, y necesita un modelo de error para incorporarse a un presupuesto probabilístico. Lo mismo ocurre con escenarios hipotéticos de ángulo o Al.
+
+\section{Propagación paramétrica implementada}
+El módulo \codigo{uncertainty.py} ofrece muestreo Latin Hypercube o aleatorio, distribuciones normales y uniformes, y lognormales para escalas positivas. En cada realización, un sesgo se comparte entre los eventos. Las dimensiones de entrada se tratan como independientes. El módulo informa una distribución condicionada al modelo y declara que el presupuesto no es completo \citep{jcgm101}.
+
+Ese Monte Carlo es propagación de parámetros, no transporte de fotones. No genera interacciones en el paciente. La independencia asumida puede ser inadecuada si, por ejemplo, una misma calibración afecta varias calidades o si un error de registro correlaciona posiciones.
+
+Las escalas históricas \codigo{bsf_scale} y \codigo{f_skin_scale} buscan factores configurados con esos nombres. No constituyen automáticamente un modelo de incertidumbre del proveedor espectral y pueden carecer de un factor correspondiente en la nueva configuración. La ampliación necesaria es propagar parámetros de generación o una corrección conjunta con correlación definida, y verificar su conexión con el motor.
+
+Cuando una realización queda fuera del dominio, el código interrumpe la propagación en vez de descartarla silenciosamente. Esta política evita condicionar de forma oculta la distribución a los casos que sí se pudieron calcular. La interpretación de cuantiles requiere además estudiar estabilidad frente a tamaño de muestra y semilla.
+
+\section{Caracterización experimental del haz}
+\subsection{Inventario previo de la instalación}
+Se debe registrar fabricante, modelo exacto, identificador de tubo, ángulo de ánodo documentado, versión de software, limitador, detector, mesa, colchoneta y accesorios. Deben conservarse fecha de medidas y cambios de mantenimiento. La documentación genérica de familia se contrastará con manuales y datos propios de la instalación.
+
+La campaña debe disponer de modos reproducibles que permitan elegir kVp y filtro, evitando que el control automático de exposición cambie simultáneamente variables no registradas. Si se requiere un modo de servicio o coordinación con mantenimiento, se planificará con los responsables de la instalación. El objetivo es caracterizar haces definidos y registrar lo que efectivamente se emitió.
+
+\subsection{HVL y consistencia del generador}
+Se propone medir curvas de atenuación en Al en geometría de haz estrecho, minimizando dispersión de los filtros hacia el detector. Se registrarán pureza, espesores, posiciones, tamaño de campo, distancia y estabilidad de salida. La cámara y el electrómetro deben tener calibración y respuesta apropiadas al intervalo de calidad utilizado.
+
+Se medirán al menos las calidades de trabajo sin filtro añadido, con \num{0.1} y \num{0.4} mm Cu más su Al asociado. La cobertura se ampliará si se pretende utilizar \num{0.9} mm Cu. Las tensiones se elegirán para cubrir el intervalo clínico observado, incluyendo extremos y regiones de cambios de modo. La matriz definitiva dependerá de disponibilidad y objetivo, sin inventar ahora un conjunto completo de medidas.
+
+HVL1 y HVL2 permitirán contrastar endurecimiento y homogeneidad. Se evaluará la incertidumbre de interpolación de la curva, variación de salida y efecto de dispersión residual. Los parámetros del espectro se ajustarán sobre un conjunto de caracterización y se comprobarán en calidades reservadas, para evitar presentar un ajuste como validación independiente.
+
+Una filtración equivalente en Al puede ser un parámetro efectivo del modelo. Su acuerdo a una única calidad no prueba que reproduzca todas las componentes de la cadena ni todas las tensiones. Si la identificación es degenerada, se necesitan otras observaciones y restricciones documentales, no más cifras decimales del ajuste.
+
+\subsection{Calibración y rendimiento}
+El factor $CF(Q,\mathrm{modo})$ se obtendrá comparando el indicador con una medida de kerma en la referencia adecuada. Se precisará si mesa, colchoneta y retrodispersión están presentes. Se separará el ajuste de calibración de la validación de la distribución superficial.
+
+Cuando se utilice rendimiento por mAs como contraste independiente, se documentarán mAs, pulso, distancia y estabilidad. Releer el mismo $\Ka$ del mismo RDSR no constituye una segunda medida independiente. La normalización absoluta del generador de espectros solo será útil si se caracteriza con ese fin.
+
+\section{Mesa, colchoneta y cambios de calidad}
+La campaña debe medir transmisión por kVp, filtro, incidencia y región de paso. Se distinguirá la parte homogénea de raíles o soportes. El cociente transmitido debe definirse con una geometría que limite la dispersión que se desea excluir o incorporar, según el factor modelado.
+
+Se propone contrastar HVL antes y después de la mesa para cuantificar endurecimiento. Si se genera el espectro transmitido y se aplica la ecuación 13 a ese espectro, debe mantenerse coherencia con la transmisión de amplitud del kerma. Si se usa un factor efectivo de dosis que ya incorpora mesa y retrodispersión, el motor no debe multiplicar esas correcciones otra vez.
+
+La separación permite diseñar una evolución del software: mantener un estado espectral para rayos que atraviesan materiales homogéneos o introducir datasets condicionados a trayecto. La elección se justificará por precisión requerida y coste, después de medir la relevancia del efecto.
+
+\section{Verificación geométrica del equipo y del registro}
+Se emplearán configuraciones simples con puntos o marcadores de posición conocida. Se comprobarán proyecciones AP, laterales y oblicuas, signos de rotación, orden de ejes, distancia fuente--referencia y plano de campo. Cambiar solo una variable por ensayo ayuda a identificar errores de convención.
+
+Las coordenadas de mesa requieren un origen absoluto o una transformación medida. La referencia al primer evento no proporciona por sí sola posición de anatomía. El registro del contorno puede utilizar landmarks y distancias foco--superficie, con repetición entre operadores para cuantificar variabilidad.
+
+La coherencia de un mapa sobre la cabeza, cuando el procedimiento se dirige a la cabeza, es una comprobación de plausibilidad; no reemplaza una transformación calibrada. Del mismo modo, desplazar visualmente el XCAT hasta que el mapa parezca razonable no demuestra que se haya corregido la geometría.
+
+\section{Ensayos de validación dosimétrica}
+Se propone comenzar con una superficie plana o fantoma de agua en incidencia normal y calidad conocida. Después se variarán distancia, campo, ángulo, mesa y superposición. Por último se estudiará un fantoma antropomórfico con región superficial y posicionamiento documentados. Los protocolos aportados ofrecen marcos de ensayo, sin que su mera cita implique conformidad \citep{veridic2020,ganan2024}.
+
+\begin{table}[htbp]\centering\small
+\caption{Secuencia propuesta para aislar mecanismos de discrepancia.}
+\begin{tabularx}{\textwidth}{p{30mm}YY}\toprule
+Ensayo & Variable principal & Resultado que se contrasta\\\midrule
+Aire, eje central & Distancia y escala de kerma. & Ley del inverso del cuadrado y $CF$.\\
+Fantoma plano & kVp, filtro y campo, sin cambiar registro. & Corrección combinada superficial.\\
+Con mesa & Presencia, ángulo y zona de paso. & Transmisión y posible endurecimiento.\\
+Contorno curvo & Forma, incidencia y sombras. & Primera entrada, localización y adecuación local de $C$.\\
+Varios campos & Desplazamientos y solapamiento. & Mapa acumulado, PSD y áreas.\\
+Secuencia realista & Combinación de variables ya caracterizadas. & Comportamiento del sistema para el uso previsto.\\\bottomrule
+\end{tabularx}
+\end{table}
+
+Para cada ensayo se conservarán RDSR, configuración, geometría, instrumento, calibración, condiciones ambientales y datos brutos. El subconjunto de ajuste no se reutilizará como única validación. Deben repetirse configuraciones para evaluar reproducibilidad y no atribuir a modelo lo que sea reposicionamiento.
+
+\section{Comparación de valores y mapas}
+La diferencia relativa $\delta=(D_{\mathrm{calc}}-D_{\mathrm{ref}})/D_{\mathrm{ref}}$ es informativa, pero debe acompañarse de incertidumbre. Una diferencia normalizada coherente emplearía $u_\Delta^2=u_{\mathrm{calc}}^2+u_{\mathrm{ref}}^2-2\operatorname{cov}(D_{\mathrm{calc}},D_{\mathrm{ref}})$, con supuestos documentados. No debe utilizarse una incertidumbre de cálculo cero cuando en realidad no está cuantificada.
+
+La función de comparación escalar disponible divide por la incertidumbre de la medida, no por una incertidumbre combinada completa. El resultado no es automáticamente una prueba estadística de acuerdo. Además, las rutas de validación deben asegurar que preparan el perfil Azurion con las mismas políticas que la ejecución ordinaria; no se ha validado aquí esa integración sobre datos experimentales.
+
+El comparador de mapas existente asocia medidas a centroides próximos mediante KD-tree, limita distancia y evita duplicados. Calcula RMSE, separación entre máximos muestreados y un Dice binario sobre los puntos suministrados. No realiza registro, gamma tridimensional ni Dice de toda una superficie continua. La extensión debe modelar área de lectura y respuesta del detector para comparaciones de mayor rigor.
+
+\section{Referencia de transporte y control de cambios}
+Un cálculo Monte Carlo independiente puede contrastar calidad, materiales, espesor, oblicuidad y bordes. Debe reproducir el mismo mensurando: scorer, profundidad, volumen, cortes, normalización y estadística. Una malla de piel con puntuación muy pequeña puede tener un máximo sesgado por ruido, por lo que se estudiará su estabilidad.
+
+La referencia no debe compartir inadvertidamente todas las mismas aproximaciones. Si utiliza el mismo espectro y factores, un acuerdo podría ser circular. Conviene escalonar comparaciones: primero geometría analítica, después transporte en agua y, finalmente, anatomía con materiales. Toda modificación de tabla, parser o malla debe disparar verificaciones de regresión proporcionales a su efecto.
+\FloatBarrier

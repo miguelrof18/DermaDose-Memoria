@@ -1,0 +1,48 @@
+\chapter{Caracterización documental del MRC 200 0407}
+\label{chap:mrc200}
+\section{Identidad, fuentes y jerarquía de evidencia}
+La identificación del tubo instalado como MRC 200 0407 es aportada por el usuario. El manual de servicio Philips 4512-988-00132, revisión AC, abril de 2011, describe el conjunto ROT-GS1004 y distingue los datos del inserto (Z-1) de los de la carcasa (Z-2) \citep{mrcservice}. Las instrucciones oficiales Azurion Release 2.2 ofrecen ejemplos de etiquetas compatibles y especificaciones del limitador \citep{azurion22}. No se equipara automáticamente esta variante con MRC 200+; no se transfieren características térmicas del modelo con signo más.
+
+\begin{table}[htbp]\centering\small
+\begin{tabularx}{\linewidth}{l l X}\toprule
+Magnitud & Valor documental & Aplicación en DermaDose\\\midrule
+Ángulo anódico & $11^\circ$ & Generación del espectro central\\
+Focos nominales & 0,4 / 0,7 mm & Metadatos; no modelo de penumbra\\
+Límite del conjunto & 125 kV & Rechazo explícito de eventos superiores\\
+Filtración inherente & 0,8 mm Al eq. & Componente ya incluido en el total\\
+Placa del conjunto & 1,7 mm Al & Incluida en el mínimo del conjunto\\
+Mínimo del conjunto & 2,5 mm Al eq. & Escenario nominal, no medida efectiva\\
+Disco anódico & 200 mm & Identificación, sin multiplicador de dosis\\\bottomrule
+\end{tabularx}\caption{Datos documentales del MRC 200 0407 y uso efectivo. El material del ánodo se describe como compuesto de tungsteno aleado con renio RT/TZM; SpekPy utiliza aquí una aproximación de blanco W.}\end{table}
+El inserto tiene una tensión nominal de 150 kV con nota de reducción por la carcasa. El límite aplicable al conjunto es 125 kV. Ni el diámetro del disco ni las capacidades térmicas son factores multiplicativos de dosis. No se reconstruye la emisión térmica ni se deduce el rendimiento del tubo a partir de sus potencias nominales.
+
+\section{Filtración: componentes y equivalencia}
+El mínimo de 2,5 mm Al equivalente incluye la contribución inherente de 0,8 mm Al equivalente y la placa de 1,7 mm Al. Sumarlos nuevamente al total duplicaría la filtración. La equivalencia en aluminio se define bajo una calidad de referencia; no implica identidad de espectros con una placa homogénea de Al a cualquier tensión. Por ello, emplear 2,5 mm de Al en SpekPy constituye un escenario nominal documentado, no la caracterización completa de la instalación.
+
+\begin{figure}[htbp]\centering
+\begin{tikzpicture}[font=\small,>=Latex]
+\node[draw,rounded corners,fill=blue!8,text width=3.1cm,align=center] (a) {Conjunto tubo--carcasa\\0,8 eq. + 1,7 Al\\Mínimo: 2,5 Al eq.};
+\node[draw,rounded corners,fill=orange!12,text width=3cm,align=center,right=6mm of a] (b) {Colimador instalado\\Etiqueta y filtros\\Verificar por separado};
+\node[draw,rounded corners,fill=green!10,text width=3cm,align=center,right=6mm of b] (c) {Calidad por evento\\kVp + Al + Cu\\Sin duplicar componentes};
+\draw[->] (a)--(b);\draw[->] (b)--(c);
+\end{tikzpicture}\caption{Contabilidad física de filtración. Las equivalencias nominales no sustituyen una caracterización espectral y geométrica del equipo instalado.}\end{figure}
+Las etiquetas de ejemplo del limitador en el IFU declaran 0,1 mm Al equivalente. Se calculan dos escenarios: conjunto nominal (2,5 mm) y conjunto más esa contribución nominal (2,6 mm). La suma de equivalencias se utiliza únicamente como aproximación de modelado. Deben verificarse el limitador instalado y los componentes ya incluidos en cualquier ajuste experimental. El IFU, página 403, documenta filtros 0,1/0,4/0,9 mm Cu acompañados por 1 mm Al para la familia de limitadores indicada. Las equivalencias de esos filtros no se añaden además de sus espesores materiales. No se inventa aluminio acompañante cuando el evento no lo declara: su ausencia exige investigar el mapeo de la instalación.
+
+\section{Tablas calculadas y trazabilidad}
+El nuevo dataset separado emplea SpekPy 2.5.4, W, ángulo de $11^\circ$ y paso energético 0,5 keV. Se incluyen tensiones 46, 50, 60, 70, 80, 90, 100, 110, 120 y 125 kV; Al de 2,5, 2,6, 3,5 y 3,6 mm; Cu de 0, 0,1, 0,2, 0,3, 0,4, 0,6 y 0,9 mm; campos cuadrados de lado 5, 10, 20, 25 y 35 cm. Los nodos adicionales de Cu son coordenadas del modelo, no posiciones nuevas atribuidas al equipo. Las familias con 1 mm Al adicional permiten representar eventos que efectivamente lo declaren. Se mantienen las tablas originales y el ajuste condicionado previo como modelos distintos, sin sobrescribirlos.
+\begin{equation}
+C(Q,s)=\frac{\int \Phi(E)\,E\,(\mu_{\mathrm{en}}/\rho)_{\mathrm{aire}}(E)\,B(E,s)\,f(E,s)\,\mathrm dE}{\int \Phi(E)\,E\,(\mu_{\mathrm{en}}/\rho)_{\mathrm{aire}}(E)\,\mathrm dE}.
+\end{equation}
+La integración sigue los datos monoenergéticos y el formalismo ya descritos. Se conserva el control de energía excluida y la interpolación del factor combinado $C$; el factor de conversión almacenado es $C/B$, no una media independiente de cocientes. El dataset registra versiones, hashes, HVL calculadas y ausencia de validación clínica. El esquema histórico llama \texttt{inherent\_al\_mm} a la coordenada Al: en estos perfiles significa Al fijo efectivo del modelo y no exclusivamente filtración inherente física.
+
+\section{Geometría, límites e interpretación}
+El conocimiento del ángulo del ánodo no modifica el ángulo del arco ni establece el eje ánodo--cátodo en coordenadas del paciente. No permite introducir un efecto talón espacial sin orientación y comprobación del perfil. Tampoco determina SID, distancia foco--piel, calibración del kerma, transmisión de mesa, posición del paciente o registro TC--procedimiento. Los nuevos ejemplos rechazan distancias inválidas y no referencian automáticamente la mesa al primer evento. La configuración heredada del XCAT sigue siendo una hipótesis de colocación que debe revisarse.
+
+Los perfiles nuevos comprueban identidad, coherencia de Al entre caracterización y proveedor, ángulo de las tablas y tensión máxima del conjunto. Los datos fuera del dominio siguen produciendo error; no se recortan ni se sustituyen por factores históricos. No se infiere filtro cero a partir de un dato ausente. El conjunto de pruebas verifica estas propiedades además de las regresiones físicas previas. No constituye una validación independiente de exactitud clínica.
+
+La nueva información mejora la especificidad documental y elimina hipótesis incorrectas sobre identidad y ángulo. No demuestra por sí sola menor error dosimétrico. Una HVL única no identifica unívocamente el espectro; la verificación de calidad del haz, filtración seleccionada, orientación y respuesta dosimétrica seguirá siendo necesaria para reducir la incertidumbre. En particular, sustituir un Al efectivo ajustado por un mínimo de catálogo puede empeorar la representación del haz.
+
+\section{Comparación numérica y verificación de la entrega}
+En una matriz de 64 casos (50, 80, 100 y 125 kV; Cu de 0, 0,1, 0,4 y 0,9 mm; lados de 5, 10, 20 y 35 cm), se comparó el factor combinado con el modelo histórico de $12^\circ$ y 3,1 mm Al. Para Cu positivo se declara en esta comparación 1 mm Al acompañante en todos los modelos. Cambiar solamente el ángulo a $11^\circ$ produjo diferencias entre $-0,0132\,\text{\char37}$ y $+0,2193\,\text{\char37}$. El escenario nominal de conjunto de 2,5 mm a $11^\circ$ produjo diferencias entre $-1,7083\,\text{\char37}$ y $+0,0012\,\text{\char37}$; con 2,6 mm, entre $-1,3694\,\text{\char37}$ y $-0,0005\,\text{\char37}$. Estas diferencias afectan a $C$ a igualdad de las demás condiciones; no equivalen a una evaluación completa del mapa de un paciente ni a una incertidumbre.
+
+La entrega supera 136 pruebas del programa, incluidas ocho comprobaciones nuevas de identidad de componentes, límites de tensión, coherencia de filtración, carga del dataset y ángulo anódico. Se conserva el caso sintético reproducible anterior para comprobar que la ampliación no altera su resultado. Los valores esperados de ese caso son regresiones del motor y no medidas dosimétricas independientes.

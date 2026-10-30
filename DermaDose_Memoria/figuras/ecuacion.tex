@@ -1,0 +1,60 @@
+% Lectura término a término: magnitud inicial, correcciones y acumulación.
+\begin{tikzpicture}[font=\small,
+ card/.style={rounded corners=3pt,draw=azul!18,fill=gris,minimum width=14.2cm,minimum height=16mm},
+ desc/.style={anchor=west,text width=9.3cm,align=left,font=\small},
+ ico/.style={line width=.8pt,azul},
+ lab/.style={font=\scriptsize,text=gristexto}]
+\node[anchor=west,font=\bfseries\color{azul}] at (0,1.450) {DE UN INDICADOR DEL EQUIPO A UNA DOSIS LOCAL};
+\node[anchor=west,font=\footnotesize,text=gristexto] at (0,0.980) {Evento $e$ y elemento superficial $i$: cada término responde a una pregunta física.};
+% Filas independientes: símbolos, pictograma y función física.
+\foreach \y/\col in {0/azul,-1.8/azul,-3.6/turquesa,-5.4/turquesa,-7.2/turquesa,-9/ocre,-10.8/rojo}{
+ \node[card,anchor=west] at (0,\y) {};
+ \fill[\col,rounded corners=2pt] (.10,\y-.67) rectangle (.17,\y+.67);
+}
+\node[text=azul,font=\large] at (1.05,0.000) {$K_{\mathrm a,r,e}$};
+\node[lab] at (1.05,-0.320) {Gy};
+\node[desc] at (4.5,0.000) {\textbf{¿Cuánta irradiación informa el equipo?}\\Kerma en aire en el punto de referencia del RDSR. Fija la escala inicial; todavía no es dosis en piel.};
+\node[text=azul,font=\large] at (1.05,-1.800) {$CF_e$};
+\node[desc] at (4.5,-1.800) {\textbf{¿Cómo se corrige el indicador?}\\Relaciona el kerma indicado con una referencia compatible. Puede aumentar o reducir la escala según la calibración.};
+\node[text=turquesa,font=\large] at (1.05,-3.600) {$M_{e,i}$};
+\node[desc] at (4.5,-3.600) {\textbf{¿Este elemento recibe el haz de entrada?}\\Máscara: $1$ si está dentro del campo y en primera entrada; $0$ si queda fuera o está oculto. Si $M=0$, $D_{e,i}=0$.};
+\node[text=turquesa,font=\large] at (1.05,-5.400) {$\left(\dfrac{d_{r,e}}{r_{e,i}}\right)^2$};
+\node[desc] at (4.5,-5.400) {\textbf{¿A qué distancia está la piel?}\\Traslada el kerma desde la distancia de referencia $d_r$ hasta la distancia foco--elemento $r$: más cerca, mayor kerma.};
+\node[text=turquesa,font=\large] at (1.05,-7.200) {$P_{e,i}$};
+\node[desc] at (4.5,-7.200) {\textbf{¿Cómo varía el haz dentro del campo?}\\Perfil relativo: modula la intensidad según la posición transversal, con una normalización coherente con el indicador.};
+\node[text=ocre,font=\large] at (1.05,-9.000) {$T_{e,i}$};
+\node[desc] at (4.5,-9.000) {\textbf{¿El trayecto atraviesa la mesa?}\\Aplica transmisión de mesa si el segmento foco--piel la cruza; si no la cruza, $T=1$. No modela por sí solo el endurecimiento.};
+\node[text=rojo,font=\large] at (1.05,-10.800) {$C_{e,i}$};
+\node[desc] at (4.5,-10.800) {\textbf{¿Cómo responde la superficie de agua?}\\$C=Bf_{\mathrm{eff}}$: combina retrodispersión y conversión agua/aire. Depende de la calidad $Q$ y del campo local $s$.};
+% Miniaturas didácticas: no son resultados de transporte.
+\draw[ico] (2.6,-0.250) rectangle (3.8,0.280);
+\draw[ico] (2.78,-0.100)--(3.04,0.130)--(3.25,-0.050)--(3.58,0.170);
+\node[lab] at (3.2,-0.400) {RDSR};
+\draw[ico,-{Latex}] (2.65,-1.800)--(3.75,-1.800);
+\node[lab,above] at (3.2,-1.800) {indicador};
+\node[lab,below] at (3.2,-1.800) {referencia};
+\draw[ico] (2.8,-3.880)--(2.8,-3.320)--(3.65,-3.320)--(3.65,-3.880)--cycle;
+\fill[turquesa] (3.1,-3.600) circle (2pt);
+\draw[gristexto] (3.85,-3.500)--(4,-3.700) (3.85,-3.700)--(4,-3.500);
+\fill[azul] (2.65,-5.400) circle (1.6pt);
+\draw[ico] (2.65,-5.400)--(3.85,-5.050) (2.65,-5.400)--(3.85,-5.750);
+\draw[ico] (3.15,-5.600)--(3.15,-5.200) (3.8,-5.750)--(3.8,-5.050);
+\draw[ico] (2.65,-7.450)--(3.85,-7.450);
+\draw[turquesa,line width=1.2pt] (2.65,-7.300)..controls (3.1,-6.750) and (3.4,-6.750)..(3.85,-7.300);
+\fill[ocre!20] (2.65,-9.080) rectangle (3.85,-8.920);
+\draw[ico,-{Latex}] (3.02,-8.650)--(3.02,-8.910);
+\draw[ico,-{Latex}] (3.02,-9.100)--(3.02,-9.380);
+\draw[ico] (2.65,-10.850)--(3.85,-10.850);
+\fill[rojo!12] (2.65,-10.850) rectangle (3.85,-11.120);
+\draw[ico,-{Latex}] (2.92,-10.470)--(3.15,-10.880);
+\draw[rojo,-{Latex}] (3.15,-10.880)..controls (3.58,-11.120) and (3.75,-10.720)..(3.45,-10.540);
+% Synthèse: produit local puis somme des événements.
+\node[draw=azul!40,fill=azul!4,rounded corners=3pt,text width=13.65cm,align=center,inner sep=7pt,anchor=north] at (7.1,-11.950) {
+\textbf{Multiplicar las contribuciones para este elemento y este evento}\\[-1mm]
+\[D_{e,i}=\underbrace{\color{azul}K_{\mathrm a,r,e}CF_e}_{\text{escala corregida}}\;
+\underbrace{\color{turquesa}M_{e,i}\!\left(\frac{d_{r,e}}{r_{e,i}}\right)^2P_{e,i}}_{\text{geometría y perfil}}\;
+\underbrace{\color{ocre}T_{e,i}}_{\text{trayecto}}\;
+\underbrace{\color{rojo}C_{e,i}}_{\text{superficie}}\]
+\textbf{Acumular en el mismo lugar:} $D_i=\sum_e D_{e,i}$ \quad [Gy].\\
+\footnotesize Solo $K_{\mathrm a,r,e}$ tiene unidades; los demás factores son adimensionales.};
+\end{tikzpicture}

@@ -1,0 +1,155 @@
+\documentclass[11pt,a4paper,oneside]{report}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\IfFileExists{spanish.ldf}{\usepackage[spanish,es-nodecimaldot,es-tabla]{babel}}{\usepackage[provide=*]{babel}\babelprovide[main,import]{spanish}}
+\usepackage{lmodern,microtype}
+\usepackage[margin=26mm,headheight=15pt]{geometry}
+\usepackage{amsmath,amssymb,mathtools,bm}
+\usepackage{graphicx,xcolor,booktabs,longtable,tabularx,array,multirow}
+\usepackage{enumitem,caption,float,placeins,needspace}
+\usepackage{tikz,pgfplots}
+\usetikzlibrary{babel,arrows.meta,positioning,calc,shapes.geometric,fit,backgrounds,patterns,decorations.pathreplacing,angles,quotes}
+\pgfplotsset{compat=1.18}
+\IfFileExists{siunitx.sty}{\usepackage{siunitx}\sisetup{output-decimal-marker={,},group-separator={\,},group-minimum-digits=5}}{}
+\ExplSyntaxOn
+\cs_if_exist:NF \num {
+\NewDocumentCommand{\num}{m}{\group_begin:\tl_set:Nn\l_tmpa_tl{#1}\tl_replace_all:Nnn\l_tmpa_tl{.}{{,}}\ensuremath{\tl_use:N\l_tmpa_tl}\group_end:}
+}
+\ExplSyntaxOff
+\usepackage{listings}
+\usepackage{fancyhdr,titlesec}
+\usepackage[most]{tcolorbox}
+\usepackage{natbib}
+\usepackage{xurl}
+\usepackage[breaklinks=true,colorlinks=true,linkcolor=azul,citecolor=azul,urlcolor=azul]{hyperref}
+\usepackage{bookmark}
+\definecolor{azul}{HTML}{173E60}
+\definecolor{turquesa}{HTML}{117C83}
+\definecolor{gris}{HTML}{F1F5F8}
+\definecolor{gristexto}{HTML}{46535E}
+\definecolor{ocre}{HTML}{93620F}
+\hypersetup{pdftitle={DermaDose: memoria técnica y científica ampliada},pdfauthor={Proyecto DermaDose},pdfsubject={RDSR, geometría superficial, Philips Azurion y factores espectrales}}
+\titleformat{\chapter}[display]{\normalfont\huge\bfseries\color{azul}}{\large\chaptertitlename\ \thechapter}{8pt}{\Huge\raggedright}
+\titlespacing*{\chapter}{0pt}{0pt}{24pt}
+\titleformat{\section}{\Large\bfseries\color{azul}}{\thesection}{.7em}{}
+\titleformat{\subsection}{\large\bfseries}{\thesubsection}{.7em}{}
+\pagestyle{fancy}\fancyhf{}
+\fancyhead[L]{\small\color{gristexto}DermaDose | Memoria técnica y científica}
+\fancyhead[R]{\small\thepage}
+\renewcommand{\headrulewidth}{.3pt}
+\fancypagestyle{plain}{\fancyhf{}\fancyfoot[C]{\small\thepage}\renewcommand{\headrulewidth}{0pt}}
+\setlength{\parskip}{5pt}\setlength{\parindent}{0pt}
+\setlength{\emergencystretch}{2em}
+\setlist{itemsep=3pt,topsep=5pt}
+\captionsetup{font=small,labelfont=bf,labelsep=period}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\newcommand{\Ka}{K_{\mathrm{a},r}}
+\newcommand{\muen}[1]{\left(\frac{\mu_{\mathrm{en}}}{\rho}\right)_{\!#1}}
+\newcommand{\vect}[1]{\bm{#1}}
+\newcommand{\codigo}[1]{\expandafter\nolinkurl\expandafter{\detokenize{#1}}}
+\newcommand{\estado}[1]{\textbf{#1}}
+\newtcolorbox{criterio}[1]{colback=gris,colframe=turquesa,boxrule=.6pt,arc=1mm,title={#1},fonttitle=\bfseries,breakable}
+\lstset{basicstyle=\ttfamily\footnotesize,breaklines=true,columns=fullflexible,keepspaces=true,frame=single,rulecolor=\color{gray!40},backgroundcolor=\color{gris},showstringspaces=false,aboveskip=8pt,belowskip=8pt}
+\tikzset{bloque/.style={draw=azul,rounded corners=2pt,fill=gris,align=center,minimum height=11mm,text width=32mm,font=\small},flujo/.style={-{Latex[length=2mm]},thick,azul}}
+% Gramática visual común: azul = geometría/entrada, turquesa = cálculo,
+% ocre = decisión/condición. La forma y el texto duplican el código cromático.
+\definecolor{rojo}{HTML}{A53E42}
+\tikzset{
+ panel/.style={draw=azul!35,fill=gris,rounded corners=3pt,inner sep=8pt,align=left,font=\small},
+ proceso/.style={panel,draw=turquesa!65,fill=turquesa!5},
+ aviso/.style={panel,draw=ocre!65,fill=ocre!6},
+ rotulo/.style={font=\small\bfseries,text=azul,align=left},
+ nota/.style={font=\footnotesize,text=gristexto,align=left},
+ rayo/.style={-{Latex[length=2mm]},line width=1pt,azul},
+ retorno/.style={-{Latex[length=2mm]},line width=1pt,turquesa,dashed},
+ cota/.style={<->,>=Latex,thin,gristexto},
+ punto/.style={circle,fill=azul,inner sep=1.7pt},
+}
+\pgfplotsset{dermaplot/.style={width=.95\textwidth,height=6.5cm,
+ axis line style={azul!60},tick label style={font=\small},
+ label style={font=\small},title style={font=\small\bfseries,text=azul},
+ grid=major,grid style={gray!18},major tick length=2pt,
+ legend style={draw=none,fill=white,font=\small,cells={anchor=west}},
+ every axis plot/.append style={line width=1.15pt},
+ unbounded coords=jump}}
+\newcommand{\fuente}[1]{\par\smallskip{\footnotesize\color{gristexto}Fuente y alcance: #1\par}}
+\AtBeginDocument{\renewcommand{\tablename}{Tabla}\renewcommand{\listtablename}{Índice de tablas}}
+\begin{document}
+\begin{titlepage}
+\begin{tikzpicture}[remember picture,overlay]
+\fill[azul] (current page.north west) rectangle ($(current page.north east)+(0,-3.7cm)$);
+\draw[turquesa,line width=5pt] ($(current page.north west)+(2.6cm,-4.4cm)$)--($(current page.north west)+(6cm,-4.4cm)$);
+\end{tikzpicture}
+\vspace*{.7cm}
+{\color{white}\Large PROYECTO DERMADOSE\par}
+\vspace{3.6cm}
+{\Huge\bfseries\color{azul}Memoria técnica\par y científica ampliada\par}
+\vspace{1cm}
+{\Large Reconstrucción de dosis superficial a partir de RDSR,\par modelado geométrico y adaptación de investigación\par a Philips Azurion\par}
+\vspace{1cm}
+{\large Formalismo de Benmakhlouf, espectros SpekPy\par y construcción de tablas derivadas trazables\par}
+\vfill
+\begin{criterio}{Estado del trabajo}
+Prototipo de investigación. Se documentan implementación, comprobaciones numéricas y limitaciones. Los espectros calculados no equivalen a una caracterización experimental de la instalación ni establecen exactitud clínica.
+\end{criterio}
+\vspace{.5cm}
+{\large Edición revisada de 30 de octubre de 2026\par}
+{\small Base del paquete: versión declarada 0.5.3, con ampliaciones posteriores revisadas en la copia de trabajo.\par}
+\end{titlepage}
+\pagenumbering{roman}
+\chapter*{Resumen}\addcontentsline{toc}{chapter}{Resumen}
+DermaDose es un calculador independiente del fabricante, desarrollado en Python, para reconstruir la distribución de dosis superficial modelada en procedimientos de radiología intervencionista. Utiliza los eventos de irradiación de un informe DICOM Radiation Dose Structured Report (RDSR), una representación tridimensional de la superficie del paciente y una configuración auxiliar que describe el equipo y las condiciones de cálculo. Su propósito es complementar los indicadores integrados de exposición con información sobre la localización de las contribuciones, su superposición y el máximo superficial estimado.
+
+La reconstrucción combina geometría divergente de fuente puntual, selección de la primera intersección con la superficie y acumulación de contribuciones por evento. La transformación del kerma en aire de referencia incorpora, según la configuración, calibración, distancia, transmisión de mesa y factores de respuesta superficial en agua. Las superficies pueden proceder de fantomas de referencia o de una segmentación de TC mediante el módulo DermaDose Surface de 3D Slicer. El programa conserva la procedencia de los factores y las aproximaciones utilizadas para facilitar la interpretación y reproducción de los resultados.
+
+La adaptación al angiógrafo Philips Azurion con tubo MRC 200 0407 incorpora la identificación documental del conjunto, su ángulo anódico de $11^\circ$, el límite de tensión de 125 kV y una contabilidad explícita de la filtración fija y añadida. Los factores dosimétricos se obtienen de los datos de Benmakhlouf, Fransson y Andreo y de su integración monoenergética, ponderada por kerma en aire, sobre espectros calculados con SpekPy. El conjunto específico de escenarios nominales contiene \num{1400} combinaciones de tensión, filtración y tamaño de campo. La filtración mínima documental del conjunto se distingue de una caracterización espectral medida de la instalación.
+
+La verificación disponible comprende 136 pruebas de software y propiedades físicas, así como un caso sintético reproducible con entradas, configuración, factores y resultados identificados. El sistema permite generar mapas, estimar máximos y estudiar la sensibilidad a las hipótesis del modelo. Estas comprobaciones respaldan su coherencia interna y reproducibilidad; la exactitud dosimétrica clínica requiere una validación experimental independiente. La magnitud calculada se refiere al modelo superficial en agua y no se identifica sin justificación con dosis absorbida en piel a una profundidad clínica específica.
+
+El trabajo establece una base técnica para el análisis de procedimientos realizados en el Hospital Universitario Marqués de Valdecilla. La explotación de una cohorte hospitalaria, la caracterización completa de la instalación y la validación del uso clínico se delimitan como objetivos de aplicación, sin presentarlos como resultados ya obtenidos.
+
+\chapter*{Guía de lectura y convención de evidencia}\addcontentsline{toc}{chapter}{Guía de lectura y convención de evidencia}
+La memoria presenta el contexto científico y los objetivos, el fundamento físico, la reconstrucción geométrica y la implementación. Desarrolla el formalismo dosimétrico, la adaptación al Azurion y la caracterización del MRC 200 0407; después expone resultados, verificación, incertidumbres y limitaciones. Los anexos reúnen símbolos, configuración y procedimientos de reproducción. Las comparaciones entre modelos se conservan como análisis de sensibilidad, sin equipararlas a una demostración de exactitud clínica.
+
+Se utiliza \emph{dosis superficial modelada} para la salida de la etapa \codigo{skin_dose}. En la vía estudiada, el medio de referencia es agua; la identificación con dosis absorbida en piel a una profundidad clínica concreta requiere una justificación adicional. \emph{Validación} se reserva para comparación externa respecto al uso previsto; las pruebas de software y la reproducción de una fórmula se denominan \emph{verificación}.
+
+\begin{tabularx}{\textwidth}{p{29mm}Y}
+\toprule
+Categoría & Significado en esta memoria\\\midrule
+Publicado & Valor o método localizable en una fuente identificada; no implica que se haya medido en el hospital.\\
+Implementado & Comportamiento comprobable en el código disponible de la copia revisada.\\
+Verificado aquí & Comprobación ejecutada para esta edición, con salida conservada.\\
+Antecedente & Resultado de la memoria previa; se atribuye a esa auditoría y no se presenta como repetido ahora.\\
+Hipótesis & Parámetro o aproximación elegido para investigación y todavía no caracterizado.\\
+Propuesto & Desarrollo o medida futura; no es una capacidad actual del programa.\\\bottomrule
+\end{tabularx}
+
+La edición gráfica organiza las figuras mediante paneles, etiquetas y estilos de línea consistentes. Azul identifica entradas y geometría; turquesa, cálculo; ocre, condiciones o decisiones. El texto y la forma duplican el color para facilitar lectura en escala de grises. Los dibujos didácticos se distinguen de los gráficos obtenidos con resultados numéricos.
+
+Las figuras se han realizado con TikZ y PGFPlots, sin imágenes generadas ni reproducciones de capturas clínicas. Los esquemas geométricos no representan la colocación real del paciente. Los gráficos numéricos identifican su origen y mantienen separados los datos históricos y los nuevos estudios.
+\tableofcontents
+\listoffigures
+\listoftables
+\clearpage\pagenumbering{arabic}
+\input{capitulos/01_alcance}
+\input{capitulos/03_fisica}
+\input{capitulos/04_geometria}
+\input{capitulos/05_software}
+\input{capitulos/06_superficies}
+\input{capitulos/07_benmakhlouf}
+\input{capitulos/08_azurion}
+\input{capitulos/09_espectros}
+\input{capitulos/10_resultados}
+\input{capitulos/11_validacion}
+\input{capitulos/12_discusion}
+\input{capitulos/atlas}
+\input{capitulos/refinamiento_factores}
+\input{capitulos/auditoria}
+\input{capitulos/mrc200}
+\input{capitulos/13_conclusiones}
+\clearpage\addcontentsline{toc}{chapter}{Bibliografía}
+\bibliographystyle{unsrtnat}
+\bibliography{bibliografia}
+\appendix
+\input{capitulos/anexos}
+\end{document}

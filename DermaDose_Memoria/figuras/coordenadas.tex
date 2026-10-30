@@ -1,0 +1,8 @@
+\begin{tikzpicture}[font=\small,x=1cm,y=1cm]
+\node[panel,text width=5.8cm,anchor=north west]at(0,4.3){\textbf{Archivo de superficie}\\STL sin unidades ni ejes inequívocos. Metadatos de Slicer: RAS y mm.};
+\node[proceso,text width=5.8cm,anchor=north west]at(7.5,4.3){\textbf{Marco interno de DermaDose}\\$x$: izquierda; $y$: craneal; $z$: anterior. Transformación declarada.};
+\coordinate(O)at(1.8,-.2);\draw[rayo](O)--++(2.3,0)node[right]{$R$};\draw[rayo](O)--++(0,2)node[above]{$S$};\draw[rayo](O)--++(-1,-.8)node[left]{$A$};
+\coordinate(I)at(10,-.2);\draw[rayo](I)--++(2.3,0)node[right]{$x$ (L)};\draw[rayo](I)--++(0,2)node[above]{$y$ (S)};\draw[rayo](I)--++(-1,-.8)node[left]{$z$ (A)};
+\draw[flujo](4.8,.3)--(7.4,.3)node[midway,above]{$\ell R\vect p+\vect o$};
+\node[aviso,text width=13.2cm,anchor=north west]at(0,-2){\textbf{Conversión de base $\neq$ registro anatómico}\\Cambiar ejes y unidades no coloca al paciente respecto a foco y mesa. El registro debe justificar traslación y rotación del contorno para el procedimiento.};
+\end{tikzpicture}

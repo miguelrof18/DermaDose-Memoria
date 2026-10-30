@@ -1,0 +1,14 @@
+\begin{tikzpicture}[font=\small,x=1cm,y=1cm]
+\node[rotulo,anchor=west]at(0,4.2){Cortes de Cu para dos familias clínicas de Al};
+\draw[->,azul](1,0)--(13.3,0)node[right]{Cu (mm)};
+\foreach \v/\lab in {0/0,1/{0,1},2/{0,2},3/{0,3},4/{0,4},6/{0,6},9/{0,9}}{
+\draw(1+1.3*\v,0)--++(0,-.1);\node[below,font=\footnotesize]at(1+1.3*\v,-.1){\lab};}
+\node[anchor=east]at(.8,3){$3{,}1$ Al};\node[anchor=east]at(.8,1.5){$4{,}1$ Al};
+\draw[turquesa,line width=3pt](1,3)--(12.7,3);\draw[turquesa,line width=3pt](1,1.5)--(3.6,1.5);
+\foreach \v in {0,1,2,3,6,9}\node[circle,draw=azul,fill=white,inner sep=2.4pt]at(1+1.3*\v,3){};
+\foreach \v in {0,1,2}\node[circle,draw=azul,fill=white,inner sep=2.4pt]at(1+1.3*\v,1.5){};
+\node[circle,draw=rojo,fill=rojo!10,inner sep=3pt]at(6.2,1.5){};
+\node[nota,anchor=west,text=rojo]at(6.5,1.5){Consulta $4{,}1$ Al + $0{,}4$ Cu: fuera};
+\draw[rojo,dashed](6.2,1.7)--(6.2,2.8);\node[text=rojo,fill=white]at(6.2,2.4){$\times$};
+\node[aviso,text width=13cm,anchor=north west]at(0,-1){\textbf{No cambiar de familia para encontrar cobertura}\\Que otra familia tenga Cu suficiente no convierte el haz en equivalente. Las tablas derivadas amplían combinaciones mediante espectros; no extrapolan la tabla clínica.};
+\end{tikzpicture}

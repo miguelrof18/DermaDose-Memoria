@@ -1,0 +1,53 @@
+\chapter{Superficies XCAT y extracción mediante 3D Slicer}
+\section{Fantoma de referencia y anatomía individual}
+La demostración utiliza el contorno corporal externo de un fantoma XCAT. El activo descrito en la memoria previa contiene \num{12148} triángulos antes de refinamiento; no aporta por ello dosis en órganos ni materiales internos. La revisión de esta edición no incluye el STL completo en la copia local, por lo que no se han repetido su reconstrucción y mapa histórico.
+
+Una malla antropomórfica facilita visualizar regiones y sombras, pero no garantiza representar distancia foco--piel ni postura de un paciente. El contorno segmentado de una TC puede acercar la forma individual, aunque también difiere por apoyo, brazos, respiración, mesa de TC y momento del procedimiento. La calidad anatómica y el registro espacial deben evaluarse por separado.
+
+
+\section{Módulo DermaDose Surface}
+El módulo de 3D Slicer extrae un contorno a partir de una serie TC elegida. La versión revisada, \codigo{1.3.0-150k}, propone un umbral inicial de $-350$ HU, selección de la mayor componente con conectividad de seis vecinos y relleno de cavidades internas. Estos pasos buscan una envolvente externa, no una segmentación validada universalmente.
+
+El umbral es orientativo. Deben revisarse cortes y superficie, especialmente en regiones de baja densidad, contacto con soportes, extremos del volumen y extremidades. Una componente conectada de mesa puede contaminar el contorno, mientras que una extremidad separada por segmentación puede eliminarse al conservar solo la mayor componente. El cierre de la superficie no corrige un corte de campo de visión que haya truncado anatomía.
+
+El relleno de cavidades produce una envolvente cerrada, adecuada para el problema geométrico de entrada bajo sus hipótesis. No conserva anatomía interna ni materiales. Para transporte volumétrico haría falta una segmentación diferente, donde aire interno y tejidos no se sustituyeran simplemente por una masa continua.
+\begin{figure}[htbp]\centering\input{figuras/slicer}
+\caption{Preparación y exportación de una superficie en el módulo de Slicer. El objetivo de reducción está subordinado a los controles geométricos.}\end{figure}
+
+\section{Simplificación con objetivo de 150000 triángulos}
+La petición de limitar triángulos responde al coste observado en ejecuciones con mallas grandes. El módulo intenta reducir la representación mediante \codigo{vtkDecimatePro} y, como alternativa, \codigo{vtkQuadricDecimation}, junto con limpieza y orientación. Se prueban objetivos conservadores cuando la reducción inicial no satisface los controles.
+
+La mejora principal respecto al fallo repetido de simplificación es conservar una superficie válida antes de exportar. Si la simplificación no mantiene las condiciones exigidas, la versión revisada puede conservar la original con aviso en lugar de descartar toda exportación. Por tanto, \num{150000} es un objetivo, no un techo garantizado a costa de abrir la malla.
+
+El número de caras que se debe registrar es el real tras el proceso, junto con método, objetivo y resultado de validación. Si la malla original contiene menos caras, no necesita inflarse hasta el objetivo. Si se mantiene una malla mayor, el usuario debe conocerlo antes de iniciar el cálculo.
+
+\section{Controles de validez y exportación}
+Los controles revisan coordenadas finitas, caras degeneradas, conectividad, bordes abiertos, aristas no manifold y volumen admisible. Se limpian coincidencias de vértices y se orientan normales. La rutina no rellena arbitrariamente agujeros para forzar aceptación de cualquier simplificación.
+
+El flujo prepara un STL temporal, lo vuelve a leer y verifica su admisibilidad antes de completar la exportación. El archivo y su JSON se crean sin sobrescribir una pareja ya existente, para evitar incoherencia entre malla y metadatos. Se requiere revisión visual de la superficie preparada, y los controles de interfaz se bloquean durante operaciones que no deben solaparse.
+
+Estos controles reducen errores topológicos frecuentes. No equivalen a demostrar ausencia de todas las autointersecciones, fidelidad a la TC o exactitud de las normales en cada detalle. Deben complementarse con inspección de contorno y, en una evaluación formal, distancia entre superficies antes y después de reducir.
+
+\section{Unidades, ejes y dos JSON diferentes}
+La exportación conserva mm y coordenadas RAS. El JSON de acompañamiento documenta extracción y geometría; no es el perfil completo de equipo requerido por el calculador. Para utilizarla se debe configurar \codigo{patient.type=mesh}, ruta, unidad, transformación de ejes y origen, junto con el resto del perfil dosimétrico.
+
+Para transformar un contorno RAS al sistema interno del proyecto hay que definir la matriz y comprobarla con puntos anatómicos conocidos. La matriz utilizada en una configuración XCAT no puede copiarse sin más a una malla RAS distinta. La orientación de cabeza y pies, lateralidad y apoyo constituyen comprobaciones concretas antes de interpretar el mapa.
+
+El proceso de Slicer crea y exporta la superficie; DermaDose puede ejecutarse después desde un entorno Python externo. No necesita que el motor de dosis se ejecute dentro de Slicer. La llamada automatizada a Slicer desde otro intérprete es una integración adicional que requiere definir ejecutable, argumentos y archivos de intercambio; no se considera resuelta únicamente por disponer del módulo.
+
+\section{Rendimiento y elección de resolución}
+Reducir caras puede disminuir preparación geométrica, candidatos de intersección, mapas y tamaño del HTML. No garantiza una disminución proporcional del tiempo total, porque pueden dominar consultas al índice, métricas locales o exportación. La interacción entre tamaño de caras y número de rayos debe medirse en una carga representativa.
+
+La selección de resolución debería basarse en diferencias de PSD, posición del máximo, áreas e integral entre representaciones. Si la simplificación desplaza la superficie, también se modifica la distancia física del cálculo. En cambio, refinar un triángulo plano solo cambia los puntos de muestreo. Confundir estas operaciones puede atribuir al rendimiento un cambio dosimétrico que procede de anatomía alterada.
+\FloatBarrier
+
+\section{Justificación del tamaño de los elementos}
+Se propone, como criterio inicial de investigación, una longitud característica de aproximadamente 5 mm y un objetivo de exportación de \num{150000}--\num{200000} caras para una superficie de cuerpo completo. El objetivo combina fidelidad geométrica, muestreo dosimétrico y coste computacional; no es un requisito normativo ni una resolución clínicamente validada. El número total no garantiza el tamaño local: deben registrarse distribuciones de áreas y longitudes de arista, además de la forma de los triángulos.
+
+Para triángulos aproximadamente equiláteros de lado $h$ sobre una superficie de área $S$, la estimación $N\simeq4S/(\sqrt{3}h^2)$ permite relacionar resolución y número de caras. Tomando $S=1{,}8$ m$^2$ únicamente como ejemplo, $h=5$ mm requiere unas \num{166000} caras, frente a \num{462000} para 3 mm y \num{1040000} para 2 mm. Una segmentación anatómica parcial necesita menos caras para una misma resolución. Por tanto, \num{150000} caras representan un presupuesto inicial, no una garantía universal de suficiencia.
+
+La evaluación por cara hace especialmente sensibles los bordes de campo y los solapamientos estrechos: el centro de una cara parcialmente irradiada puede no representar su fracción realmente expuesta. Se propone comprobar los máximos mediante refinamiento local a 2--3 mm en regiones irradiadas, incluyendo sus bordes. En el ejemplo regular, un área de 1 cm$^2$ contiene unas nueve caras de lado 5 mm y unas 26 de lado 3 mm; aumentar ese muestreo mejora la descripción discreta, sin convertir la vecindad implementada en un dosímetro exacto de 1 cm$^2$. La bibliografía describe el beneficio de refinar para delimitar el haz; ello no establece una resolución obligatoria para DermaDose.
+
+El coste crece al aumentar muestras, intersecciones y vecindades. Solo almacenar un valor de doble precisión por cara y evento exige $8NE$ bytes: para 101 eventos, unas \num{150000} caras requieren 121 MB y un millón, 808 MB, sin contar geometría, cachés, copias o visor. No se asignan tiempos concretos sin medirlos en el equipo de ejecución.
+
+La selección definitiva debe basarse en convergencia con anatomía fija: comparar, por ejemplo, 7, 5, 3 y 2 mm, evaluando PSD puntual, máximo promediado sobre 1 cm$^2$, región de alta dosis, tiempo y memoria. Una variación inferior al 2--3\,\% entre refinamientos sucesivos puede utilizarse como objetivo interno inicial, explícitamente propuesto y no como tolerancia clínica publicada. La fidelidad de la simplificación debe comprobarse por separado frente a la superficie original: subdividir caras no recupera anatomía perdida. Estas decisiones tampoco sustituyen la caracterización del equipo, el registro anatómico o la validación dosimétrica externa.

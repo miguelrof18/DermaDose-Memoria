@@ -1,0 +1,8 @@
+
+\begin{tikzpicture}
+\begin{axis}[dermaplot,height=7cm,title={Promedio espectral: el área del integrando es el factor},xlabel={Energía (keV)},ylabel={Densidad normalizada (keV$^{-1}$)},xmin=5,xmax=80,ymin=0,legend style={at={(.02,.98)},anchor=north west}]
+\addplot[azul,fill=azul!8]table[x=energy_kev,y=pK,col sep=comma]{datos/kernel_integracion.csv}\closedcycle;\addlegendentry{$p_K(E)$; área $1$}
+\addplot[turquesa,dashed]table[x=energy_kev,y=pKC,col sep=comma]{datos/kernel_integracion.csv};\addlegendentry{$p_K(E)C(E,20\,\mathrm{cm})$; área $C$}
+\end{axis}
+\node[proceso,text width=12.8cm,anchor=north west]at(.3,-1.6){\textbf{No se evalúa $C$ solo a la energía media.}\\Cada bin aporta $p_K(E_i)C(E_i,s)\Delta E_i$; en este caso, $C\simeq 1,5272$.\\Condiciones del ejemplo: 80 kVp; 4,1 mm Al; 0,1 mm Cu; $12^\circ$; lado 20 cm.};
+\end{tikzpicture}

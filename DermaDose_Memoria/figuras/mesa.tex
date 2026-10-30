@@ -1,0 +1,13 @@
+\begin{tikzpicture}[font=\small,x=1cm,y=1cm]
+\fill[gris](1,2.2)rectangle(13,3);\draw[azul,thick](1,2.2)--(13,2.2);
+\node[nota]at(11.7,2.6){Superficie};
+\fill[ocre!25](2.8,.75)rectangle(9.3,.95);\draw[ocre](2.8,.75)rectangle(9.3,.95);
+\node[nota,anchor=east]at(2.7,.85){Mesa acotada};
+\node[punto,label=below:{Foco}]at(6,-1){};
+\draw[rayo](6,-1)--(6,2.2);\node[circle,fill=turquesa,inner sep=2pt]at(6,2.2){};
+\draw[rayo](6,-1)--(12,2.2);\node[circle,fill=azul,inner sep=2pt]at(12,2.2){};
+\node[nota,text=turquesa,anchor=west]at(6.3,1.5){Cruza mesa: aplicar $T(Q,\alpha)$};
+\node[nota,anchor=west]at(9.7,-.6){No cruza: $T=1$};
+\node[proceso,text width=6cm,anchor=north west]at(0,-2){\textbf{Implementación actual}\\Transmisión escalar sobre el segmento. Reduce amplitud, sin cambiar el espectro usado para $C$.};
+\node[aviso,text width=6cm,anchor=north west]at(7.3,-2){\textbf{Extensión física propuesta}\\La mesa también endurece el haz: usar espectro transmitido o respuesta efectiva compatible.};
+\end{tikzpicture}

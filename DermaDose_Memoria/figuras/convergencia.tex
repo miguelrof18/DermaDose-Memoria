@@ -1,0 +1,7 @@
+\begin{tikzpicture}
+\begin{semilogxaxis}[dermaplot,width=.96\textwidth,height=6.7cm,title={Refinamiento histórico del mismo poliedro},xlabel={Número de caras},ylabel={PSD puntual (mGy)},xmin=12000,xmax=1000000,scaled x ticks=false,xtick={16390,46886,177926,709122},xticklabels={16\,390,46\,886,177\,926,709\,122},x tick label style={rotate=15,anchor=east},ymin=34.70,ymax=34.81,scaled y ticks=false]
+\addplot[gray,dashed]coordinates{(12000,34.78205)(1000000,34.78205)};
+\addplot[azul,mark=*,thick] coordinates{(16390,34.72008)(46886,34.76189)(177926,34.77631)(709122,34.78205)};
+\node[nota,anchor=north west,fill=white]at(rel axis cs:.03,.97){Referencia numérica: malla más fina.\\De 10 a 5 mm: cambio de PSD $\simeq0{,}0165\,\text{\char37}$.};
+\end{semilogxaxis}
+\end{tikzpicture}

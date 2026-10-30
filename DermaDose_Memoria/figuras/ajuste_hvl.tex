@@ -1,0 +1,12 @@
+\begin{tikzpicture}
+\begin{axis}[dermaplot,name=hvl,height=6.3cm,title={A · Observaciones y modelo condicionado},xlabel={Tensión medida media por grupo (kVp)},ylabel={HVL1 (mm Al)},xmin=45,xmax=130,ymin=1.8,ymax=6.5,legend style={at={(.02,.98)},anchor=north west}]
+\addplot[azul,only marks,mark=*,mark size=2.5pt]coordinates{(49.8,2.32)(60.4,2.92)(80.275,3.9275)(100,4.87)};\addlegendentry{Grupos usados en el ajuste}
+\addplot[ocre,only marks,mark=diamond*,mark size=3pt]coordinates{(124.6,5.82)};\addlegendentry{Grupo reservado}
+\addplot[turquesa,dashed,mark=square*,mark size=1.7pt]coordinates{(49.8,2.39776)(60.4,2.92023)(80.275,3.85308)(100,4.79521)(124.6,5.89835)};\addlegendentry{Modelo condicionado}
+\end{axis}
+\begin{axis}[dermaplot,at={(hvl.below south west)},anchor=north west,yshift=-1.1cm,height=4.3cm,xlabel={Tensión medida media por grupo (kVp)},ylabel={Residuo (\%)},xmin=45,xmax=130,ymin=-3,ymax=4.5,xtick={50,60,80,100,125}]
+\addplot[gray,dashed]coordinates{(45,0)(130,0)};
+\addplot[azul,only marks,mark=*,mark size=2.5pt]coordinates{(49.8,3.3517)(60.4,.0077)(80.275,-1.8949)(100,-1.5358)};
+\addplot[ocre,only marks,mark=diamond*,mark size=3pt]coordinates{(124.6,1.3462)};
+\end{axis}
+\end{tikzpicture}

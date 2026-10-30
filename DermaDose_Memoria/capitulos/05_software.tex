@@ -1,0 +1,54 @@
+\chapter{Arquitectura, lectura RDSR y trazabilidad}
+\section{Separación de responsabilidades}
+El paquete separa la lectura de datos, configuración, geometría, factores, cálculo, métricas y presentación. \codigo{rdsr.py} transforma el árbol DICOM en eventos; \codigo{config.py} construye un equipo; \codigo{geometry.py} proyecta el haz; \codigo{raytrace.py} resuelve primera entrada; \codigo{engine.py} aplica la ecuación y acumula. \codigo{surface_factors.py} y \codigo{factor_tables.py} separan datos físicos e interpolación. \codigo{spectral.py} genera tablas sin alterar el conjunto publicado.
+
+La separación facilita probar funciones sin confundir resultados de visualización con resultados numéricos. También permite introducir un nuevo dataset con el mismo formalismo, siempre que declare medio, ejes, geometría y procedencia. La compatibilidad de esquema es un requisito informático; la compatibilidad física necesita un análisis adicional.
+\begin{figure}[htbp]\centering\input{figuras/flujo}
+\caption{Flujo de información de DermaDose. La trazabilidad acompaña a las etapas de cálculo y no se limita a una anotación final.}\end{figure}
+
+\section{Contenido de un evento y normalización}
+El lector identifica conceptos por pareja de esquema de codificación y código, en lugar de depender de una cadena descriptiva traducida. El estándar DICOM organiza el evento como entidad de información y permite asociar parámetros de exposición y geometría \citep{dicom}. El código disponible implementa un subconjunto de esa estructura, no un verificador completo del estándar ni de todas las jerarquías comerciales.
+
+Cada evento conserva identificador, modo, kerma, producto kerma-área cuando está disponible, kVp, filtración, ángulos, distancias, campo, mesa y datos originales. Las lecturas numéricas se convierten desde unidades UCUM admitidas. Medidas múltiples incompatibles de un mismo concepto no se promedian silenciosamente. Se rechazan números no finitos e identificadores duplicados.
+
+Las distancias SID, SOD y SRP son nombres internos vinculados a los conceptos que el perfil interpreta. En particular, el uso de SOD como distancia foco--isocentro requiere comprobar su semántica y la correspondencia con el equipo. El nombre de una variable no basta para demostrar que una medida DICOM tenga exactamente esa referencia.
+
+Si solo existe un área de campo y se reconstruye un cuadrado equivalente, se debe conservar la hipótesis. Conocer el área no determina el rectángulo real ni la posición de sus bordes. Las dimensiones y el plano al que se refieren afectan tanto a la máscara como al argumento del factor superficial.
+
+\section{Estados de filtración que deben permanecer distintos}
+El análisis de Azurion mostró que exigir material en todos los contenedores producía un fallo ante una declaración explícita de filtro no insertado. La corrección distingue tres situaciones:
+\begin{enumerate}
+\item \emph{No filter} declarado: se asigna ausencia de filtración añadida representada en ese contenedor, con Cu añadido cero y estado específico.
+\item Pila de filtros con material y espesor: se conservan por separado Al y Cu, y se suman capas del mismo material cuando procede.
+\item Información ausente o insuficiente: se mantiene el estado desconocido y no se sustituye por cero.
+\end{enumerate}
+Un contenedor ``No filter'' con material o espesor simultáneo, o una combinación contradictoria de declaraciones, produce error controlado. El aluminio no se convierte en cobre equivalente para facilitar una consulta. Una pila de aluminio conocida sin cobre puede representar Cu añadido cero, pero no una filtración total nula.
+
+Cuando mínimo y máximo difieren, el lector rechaza el evento: el intervalo no determina un espesor homogéneo ni un espectro único. En un filtro homogéneo, DICOM permite declarar el mismo valor en ambos extremos. Si solo se proporciona uno, el lector conserva ese valor; su aceptación es una limitación de lectura y no demuestra homogeneidad. El soporte de materiales y códigos está acotado a lo implementado. Esta política sustituye el promedio aritmético anterior, que carecía de justificación espectral \citep{dicomfilters}.
+
+
+
+\begin{figure}[htbp]\centering\input{figuras/estados_filtro}
+\caption{Estados de información de filtración. Son alternativas de lectura, no etapas consecutivas; el código y las hipótesis del perfil deben conservar su significado.}\label{fig:estados_filtro}\end{figure}
+
+\section{Configuración y control de aplicabilidad}
+El JSON de equipo debe incluir versión y bloques coherentes de geometría, paciente y factores. El archivo de metadatos de una exportación de malla no es una configuración completa de DermaDose. El error ``falta version'' observado al usarlo como perfil no se soluciona añadiendo una etiqueta arbitraria: faltan definiciones físicas y geométricas.
+
+Las rutas se resuelven respecto a la configuración. Mover el JSON a una carpeta de ejemplo cambia la relación con la malla y el dataset. Los errores de archivo ausente son problemas de localización, diferentes de un evento fuera de dominio o de una geometría inválida. El anexo ofrece una estructura reproducible que evita depender de la carpeta actual de la terminal.
+
+El perfil Azurion exige indicadores de caracterización cuando no se permiten hipótesis. Marcar esos indicadores a verdadero no realiza una calibración: deben estar respaldados por medidas, identificación del equipo y un registro de su evaluación. En investigación se permiten sustituciones explícitas, registradas en la calidad del evento, que siguen siendo hipótesis.
+
+\section{Caché y acumulación}
+La caché conserva proyecciones de geometrías exactamente coincidentes. Reutiliza la selección y magnitudes geométricas, mientras que kerma y factores se recalculan para cada evento. La corrección de la caché se evalúa comparando mapas con la vía sin caché, no únicamente tiempos.
+
+La suma mantiene los índices de una superficie fija. Con $N$ elementos y $E$ eventos, conservar todos los mapas en \codigo{float64} exige al menos $8NE$ bytes, antes de añadir geometría, índices y copias. La implementación actual puede crear matrices apiladas para acumular, con un máximo de memoria superior al almacenamiento base.
+
+La trazabilidad por evento es valiosa para explicar máximos y depurar casos, pero tiene un coste. Una futura acumulación por bloques deberá decidir qué contribuciones conservar, cómo permitir inspección posterior y cómo mantener igualdad numérica dentro de tolerancias justificadas.
+
+\section{Salidas y procedencia}
+Las salidas incluyen un informe JSON, matrices de mapa en NPZ, tabla de eventos, figuras, histograma dosis--área y visor HTML. Deben conservar etapa física, medio, factores, geometría, advertencias y huellas de entradas. Los metadatos tabulados registran nodos fuente y si la consulta es exacta o interpolada.
+
+La presencia de un \emph{hash} no acredita que una tabla sea correcta: acredita correspondencia con unos bytes identificados. Su utilidad es detectar modificaciones y permitir repetir el mismo cálculo. La revisión humana de unidades, transcripción y definición física sigue siendo necesaria.
+
+Los informes reales pueden contener identificadores en el árbol SR y en metadatos del archivo. Una revisión de desidentificación debe abarcar ambos y conservar relaciones internas necesarias. Esta memoria presenta solo recuentos agregados del caso de trabajo; no distribuye su DICOM ni identificadores de eventos.
+

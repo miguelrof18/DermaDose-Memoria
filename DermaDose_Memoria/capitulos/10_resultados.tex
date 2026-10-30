@@ -1,0 +1,95 @@
+\chapter{Resultados documentados y verificación actual}
+\section{Organización de la evidencia}
+Se presentan por separado los resultados del antecedente y los ejecutados para esta memoria. La auditoría histórica evaluó geometría, convergencia y rendimiento sobre ejemplos sintéticos. La verificación actual se concentra en el soporte Azurion, la integración espectral y las tablas derivadas. No se combinan ambos grupos para atribuir una validación clínica acumulativa.
+
+El script \codigo{scripts/estudio_espectral.py} reproduce los estudios nuevos sin datos de pacientes. Conserva CSV, comparación JSON y versiones de dependencias. Las pruebas focalizadas se ejecutaron con salida satisfactoria y el registro identifica su comando y alcance. No se ha repetido la suite histórica completa ni los tiempos de Windows del usuario.
+
+\section{Antecedente: convergencia espacial del ejemplo XCAT}
+La memoria previa describe una comparación con preparación incluida, métricas detalladas omitidas en malla y una ejecución por resolución \citep{memoria2026}. Se conservan aquí las cifras para relacionar la discusión de resolución con evidencia, identificándolas como resultados históricos no reejecutados.
+\begin{table}[htbp]\centering
+\caption{Convergencia espacial histórica del ejemplo sintético XCAT.}
+\begin{tabular}{rrrrr}\toprule
+Arista máxima (mm) & Caras & PSD (Gy) & Área (cm$^2$) & Tiempo (s)\\\midrule
+40 & \num{16390} & \num{0.03472008} & \num{142.448} & \num{0.218}\\
+20 & \num{46886} & \num{0.03476189} & \num{141.417} & \num{0.555}\\
+10 & \num{177926} & \num{0.03477631} & \num{139.855} & \num{2.212}\\
+5 & \num{709122} & \num{0.03478205} & \num{140.408} & \num{11.544}\\\bottomrule
+\end{tabular}
+\fuente{Memoria del 28-09-2026; Linux, carga sintética y protocolo allí descrito. No predice duración del caso Azurion.}
+\end{table}
+
+La diferencia de PSD entre 10 y 5 mm es aproximadamente \num{0.0165}\,\%; el área cambia \num{0.395}\,\% y la posición del máximo se desplaza \num{2.333} mm. El área no converge monótonamente, comportamiento compatible con clasificación de caras mediante centroides frente a un borde discontinuo.
+
+La malla original histórica produce \num{0.0345982715} Gy, y la de 10 mm \num{0.0347763062} Gy. La estabilidad del máximo en ese ejemplo no demuestra que \num{150000} caras sean suficientes para cualquier anatomía o campo. Tampoco permite asignar un error físico al factor de retrodispersión, porque los factores del ejemplo son sintéticos.
+
+\begin{figure}[htbp]\centering
+\input{figuras/convergencia}
+\caption{Estabilidad numérica histórica del máximo al refinar el mismo poliedro. Figura TikZ/PGFPlots reconstruida desde la tabla del antecedente; la malla más fina es referencia numérica, no dosimétrica.}
+\end{figure}
+
+\section{Antecedente: rendimiento y límites de comparación}
+El estudio previo describe gran ahorro de caché para geometrías idénticas y ahorro pequeño para secuencias de ángulos distintos. Registra además que la preparación, trazado y exportación pueden dominar en momentos diferentes. Sus tiempos se obtuvieron en un entorno Linux virtualizado con control de hilos; no se comparan directamente con una ejecución completa en Windows.
+
+El número de candidatos del índice crecía más deprisa que el número de caras en algunos refinamientos. Esto desaconseja asumir una complejidad global logarítmica por el mero uso de R-tree. Una malla muy fina, un campo oblicuo y una colección grande de eventos pueden producir una carga distinta a la de dos exposiciones de demostración.
+
+La consulta local de métricas sobre vecinos también puede ser costosa: el máximo medio en una región nominal se busca desde caras irradiadas mediante recorridos del grafo. En una ejecución que parece detenida debe distinguirse lectura, preparación, proyección, métricas y escritura. No hay en esta memoria un tiempo medido del caso completo de 101 eventos ni evidencia para diagnosticar un bloqueo concreto del ordenador del usuario.
+
+\section{Pruebas focalizadas repetidas}
+La ejecución \codigo{python -m pytest tests/test_azurion.py tests/test_spectral.py tests/test_surface_factors.py -q} termina con 47 pruebas superadas. Se comprueban, entre otras, declaración explícita de filtro no insertado, contradicciones, selección de Al, rechazo de extrapolación, integridad del dataset, promedio de productos y compatibilidad del proveedor.
+
+Las pruebas espectrales incluyen invariancia ante renormalización de fluencia, recuperación de un nodo monoenergético, interpolación del producto entre energías originales, rechazo de entradas inválidas y fracción de kerma exterior. También se prueba la generación de una tabla nueva, su consulta desde el proveedor y la detención ante incompatibilidad con una HVL proporcionada.
+
+En esa prueba de HVL se utiliza un valor calculado para ejercitar la lógica de comparación, y después uno alterado para forzar error. No es una medición física. Superar la prueba demuestra que funciona la condición programada, no que el Azurion cumpla la tolerancia.
+
+\section{Cuatro condiciones clínicas de referencia}
+Se repitió la comparación de cuatro casos del informe. La diferencia se define como $\delta_C=100(C_{\mathrm{calc}}/C_{\mathrm{ref}}-1)$. Los espesores son mm y el lado cm.
+\begin{table}[htbp]\centering\small
+\caption{Comparación parcial del factor combinado con productos clínicos publicados.}
+\input{datos/tabla_referencia}
+\end{table}
+Los residuos del combinado se encuentran entre $-\num{0.1344}\,\text{\char37}$ y $-\num{0.0595}\,\text{\char37}$. La comparación también revela diferencias de calidad del haz, presentadas en la tabla siguiente. Un factor combinado parecido no implica que las formas espectrales sean idénticas.
+\begin{table}[htbp]\centering\small
+\caption{Comparación de HVL1 en las mismas cuatro condiciones.}
+\input{datos/tabla_hvl}
+\end{table}
+Las diferencias de HVL1 oscilan entre aproximadamente $-\num{2.60}\,\text{\char37}$ y $-\num{1.78}\,\text{\char37}$. No se ajustaron parámetros para anularlas. El informe original usa SpekCalc y sus tablas contienen redondeo y promedios separados; esos elementos forman parte del análisis del residuo.
+
+El contraste no incluye una medida de la instalación. Tampoco demuestra un error inferior al 1\,\% para todo el dominio: cubre cuatro puntos concretos. La tolerancia usada en una prueba automatizada no debe convertirse en una especificación de exactitud del programa.
+
+\section{Convergencia con el paso energético}
+Se generaron de nuevo las cuatro condiciones con $\Delta E=1$, \num{0.5}, \num{0.25} y \num{0.125} keV. Se mantuvieron los datos monoenergéticos y el resto de parámetros. La tabla expresa diferencias de $C$ respecto a \num{0.125} keV, en porcentaje; los casos siguen el orden de la comparación clínica.
+\begin{table}[htbp]\centering\small
+\caption{Sensibilidad del factor combinado al paso energético. Referencia numérica: \num{0.125} keV.}
+\input{datos/tabla_convergencia}
+\end{table}
+Para el paso de trabajo de \num{0.5} keV, la máxima diferencia absoluta en esos cuatro casos es aproximadamente \num{0.00330}\,\%. Es pequeña frente a otras discrepancias del estudio. La variación no es estrictamente monótona, y el refinamiento del generador cambia también la representación de las líneas características.
+
+Este estudio no reduce el intervalo de 5 keV de los factores publicados ni prueba exactitud espectral. Solo examina el discretizado de generación e integración manteniendo el modelo. La tabla fina es una referencia interna, no una medida de verdad física.
+
+\section{Error de consulta entre nodos derivados}
+Se seleccionaron nueve puntos interiores que combinan kVp 55, 85 y 115; Cu de \num{0.05}, \num{0.2} y \num{0.3} mm; y lados de \num{7.5}, 15 y 30 cm. Se fijó Al total en \num{4.1} mm. Para cada punto se comparó generar e integrar el espectro directamente con consultar la tabla de 390 filas.
+\begin{table}[htbp]\centering\small
+\caption{Consulta interpolada frente a integración directa en nueve puntos interiores.}
+\input{datos/tabla_interpolacion}
+\end{table}
+La diferencia va de aproximadamente $-\num{0.8902}\,\text{\char37}$ a $-\num{0.2562}\,\text{\char37}$, con mayor discrepancia que la del paso energético en los cuatro casos anteriores. Este resultado justifica priorizar una evaluación de densidad de nodos y consulta de $C$ antes de reducir indiscriminadamente $\Delta E$.
+
+El ensayo mezcla efectos de interpolación en kVp, Cu y campo, además de la representación por columnas separadas. No permite atribuir todo el residuo a $Bf_{\mathrm{eff}}$ frente a interpolar $C$. Para separar las causas se necesita variar un solo eje y comparar ambos interpoladores con el mismo espectro. La cifra máxima observada tampoco es una cota global del dominio.
+
+\section{Sensibilidad ilustrativa a las hipótesis del tubo}
+Se realizó un estudio a 80 kVp, \num{0.1} mm Cu y lado de 20 cm, variando ángulo de ánodo entre 9, 12 y $15^\circ$ y Al fijo entre \num{2.8}, \num{3.1} y \num{3.4} mm. Estas elecciones son escenarios, no intervalos de confianza ni especificaciones acreditadas del Azurion.
+\begin{table}[htbp]\centering\small
+\caption{Escenarios de ángulo y filtración fija. Diferencia respecto a $12^\circ$ y \num{3.1} mm Al.}
+\input{datos/tabla_sensibilidad}
+\end{table}
+En este escenario el factor combinado varía aproximadamente entre $-\num{0.62}\,\text{\char37}$ y $+\num{0.68}\,\text{\char37}$ respecto al caso central, mientras HVL1 también cambia. La similitud de algunos valores de $C$ no elimina la necesidad de caracterización: puede haber degeneración entre parámetros y el resultado absoluto depende además de calibración, mesa y registro.
+
+No se extrapola esta sensibilidad a todos los kVp y filtros. Tampoco se usa para afirmar que la hipótesis de \num{3.1} mm Al sea adecuada. La aportación del estudio es proporcionar una comprobación reproducible y una base para diseñar medidas que discriminen parámetros.
+
+\section{Cobertura del RDSR y ausencia de un resultado clínico final}
+El inventario de filtros del capítulo anterior ha sido repetido en esta edición. Bajo Al fijo de \num{3.1} mm, la tabla derivada cubre los kVp y combinaciones Al/Cu de los 101 eventos cuando se consulta a un lado de referencia de 10 cm. Es una comprobación del proveedor, sin malla ni cálculo de campo real.
+
+No se demuestra con ello que los tamaños locales de todos los elementos queden dentro de 5--35 cm, ni que la geometría sea válida. El evento con distancias nulas sigue requiriendo resolución, y la posición del contorno sigue sin registro experimental. No se presenta una PSD del procedimiento como resultado final de esta memoria.
+
+La distinción evita un error de interpretación especialmente relevante: completar un dataset puede resolver un bloqueo informático y, simultáneamente, dejar intactos los principales determinantes de error físico. La utilidad de las nuevas tablas debe evaluarse como parte del sistema completo.
+\FloatBarrier

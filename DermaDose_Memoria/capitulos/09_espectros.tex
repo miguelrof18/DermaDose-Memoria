@@ -1,0 +1,123 @@
+\chapter{Generación espectral y construcción de tablas derivadas}
+\section{Justificación de la ampliación}
+Extrapolar directamente una tabla clínica en filtración no conserva necesariamente la dependencia espectral de la respuesta. La vía elegida utiliza datos monoenergéticos y un espectro calculado para cada combinación de kVp y filtros. La ecuación~\eqref{eq:eq13} permite construir nuevas correcciones dentro del dominio energético de la base, sin presentar esas correcciones como nuevas mediciones.
+
+SpekPy proporciona el espectro incidente; la respuesta de retrodispersión procede de los cálculos de Benmakhlouf. 
+
+Los trabajos de validación de SpekPy y su versión 2.0 respaldan el uso de la herramienta como generador de espectros de tubo \citep{spek2020,spek2021}. Esa evidencia no sustituye la caracterización de la instalación utilizada por DermaDose. Además, la versión fijada para reproducir este proyecto es 2.5.4; los parámetros y el modelo físico quedan registrados en sus metadatos.
+
+\section{Particularización al tubo MRC 200 0407 del Azurion}
+Sí se han calculado tablas específicas bajo la identidad documental MRC 200 0407 ROT-GS1004 aportada para el equipo. El dataset \codigo{derived_mrc200_nominal} contiene 1400 filas calculadas con $11^\circ$, blanco W como aproximación del ánodo aleado, paso de 0,5 keV y tensiones de 46 a 125 kV. El límite de 125 kV corresponde al conjunto; no se adopta la tensión superior del inserto aislado. Su construcción y sensibilidad se detallan en el capítulo de caracterización del tubo.
+
+Se incluyen las familias Al de 2,5 y 2,6 mm para dos escenarios nominales, y de 3,5 y 3,6 mm para eventos que declaren 1 mm Al adicional. Se calculan siete nodos de Cu (0, 0,1, 0,2, 0,3, 0,4, 0,6 y 0,9 mm), diez tensiones (46, 50, 60, 70, 80, 90, 100, 110, 120 y 125 kV) y cinco lados de campo (5, 10, 20, 25 y 35 cm). Los nodos intermedios del modelo no se atribuyen a posiciones físicas nuevas del portafiltros.
+
+El perfil de conjunto usa 2,5 mm Al equivalente mínimo; la contribución inherente de 0,8 mm equivalente y la placa de 1,7 mm ya están incluidas. El escenario de 2,6 mm incorpora aproximadamente la contribución de 0,1 mm Al equivalente de la etiqueta de ejemplo del limitador. Es necesario confirmar el limitador instalado y la calidad de referencia de esas equivalencias \citep{mrcservice,azurion22}. No se añade nuevamente el total equivalente de un filtro a sus espesores materiales.
+
+Los perfiles \codigo{equipo_mrc200_conjunto_investigacion.json} y \codigo{equipo_mrc200_conjunto_colimador_investigacion.json} seleccionan estas tablas. La existencia del dataset no activa su uso en cualquier JSON: la configuración efectiva debe apuntar a él y declarar Al y ángulo coherentes. Se conservan los modelos históricos y el ajuste condicionado previo para comparación; no se reemplazan automáticamente las configuraciones del usuario.
+
+\textbf{Particularización documental no equivale a caracterización completa de la instalación.} Las tablas incorporan datos propios del tipo de tubo, pero no acreditan una filtración efectiva medida, orientación ánodo--cátodo, perfil talón, calibración del indicador ni registro anatómico de la sala. Los datos documentales permiten eliminar supuestos incorrectos y estudiar sensibilidad; no demuestran por sí solos mayor exactitud clínica. Los escenarios nominales no sustituyen automáticamente un ajuste basado en medidas compatibles.
+
+\section{Parámetros del generador y significado del espectro}
+La función \codigo{generate_spectrum} crea un modelo con blanco W, kVp solicitado, ángulo de ánodo y anchura de bin. Para el MRC 200 0407 se utiliza $11^\circ$ y $\Delta E=\num{0.5}$ keV. El valor de $12^\circ$ corresponde exclusivamente a una configuración histórica de comparación y no caracteriza este tubo. Se aplica filtración de Al total y Cu mediante las herramientas de SpekPy. El espectro se obtiene como fluencia diferencial en energía, no como kerma por bin.
+
+La forma general del efecto de filtros homogéneos sobre el primario puede expresarse, de manera ilustrativa, como
+\begin{equation}
+\Phi_Q(E)=\Phi_0(E;V,\alpha,W)\exp[-\mu_{\mathrm{Al}}(E)a-\mu_{\mathrm{Cu}}(E)c],
+\end{equation}
+con unidades de espesor compatibles con los coeficientes. El generador implementa su propio modelo y bases; esta expresión explica la dependencia energética y no pretende sustituir sus cálculos internos. No se modelan en esta fase cuñas espaciales, mesa ni colchoneta.
+
+La normalización absoluta de fluencia no es necesaria para el cociente que define $C$. Multiplicar todo el espectro por una constante positiva cancela numerador y denominador. El kerma absoluto de la contribución procede de $\Ka$, con su calibración, en la ecuación del motor. Se evita así sustituir el indicador real por una salida absoluta no caracterizada del generador.
+
+Cada espectro conserva kVp, Al, Cu, ángulo, versión de SpekPy, modelo físico, paso energético, HVL1, HVL2 y una huella del arreglo de energías, fluencias y coeficientes. El modelo registrado en los archivos es \codigo{spekpy-v2-casim}. El acceso a los coeficientes de absorción de energía del aire utiliza un recurso interno de la versión fijada, por lo que futuras actualizaciones requieren comprobar esa interfaz.
+
+\section{Discretización de la integral}
+Para centros de bin $E_i$, fluencia diferencial $\Phi_i$, coeficiente $\muen{\mathrm{aire},i}$ y anchura $\Delta E_i$, se construyen
+\begin{equation}\label{eq:weights}
+w_i=E_i\Phi_i\muen{\mathrm{aire},i}\Delta E_i,
+\qquad \widehat w_i=\frac{w_i}{\sum_j w_j}.
+\end{equation}
+Las constantes de conversión de energía y masa se cancelan en estos cocientes si se emplea una única convención coherente. La presencia de $\Delta E_i$ es necesaria para una fluencia diferencial. Si el generador entregase una cantidad ya integrada por bin, volver a multiplicar por su anchura sería un error.
+
+La implementación comprueba vectores unidimensionales compatibles, energía positiva y estrictamente creciente, fluencia no negativa, coeficientes y anchuras positivos y datos finitos. Rechaza una suma nula de pesos de kerma de colisión. Estas verificaciones protegen la operación matemática; no garantizan que el espectro represente al equipo.
+
+Se calcula primero el producto $C(E_j,s_k)=B(E_j,s_k)f(E_j,s_k)$ en los nodos originales de la tabla monoenergética. Después se interpola ese producto en energía y lado para evaluar los bins del espectro. El factor combinado y la retrodispersión promediada resultan
+\begin{equation}
+C(Q,s)\simeq\sum_i\widehat w_i C(E_i,s),\qquad
+B(Q,s)\simeq\sum_i\widehat w_i B(E_i,s).
+\end{equation}
+\begin{figure}[htbp]\centering\input{figuras/espectral}
+\caption{Construcción del dataset espectral. El promedio se aplica al producto monoenergético y mantiene una procedencia distinta de las filas clínicas publicadas.}\end{figure}
+
+\section{Por qué se almacena un factor efectivo}
+El motor espera dos columnas multiplicativas, \codigo{k_bs} y \codigo{k_f}. Para conservar la interfaz sin alterar el factor combinado se define
+\begin{equation}\label{eq:feff}
+f_{\mathrm{eff}}(Q,s)=\frac{C(Q,s)}{B(Q,s)}.
+\end{equation}
+Por construcción, $Bf_{\mathrm{eff}}=C$ en cada nodo generado. Este factor efectivo es una descomposición de la corrección conjunta. No debe describirse como la ecuación 12 ni como un nuevo cociente clínico publicado por Benmakhlouf.
+
+Las columnas siguen siendo positivas y compatibles con el producto del motor, pero su interpretación debe acompañar al dataset. Una futura interfaz que admitiese $C$ como magnitud primaria reduciría la ambigüedad de nombres y permitiría controlar de forma directa su interpolación.
+
+Los datasets actuales con metadato \codigo{interpolation_quantity=combined_C} interpolan el producto $C$ directamente, evitando la discrepancia de interpolar $B$ y $f_{\mathrm{eff}}$ por separado. El conjunto MRC 200 0407 declara esa política. Los resultados de interpolación separada del primer dataset se conservan únicamente como análisis de una versión anterior y no describen el proveedor actual.
+
+\section{Dominio energético y truncamiento explícito}
+La base impresa cubre 5--150 keV. No se asignan factores inventados a energías inferiores a 5 keV ni superiores a 150 keV. El código calcula la fracción de kerma en los bins exteriores,
+\begin{equation}
+\varepsilon_{\mathrm{ext}}=\frac{\sum_{i\notin[5,150]}w_i}{\sum_iw_i}.
+\end{equation}
+La tolerancia explícita de trabajo es $10^{-4}$, equivalente a \num{0.01}\,\% del kerma. Si se supera, se rechaza el espectro. Si se admite la fracción, se integra sobre los bins retenidos y se renormaliza, registrando la exclusión. El API permite tolerancia cero para exigir cobertura completa.
+
+Esta política es una aproximación controlada por kerma excluido, no una demostración de error acotado de $C$ en las energías ausentes: sin conocer su respuesta no puede establecerse una cota universal del sesgo del factor. En los 78 espectros del dataset actual, la fracción máxima registrada es aproximadamente $6{,}09\times10^{-81}$, despreciable numéricamente en las condiciones generadas.
+
+Incluir 46 kVp es posible porque su espectro se integra con nodos monoenergéticos dentro del dominio permitido. No se extrapola la tabla clínica desde 50 kVp. Esta distinción es una de las ventajas de la vía espectral, aunque sigue dependiendo de la fidelidad del generador para esa calidad.
+
+\section{Diseño de la tabla calculada}
+La malla utiliza 13 tensiones: 46, 50, 60, 70, 80, 90, 100, 110, 120, 125, 130, 140 y 150 kVp. Se combinan dos familias de Al total, \num{3.1} y \num{4.1} mm, con tres de Cu, 0, \num{0.1} y \num{0.4} mm. Para cada una se calculan cinco lados: 5, 10, 20, 25 y 35 cm.
+\begin{equation}
+N_Q=13\times2\times3=78,\qquad
+N_{\mathrm{filas}}=N_Q\times5=390.
+\end{equation}
+No hay 390 espectros independientes: el mismo espectro de cada calidad se combina con cinco respuestas de campo. Esta separación reduce trabajo y clarifica la procedencia de los factores.
+
+\begin{table}[htbp]\centering\small
+\caption{Características del dataset derivado suministrado.}
+\begin{tabularx}{\textwidth}{p{49mm}Y}\toprule
+Propiedad & Valor o condición\\\midrule
+Identificador & \codigo{DERIVED-SPEKPY-BENMAKHLOUF-EQ13}\\
+Versión del dataset & 1.0\\
+Medio y formalismo & Agua; corrección combinada de superficie basada en la ecuación 13.\\
+Generador & SpekPy 2.5.4; W; modelo registrado \codigo{spekpy-v2-casim}.\\
+Parámetros no medidos & Ángulo $12^\circ$ y Al fijo hipotético \num{3.1} mm.\\
+Paso energético & \num{0.5} keV.\\
+Familias de Al total & \num{3.1} y \num{4.1} mm; selección discreta.\\
+Dominio de Cu & 0--\num{0.4} mm, con nodos 0; \num{0.1}; \num{0.4}.\\
+Lado de campo & 5--35 cm; cinco nodos.\\
+Restricciones experimentales del dataset inicial & No incorporadas; el ajuste condicionado posterior se documenta por separado.\\
+Validación clínica & Falsa en metadatos; pendiente.\\\bottomrule
+\end{tabularx}
+\end{table}
+
+El dataset se guarda en una carpeta nueva con \codigo{derived_clinical.csv} y \codigo{metadata.json}. La función de construcción rechaza un destino existente para proteger datos originales y resultados previos. La huella del CSV derivado en la copia revisada es \codigo{fb6740fd06f408c8fb0768bdb52ce7c547394214225d1f75cd6da1d07906b7d9}. El inventario conserva también las huellas de las fuentes.
+
+\section{Calidad del haz y capas hemirreductoras}
+La primera capa hemirreductora $H_1$ es el espesor adicional de Al que reduce a la mitad el kerma del haz en una geometría de medida definida. Si $K(x)$ representa kerma tras espesor $x$, se cumple $K(H_1)=K(0)/2$. La segunda capa $H_2$ es el espesor adicional para pasar de la mitad al cuarto: $K(H_1+H_2)=K(0)/4$. No debe confundirse $H_2$ con el espesor total hasta el cuarto.
+
+El coeficiente de homogeneidad se registra como $h=H_1/H_2$. Para un haz polienergético que se endurece, la segunda capa suele ser mayor. Estas magnitudes resumen información del espectro, pero un mismo $H_1$ puede corresponder a formas espectrales diferentes. El acuerdo de una única HVL es una condición de plausibilidad, no identificación unívoca del espectro.
+
+El constructor puede comparar HVL1 calculada con una lista de medidas por kVp, Al total y Cu. La tolerancia relativa por defecto es 5\,\%, un criterio configurable de trabajo, no una tolerancia normativa atribuida a la bibliografía. Una discrepancia superior detiene la generación. Las calidades sin medida quedan marcadas y no permiten declarar el conjunto completamente contrastado. HVL2 calculada se conserva para evaluación adicional manual; este constructor no ajusta parámetros para forzar acuerdo. El módulo de refinamiento posterior implementa un ajuste condicionado separado, documentado en su capítulo.
+
+\section{Espectros ilustrativos calculados}
+La figura~\ref{fig:spectra} presenta una generación reproducida para esta memoria a 80 kVp y \num{4.1} mm Al total. Se normaliza cada curva para comparar forma, no rendimiento absoluto. El endurecimiento cambia el reparto de fotones y, al ponderar por absorción energética del aire, el reparto de kerma. No deben leerse ambas distribuciones como si fueran la misma función.
+\begin{figure}[p]\centering
+\input{figuras/espectros_grafico}
+\caption{Espectros modelados y densidades relativas de kerma a 80 kVp, Al total de \num{4.1} mm y ángulo de $12^\circ$. Curvas calculadas con SpekPy 2.5.4 y representadas mediante PGFPlots/TikZ. Cada curva tiene integral unitaria; no son espectros medidos del Azurion.}\label{fig:spectra}
+\end{figure}
+
+
+\begin{figure}[htbp]\centering\input{figuras/kernel_integracion}
+\caption{Visualización de la ecuación 13 con un espectro conservado de SpekPy y los productos nodales de Benmakhlouf. La suma usa bins de 0,5 keV e interpolación del producto; las áreas representan normalización de kerma y factor combinado, sin rendimiento absoluto.}\label{fig:kernel_integracion}\end{figure}
+
+\section{Comprobación de referencia antes de ampliar}
+Se reproducen cuatro condiciones clínicas impresas para comprobar consistencia de generación e integración. La comparación utiliza el producto de los factores clínicos como referencia y comunica por separado diferencias de $C$, $B$ y HVL1. Como intervienen otro generador y otra vía de promedio, el residuo no debe interpretarse exclusivamente como error del integrador.
+
+Cuatro casos no cubren toda la tabla. La comprobación es necesaria como ensayo inicial y debe ampliarse a todas las filas, con análisis por kVp, filtración y campo. Tampoco demuestra que los parámetros empleados en esas condiciones reproduzcan un Azurion específico: son haces de referencia para verificar la implementación del método.
+\FloatBarrier

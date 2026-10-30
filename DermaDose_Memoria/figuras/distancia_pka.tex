@@ -1,0 +1,12 @@
+\begin{tikzpicture}[font=\small,x=1cm,y=1cm]
+\node[punto,label=left:{Foco}]at(0,1){};
+\fill[azul!7](0,1)--(9,3.4)--(9,-1.4)--cycle;
+\draw[azul](0,1)--(9,3.4)(0,1)--(9,-1.4);
+\draw[turquesa,line width=3pt](4,-.067)--(4,2.067);
+\draw[ocre,line width=3pt](8,-1.133)--(8,3.133);
+\draw[cota](0,-1.9)--(4,-1.9)node[midway,fill=white]{$r$};
+\draw[cota](0,-2.5)--(8,-2.5)node[midway,fill=white]{$2r$};
+\node[proceso,text width=3cm,anchor=west]at(9.6,2.2){A distancia $r$:\\área $A$; kerma $K$.};
+\node[aviso,text width=3cm,anchor=west]at(9.6,-.3){A distancia $2r$:\\área $4A$; kerma $K/4$.};
+\node[panel,text width=12.6cm,anchor=north west]at(0,-3.2){\textbf{En aire, sin pérdidas y con el mismo haz:}\quad $P_{KA}\simeq K A=(K/4)(4A)$.\\El kerma puntual cambia con distancia; el producto kerma--área se conserva aproximadamente bajo estas hipótesis. No es una integral de dosis sobre la piel.};
+\end{tikzpicture}

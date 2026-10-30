@@ -1,0 +1,192 @@
+\chapter{Magnitudes y modelo físico de cálculo}
+\section{Definición de magnitudes, coeficientes y convención espectral}
+Se adopta el marco de magnitudes y unidades del ICRU Report 60 \citep{icru60}, distinguiendo las definiciones de los supuestos del cálculo. El ICRU Report 85a sustituye a aquel informe e introduce precisiones; se incorpora como referencia actualizada \citep{icru85a}. Las definiciones siguientes se expresan mediante paráfrasis y relaciones matemáticas, no como citas literales.
+
+\paragraph{Kerma y dosis absorbida.}
+El kerma es la energía cinética inicial transferida por partículas no cargadas a partículas cargadas liberadas en un elemento de material, dividida por su masa:
+\begin{equation}
+K=\frac{\mathrm d\overline{E}_{\mathrm{tr}}}{\mathrm dm}.
+\end{equation}
+La energía transferida incluye la que posteriormente se disipa por colisiones y la que se pierde por procesos radiativos. Se distingue
+\begin{equation}
+K=K_{\mathrm{col}}+K_{\mathrm{rad}}.
+\end{equation}
+El kerma de colisión retiene la contribución destinada a pérdidas por colisión de las partículas cargadas. La dosis absorbida, en cambio, se define por la energía media impartida al material por unidad de masa:
+\begin{equation}
+D=\frac{\mathrm d\overline{\varepsilon}}{\mathrm dm}.
+\end{equation}
+La transferencia y la impartición no son el mismo proceso: las partículas secundarias pueden transportar energía entre regiones. La igualdad $D=K_{\mathrm{col}}$ requiere condiciones de equilibrio de partículas cargadas compatibles con la región de evaluación; no se impone automáticamente en una interfaz superficial. El modelo de DermaDose no resuelve transporte electrónico ni una profundidad específica en tejido.
+
+\paragraph{Coeficientes másicos y espectro.}
+Para fotones monoenergéticos de energía $E$ y fluencia energética $\Psi$, se definen los coeficientes operativos mediante
+\begin{equation}
+K_m=\Psi\left(\frac{\mu_{\mathrm{tr}}}{\rho}\right)_m,
+\qquad K_{\mathrm{col},m}=\Psi\muen{m}.
+\end{equation}
+El coeficiente másico de transferencia de energía cuantifica la transferencia inicial a partículas cargadas por unidad de fluencia energética. El de absorción de energía descuenta la fracción radiativa $g$ correspondiente al frenado de esas partículas:
+\begin{equation}
+\left(\frac{\mu_{\mathrm{en}}}{\rho}\right)_m(E)
+=[1-g_m(E)]\left(\frac{\mu_{\mathrm{tr}}}{\rho}\right)_m(E).
+\end{equation}
+Ambos tienen unidad SI m$^2$ kg$^{-1}$. El coeficiente de atenuación total $\mu/\rho$ describe la retirada de fotones del haz primario, incluida la dispersión, y no sustituye a ninguno de los anteriores \citep{nist}.
+
+Se denota por $\Phi(E)=\mathrm d\Phi/\mathrm dE$ la fluencia diferencial de fotones y por $\Psi(E)=E\Phi(E)$ la fluencia energética diferencial. Para un espectro:
+\begin{align}
+K_m &= \int E\Phi(E)\left(\frac{\mu_{\mathrm{tr}}}{\rho}\right)_m(E)\,\mathrm dE,\\
+K_{\mathrm{col},m} &= \int E\Phi(E)\muen{m}(E)\,\mathrm dE.
+\end{align}
+Por tanto, las integraciones de DermaDose con $\muen{\mathrm{aire}}$ se denominan explícitamente ponderaciones por \emph{kerma de colisión en aire}. No se identifica formalmente esa integral con el kerma total. Cuando se reproduce la notación abreviada de una fuente, se conserva esta distinción \citep{benreport,nist}.
+
+\paragraph{Unidades y normalización.}
+Kerma y dosis se expresan en Gy, con $1\,\mathrm{Gy}=1\,\mathrm{J\,kg^{-1}}$; compartir unidad no implica identidad de magnitud. Si $E$ se expresa en J y $\Phi(E)$ en m$^{-2}$ J$^{-1}$, las integrales anteriores proporcionan J kg$^{-1}$. Para datos tabulados, $1\,\mathrm{cm^2\,g^{-1}}=0{,}1\,\mathrm{m^2\,kg^{-1}}$ y $1\,\mathrm{keV}=1{,}602176634\times10^{-16}\,\mathrm J$.
+
+En los promedios espectrales se emplean energías en keV, la fluencia diferencial del generador y coeficientes compatibles. Se construyen pesos relativos $w_i=E_i\Phi_i(\mu_{\mathrm{en}}/\rho)_{\mathrm{aire},i}\Delta E_i$ y se normalizan mediante $\widehat w_i=w_i/\sum_jw_j$. Los factores constantes de conversión se cancelan en el cociente; esta cancelación no autoriza a interpretar una suma sin conversiones como kerma absoluto en Gy. La normalización absoluta de cada evento procede del indicador del RDSR, no de una salida absoluta de SpekPy sin calibrar.
+
+\section{Indicadores de exposición y unidades internas}
+El dato principal es $\Ka$, kerma en aire en el punto de referencia intervencionista. Se interpreta como indicador incidente sin retrodispersión, con la convención del equipo y su corrección de calibración.
+
+El producto kerma-área $P_{KA}$ puede escribirse como $\int_A K_a(\vect x)\,\mathrm dA$. Para un campo uniforme vale aproximadamente $K_a A$. Su unidad interna es Gy m$^2$, con $1\,\mathrm{Gy\,cm^2}=10^{-4}\,\mathrm{Gy\,m^2}$. No es la integral de dosis sobre la piel: esta última incluye orientación, primera entrada, mesa y retrodispersión, además de referirse a otra superficie.
+
+Las posiciones se expresan en mm, ángulos en grados, áreas de elementos en mm$^2$ y dosis en Gy. La conversión a cm$^2$ divide entre 100 y la representación en mGy multiplica por 1000. El parser conserva valor y unidad de origen para permitir auditoría. Una lectura numérica sin unidad identificada se rechaza.
+
+\section{Traslado del kerma por distancia}
+Para una fuente puntual en $\vect s_e$, un elemento superficial representado por $\vect p$ y distancia de referencia $d_{r,e}$, la corrección es
+\begin{equation}\label{eq:inverse}
+K_{a,e}(\vect p)=K_{\mathrm{a},r,e}\left[\frac{d_{r,e}}{r_e(\vect p)}\right]^2,
+\qquad r_e(\vect p)=\|\vect p-\vect s_e\|.
+\end{equation}
+Se supone propagación rectilínea y no se representa explícitamente la atenuación en aire ni la penumbra de foco finito. El cociente es adimensional. La distancia foco--punto varía a lo largo del cuerpo, incluso en una única proyección.
+
+Manteniendo fijos los demás términos, $\delta D/D\simeq-2\delta r/r$. A una distancia de 600 mm, una perturbación de 5 mm equivale aproximadamente a \num{1.67}\,\% por ese término. Es una sensibilidad analítica local, no una incertidumbre medida del registro. Si la perturbación desplaza un borde de campo, puede cambiar la máscara de forma discontinua y dejar de ser válida la linealización.
+
+
+
+\begin{figure}[htbp]\centering\input{figuras/distancia_pka}
+\caption{Divergencia e inverso del cuadrado para un campo uniforme ideal. El esquema explica la diferencia entre kerma puntual y producto kerma--área; no incluye atenuación ni dispersión.}\label{fig:distancia_pka}\end{figure}
+
+\section{Ecuación operativa por evento}
+La expresión aplicada por el motor puede escribirse como
+\begin{equation}\label{eq:dose}
+D_e(\vect p)=M_e(\vect p)\,K_{\mathrm{a},r,e}
+\left[\frac{d_{r,e}}{r_e(\vect p)}\right]^2
+CF_e\,P_e(\vect p)\,T_e(\vect p)\,C_e(\vect p).
+\end{equation}
+La máscara $M_e$ selecciona primera entrada; $CF_e$ corrige el indicador; $P_e$ representa un perfil relativo; $T_e$ es transmisión de mesa y $C_e=B_e f_e$ representa la conversión dosimétrica superficial. En la tabla derivada, $C_e=B_e f_{\mathrm{eff},e}$, con una definición explícita de $f_{\mathrm{eff}}$.
+
+Todos los términos salvo $\Ka$ son adimensionales. Sus factores requieren compatibilidad de normalización, plano de referencia y calidad del haz. 
+
+\begin{table}[htbp]\centering\small
+\caption{Etapas de cálculo y significado de su salida.}
+\begin{tabularx}{\textwidth}{p{32mm}YY}\toprule
+Etapa & Términos añadidos & Interpretación\\\midrule
+\codigo{free_air} & $M_e$ y distancia. & Traslado geométrico del indicador de kerma, sin correcciones de equipo ni superficie.\\
+\codigo{calibrated_air} & $CF$, perfil y mesa. & Estimación de kerma incidente corregido bajo la definición de esos factores.\\
+\codigo{skin_dose} & $Bf$ o $C$. & Estimación superficial en el medio declarado, agua en el proveedor estudiado.\\\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Identificación inequívoca de las salidas}
+La magnitud se nombra según la etapa y el medio, no únicamente por su unidad. En esta memoria se utiliza \emph{máximo de kerma en aire trasladado} para \codigo{free_air}, \emph{máximo de kerma incidente corregido} para \codigo{calibrated_air} y \emph{máximo de dosis superficial modelada en agua} para \codigo{skin_dose} con el proveedor de agua. Ninguno de los dos primeros se denomina PSD en tejido.
+
+La interfaz existente conserva el campo heredado \codigo{psd_point_gy}; esta edición documental no modifica el programa ni sus archivos de resultados. Al utilizar ese campo se deben comprobar conjuntamente \codigo{stage}, \codigo{quantity}, el medio declarado y el proveedor. No se presupone que el nombre heredado sea una definición física. La nomenclatura explícita recomendada para una futura actualización de la interfaz es:
+\begin{itemize}[leftmargin=*]
+\item \codigo{max_air_kerma_gy}: máximo de kerma en aire de la etapa indicada; distinguir traslado y corrección mediante \codigo{stage}.
+\item \codigo{max_modeled_surface_dose_gy}: máximo superficial modelado, acompañado del medio y de las aproximaciones del proveedor.
+\end{itemize}
+Estos nombres son una propuesta de contrato de salida, no claves nuevas ya implementadas. Los informes y tablas de esta memoria emplean las denominaciones físicas anteriores; una salida en agua no se presenta como dosis absorbida en tejido a una profundidad clínica concreta sin justificación adicional.
+
+
+
+\begin{figure}[htbp]\centering\input{figuras/ecuacion}
+\caption{Contribución física de los siete términos de la ecuación operativa. El producto determina la dosis de un evento en un elemento; la suma acumula eventos en ese mismo lugar. Los pictogramas son esquemas didácticos, no simulaciones de transporte.}\label{fig:ecuacion}\end{figure}
+
+\FloatBarrier
+\subsection{Interpretación dosimétrica formal de los factores}
+\label{sec:factores-formal}
+La Figura~\ref{fig:ecuacion} proporciona una lectura cualitativa. Formalmente, la Ecuación~\eqref{eq:dose} aproxima la dosis superficial mediante una factorización del kerma incidente y de la respuesta del medio. Para un elemento $i$, situado en $\vect p_i$, conviene distinguir
+\begin{align}
+K^{\mathrm{inc}}_{a,e,i}&=K_{\mathrm a,r,e}\,CF_e
+\left(\frac{d_{r,e}}{r_{e,i}}\right)^2P_{e,i}T_{e,i},\label{eq:kerma-local-formal}\\
+D_{w,e,i}&\simeq M_{e,i}\,K^{\mathrm{inc}}_{a,e,i}\,C_{e,i}.
+\label{eq:dosis-local-formal}
+\end{align}
+Aquí $K^{\mathrm{inc}}_a$ designa el kerma en aire del haz incidente en la localización superficial, excluyendo la retrodispersión del paciente; $D_w$ designa la magnitud superficial referida al agua bajo las condiciones del proveedor. Esta separación es conceptual: no implica que el programa resuelva el espectro incidente ni el transporte secundario para cada cara. La factorización requiere definiciones compatibles de referencia, campo, calidad y medio~\citep{aapm2021,benreport}.
+
+\paragraph{Indicador y calibración: $K_{\mathrm a,r,e}$ y $CF_e$.}
+El indicador del evento establece la normalización absoluta en Gy en un punto de referencia del sistema, no en la piel. Una definición operativa de la corrección de calibración es
+\begin{equation}
+CF_e=\frac{K^{\mathrm{ref}}_{a,r,e}}{K^{\mathrm{ind}}_{a,r,e}},
+\qquad K^{\mathrm{ind}}_{a,r,e}=K_{\mathrm a,r,e}.
+\end{equation}
+Numerador y denominador deben corresponder a la misma irradiación y a una referencia compatible. La corrección puede depender de calidad del haz y modo de adquisición. Por ello, $CF=1$ puede ser una hipótesis de demostración y no evidencia de calibración exacta.
+
+\paragraph{Selección espacial: $M_{e,i}$.}
+La máscara binaria representa la pertenencia del elemento al campo primario y su condición de primera intersección del rayo con la superficie. En el modelo idealizado,
+\begin{equation}
+M_{e,i}=\mathbf 1_{\{\text{dentro del campo}\}}(i)\,
+\mathbf 1_{\{\text{primera entrada}\}}(i).
+\end{equation}
+No es una probabilidad de interacción. Su valor nulo excluye la contribución de ese evento en la formulación implementada. Con una muestra en el centroide, una cara parcialmente incluida se clasifica mediante ese punto, lo que introduce dependencia de la discretización.
+
+\paragraph{Divergencia geométrica: $(d_{r,e}/r_{e,i})^2$.}
+La ley del inverso del cuadrado procede de la dilución de fluencia en propagación desde una fuente puntual, manteniendo el ángulo sólido y la calidad del haz. El cociente compara la distancia fuente--referencia con la distancia euclídea fuente--elemento. No debe sustituirse esta última por la profundidad axial o por la distancia fuente--isocentro. La ley utilizada no incluye atenuación en aire, tamaño focal finito ni dispersión. Tampoco se añade un coseno de incidencia al kerma puntual: la oblicuidad modifica la huella y las áreas geométricas, y una dependencia dosimétrica angular adicional requiere un modelo específico.
+
+\paragraph{No uniformidad transversal: $P_{e,i}$.}
+El perfil expresa una relación de kerma respecto a una posición de normalización. Puede definirse, a una distancia de caracterización común $d_0$, como
+\begin{equation}
+P_e(u,v)=\frac{K^{\mathrm{libre}}_{a,e}(u,v;d_0)}
+{K^{\mathrm{libre}}_{a,e}(0,0;d_0)},
+\qquad P_e(0,0)=1,
+\end{equation}
+cuando el eje central sea la referencia adoptada. La asignación al elemento se realiza mediante sus coordenadas transversales proyectadas. Esta definición separa perfil y distancia para evitar aplicar dos veces la divergencia. Un perfil escalar de amplitud no describe por sí solo la variación espacial del espectro, aunque reproduzca parte de la no uniformidad de kerma.
+
+\paragraph{Transmisión del soporte: $T_{e,i}$.}
+La transmisión relevante para esta factorización es una razón de kerma incidente, con y sin el conjunto mesa/colchón caracterizado, en condiciones geométricas compatibles:
+\begin{equation}
+T_{e,i}=\frac{K^{\mathrm{con\ soporte}}_{a,e,i}}
+{K^{\mathrm{sin\ soporte}}_{a,e,i}}.
+\end{equation}
+Se aplica solo cuando el soporte intersecta el trayecto anterior a la entrada. Para un modelo puramente atenuador se espera $0<T\leq1$; si no hay cruce, $T=1$. La transmisión efectiva depende de calidad y ángulo, y su definición experimental debe especificar la contribución dispersa aceptada. La aproximación escalar del motor reduce amplitud sin actualizar la calidad usada en el factor superficial: ese acoplamiento espectral permanece fuera de esta operación.
+
+\paragraph{Respuesta superficial del agua: $C_{e,i}$.}
+En la ecuación 13 de la fuente, el factor combinado convierte kerma en aire libre en kerma en agua en la superficie del fantoma. Interpretarlo como dosis absorbida requiere las aproximaciones de equilibrio electrónico y pérdidas radiativas despreciables del formalismo. No define una profundidad cutánea clínica ni resuelve el desequilibrio en una interfaz arbitraria. En la construcción espectral del proyecto se conserva el formalismo de Benmakhlouf~\citep{benreport}:
+\begin{equation}
+C(Q,s)=\frac{\int k_a(E;Q)\,B(E,s)f(E,s)\,\mathrm dE}
+{\int k_a(E;Q)\,\mathrm dE},
+\qquad k_a(E;Q)\propto E\Phi(E;Q)\muen{a}(E).
+\end{equation}
+$k_a$ es la densidad espectral de kerma empleada con la convención del informe; $B$ y $f$ mantienen sus definiciones monoenergéticas de la fuente. El factor usado es adimensional y depende tanto del espectro como del tamaño de campo. Se define $f_{\mathrm{eff}}(Q,s)=C(Q,s)/B(Q,s)$ para conservar la interfaz multiplicativa; no es, en general, el promedio independiente de $f(E,s)$ ni un cociente evaluado a una energía media. La aplicación local de factores centrales de un fantoma de agua a una anatomía curva es una aproximación del modelo, no una simulación de retrodispersión anatómica.
+
+\paragraph{Acumulación y alcance de la respuesta.}
+La dosis acumulada se obtiene por superposición de contribuciones sobre el mismo elemento material representado: $D_{w,i}=\sum_eD_{w,e,i}$. La suma presupone una correspondencia anatómica válida entre eventos. Traslaciones de mesa conocidas no describen por sí solas movimientos o deformaciones del paciente respecto a ella. La magnitud resultante sigue siendo una estimación superficial en el medio declarado, sin una profundidad cutánea asignada ni una distribución de dosis de salida. Las contribuciones multiplicativas no son incertidumbres independientes: una misma calidad del haz puede afectar simultáneamente a $CF$, $P$, $T$ y $C$.
+
+\section{Calibración, perfil y mesa}
+El factor $CF$ debe relacionar el indicador con una referencia de kerma en la misma geometría y sin incorporar correcciones que el motor aplicará después. Puede depender de modo y calidad. Los valores $CF=1$ de demostración no evidencian calibración perfecta: expresan ausencia de una corrección medida.
+
+El perfil $P$ permite modificar la distribución transversal. Su normalización debe ser consistente con el punto donde se define $\Ka$. Una función relativa cuyo valor central no corresponde a esa normalización puede cambiar toda la escala de dosis. El efecto talón no aparece automáticamente por usar un ánodo de tungsteno en los factores centrales; requiere una representación espacial o espectral fuera del eje.
+
+La transmisión se aplica únicamente si el segmento foco--superficie cruza la mesa antes del punto de entrada. El código admite una transmisión total o el producto de una parte normal y otra angular, evitando la coexistencia de ambas parametrizaciones. La configuración de investigación emplea $T=\num{0.8}$ para los rayos que cruzan la mesa y corrección angular unidad. Son valores sintéticos.
+
+Aplicar una transmisión escalar reduce amplitud, pero no endurece el espectro usado para $C$. En el equipo real la mesa puede cambiar ambas cosas. Una futura implementación coherente debería usar el espectro transmitido para los factores correspondientes o un factor efectivo medido con la misma definición, sin duplicar la atenuación.
+
+
+
+\begin{figure}[htbp]\centering\input{figuras/mesa}
+\caption{La transmisión depende del trayecto antes de la primera entrada. Se distingue el factor escalar implementado de una futura respuesta que incluya endurecimiento; sin espesores ni transmisión medidos en el dibujo.}\label{fig:mesa}\end{figure}
+
+\section{Retrodispersión y lo que queda fuera del campo}
+La retrodispersión eleva la respuesta superficial respecto al haz incidente en las condiciones del fantoma. El factor tabulado representa una respuesta central para una geometría concreta, no un campo disperso resuelto espacialmente. El motor conserva exactamente cero fuera de la máscara primaria para cada evento.
+
+Por ello, un mapa con borde neto no demuestra que la dispersión física sea nula fuera del campo. Tampoco incluye dosis de salida ni contribuciones de órganos internos. Estas exclusiones son propiedades de la formulación actual, no defectos gráficos que se resuelvan suavizando colores o aumentando triángulos.
+
+\Needspace{12cm}
+\section{Acumulación y máximo}
+Las contribuciones se suman sobre elementos homólogos de la misma superficie:
+\begin{equation}
+D(\vect p_i)=\sum_e D_e(\vect p_i),\qquad
+\mathrm{PSD}_{\mathrm{puntual}}=\max_i D(\vect p_i).
+\end{equation}
+En general, $\max_i\sum_eD_e(\vect p_i)\neq\sum_e\max_iD_e(\vect p_i)$. La segunda expresión puede sobreestimar el máximo acumulado cuando los campos se sitúan en regiones diferentes.
+\begin{figure}[H]\centering\input{figuras/superposicion}
+\caption{Acumulación espacial y superposición. Esquema TikZ, sin valores dosimétricos ni anatomía clínica.}\end{figure}
+\FloatBarrier

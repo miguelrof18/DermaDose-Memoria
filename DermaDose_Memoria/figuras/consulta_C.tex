@@ -1,0 +1,6 @@
+\begin{tikzpicture}[font=\small,x=1cm,y=1cm]
+\node[panel,text width=13cm,anchor=north west]at(0,4.6){\textbf{Consulta interior, con pesos multilineales $\lambda_j$}\\La malla y la política de consulta forman parte de los metadatos del dataset.};
+\node[proceso,text width=6cm,anchor=north west]at(0,2.7){\textbf{Política combinada del perfil refinado}\\$C=\sum_j\lambda_j B_j f_j$\\$B=\sum_j\lambda_jB_j$\\Devolver $f_{\rm eff}=C/B$ para el motor.};
+\node[panel,text width=6cm,anchor=north west]at(7.4,2.7){\textbf{Política separada del dataset anterior}\\$B=\sum_j\lambda_jB_j$\\$f=\sum_j\lambda_jf_j$\\El motor usa $C=Bf$.};
+\node[aviso,text width=13cm,anchor=north west]at(0,-.1){\textbf{Coinciden en los nodos; pueden diferir entre nodos}\\Interpolar $C$ conserva el combinado nodal, pero no equivale a regenerar el espectro en una calidad intermedia. Se necesita contraste interior independiente.};
+\end{tikzpicture}

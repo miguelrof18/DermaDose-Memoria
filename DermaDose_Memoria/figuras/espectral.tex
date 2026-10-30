@@ -1,0 +1,11 @@
+\begin{tikzpicture}[font=\small,node distance=8mm and 10mm]
+\node[panel,text width=6cm](a){\textbf{Fuente espectral}\\$Q$: kVp, W, ángulo, Al y Cu\\SpekPy $\longrightarrow\Phi_Q(E_i)$};
+\node[panel,text width=6cm,right=of a](b){\textbf{Respuesta publicada}\\Tabla monoenergética de Benmakhlouf\\$B(E_j,s)$ y $f(E_j,s)$};
+\node[proceso,text width=6cm,below=of a](w){\textbf{Pesar por kerma en aire}\\$w_i=E_i\Phi_Q(E_i)(\mu_{\rm en}/\rho)_{\rm aire}(E_i)\Delta E_i$};
+\node[proceso,text width=6cm,below=of b](c){\textbf{Formar producto en nodos}\\$C_j=B_jf_j$; interpolar $C_j$\\a las energías y lado solicitados};
+\draw[flujo](a)--(w);\draw[flujo](b)--(c);
+\node[aviso,text width=13cm,below=11mm of $(w.south)!.5!(c.south)$](lim){\textbf{Controlar cobertura antes del promedio}\\Energías 5--150 keV; lado 5--35 cm. Registrar kerma excluido y rechazar si supera tolerancia.};
+\draw[flujo](w.south)--++(0,-4mm)-|(lim.north west);\draw[flujo](c.south)--++(0,-4mm)-|(lim.north east);
+\node[proceso,text width=13cm,below=of lim](out){\textbf{Integrar y guardar un dataset calculado independiente}\\$C(Q,s)=\sum_iw_iC(E_i,s)/\sum_iw_i$; $B(Q,s)=\sum_iw_iB(E_i,s)/\sum_iw_i$\\Compatibilidad del motor: $f_{\rm eff}=C/B$; conservar parámetros, versiones y procedencia.};
+\draw[flujo](lim)--(out);
+\end{tikzpicture}

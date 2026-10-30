@@ -1,0 +1,9 @@
+\begin{tikzpicture}[font=\small,node distance=7mm]
+\node[panel,text width=13cm](a){\textbf{Leer el contenedor de filtración del evento RDSR}};
+\node[proceso,text width=13cm,below=of a](b){\textbf{Declaración explícita ``No filter''}\\Ausencia de filtro añadido en ese contenedor; conservar la filtración fija del perfil.};
+\node[proceso,text width=13cm,below=of b](c){\textbf{Material y espesor presentes}\\Sumar capas de Al con Al y Cu con Cu; mantener ambos materiales separados.};
+\node[aviso,text width=13cm,below=of c](d){\textbf{Datos ausentes, insuficientes o contradictorios}\\Ausente $\neq$ cero. No inventar espesor; producir estado desconocido o error controlado.};
+\draw[flujo](a.west)--++(-4mm,0)|-(b.west);
+\draw[flujo](a.east)--++(4mm,0)|-(c.east);
+\draw[flujo,ocre](a.west)--++(-8mm,0)|-(d.west);
+\end{tikzpicture}

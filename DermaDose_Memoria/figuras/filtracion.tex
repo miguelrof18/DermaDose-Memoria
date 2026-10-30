@@ -1,0 +1,15 @@
+\begin{tikzpicture}[font=\small,x=1cm,y=1cm]
+\node[punto,label=above:{Foco W}]at(.5,1.2){};
+\fill[azul!8](.5,1.2)--(13.5,2.1)--(13.5,.3)--cycle;
+\draw[rayo](.5,1.2)--(13.5,1.2);
+\fill[azul!35](3,.1)rectangle(3.4,2.3);
+\fill[gray!35](6.4,.1)rectangle(6.8,2.3);
+\fill[ocre!55](9.2,.1)rectangle(9.6,2.3);
+\node[rotulo,align=center]at(3.2,3){Al fijo efectivo\\$a_{\rm fijo}$};
+\node[rotulo,align=center]at(6.6,3){Al añadido\\$a_e$};
+\node[rotulo,align=center]at(9.4,3){Cu añadido\\$c_e$};
+\node[nota,align=center]at(3.2,-.5){Hipótesis del perfil\\histórico: $3{,}1$ mm};
+\node[nota,align=center]at(6.6,-.5){Desde el evento\\$0$ o $1$ mm};
+\node[nota,align=center]at(9.4,-.5){Desde el evento\\$0$; $0{,}1$; $0{,}4$ mm};
+\node[proceso,text width=12.6cm,anchor=north west]at(.2,-1.4){\textbf{Espectro del evento:} $Q=(\mathrm{kVp},\mathrm W,\theta,a_{\rm fijo}+a_e,c_e)$.\\``No filter'' significa ausencia declarada de filtro añadido; no elimina los componentes fijos del tubo.};
+\end{tikzpicture}

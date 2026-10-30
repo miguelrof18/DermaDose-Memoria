@@ -1,0 +1,64 @@
+\chapter{Fundamento teórico ampliado y atlas conceptual}
+\section{Del espectro incidente a la respuesta superficial}
+Un espectro no queda determinado por su energía media. Dos distribuciones con igual media pueden producir distinto kerma porque el coeficiente de absorción energética del aire varía con la energía. A su vez, dos distribuciones con igual kerma pueden presentar respuestas superficiales distintas si ponderan de otra manera la función $C(E,s)$. Por ello la integral espectral conserva información que se perdería al sustituir el haz por una única energía.
+
+\begin{figure}[H]\centering
+\input{figuras/ponderacion}
+\caption{Cuatro niveles de ponderación. Cada paso cambia la magnitud descrita; una curva de fotones no es una distribución de kerma.}
+\end{figure}
+La normalización del espectro desaparece en el cociente, pero su forma permanece. Esta propiedad permite obtener factores relativos desde SpekPy y mantener la escala absoluta del procedimiento en el indicador de kerma y su calibración. No permite deducir una calibración absoluta del equipo a partir del buen comportamiento de un cociente.
+
+\section{Origen de la retrodispersión y aproximación local}
+El haz primario deposita energía y genera fotones dispersos con otras direcciones y energías. Parte de esos fotones retorna hacia la entrada. La respuesta superficial depende por ello del volumen irradiado y de los materiales, además de la calidad primaria. El campo de dispersión es espacial: el factor central tabulado condensa una parte de esa información bajo condiciones concretas.
+\begin{figure}[H]\centering
+\input{figuras/retrodispersion}
+\caption{Retrodispersión esquemática. Las flechas ilustran direcciones posibles, sin representar trayectorias simuladas ni probabilidades de interacción.}
+\end{figure}
+En una superficie curva, aplicar la respuesta de agua plana en cada centroide constituye una aproximación local. Cerca del borde del campo falta parte del volumen que produciría dispersión hacia el punto central de referencia. Aumentar la resolución de la malla no modifica esta limitación: mejora el muestreo de la misma función aproximada.
+
+\section{Kerma y dosis: condiciones de identificación}
+El kerma describe transferencia inicial de energía a partículas cargadas; la dosis describe energía impartida en la región considerada. La energía puede cruzar el límite de esa región transportada por electrones secundarios. El equilibrio de partículas cargadas requiere un balance adecuado entre energía que entra y sale, y no debe imponerse automáticamente sobre una interfaz.
+\begin{figure}[H]\centering
+\input{figuras/kerma_dosis}
+\caption{Distinción conceptual entre transferencia y depósito. El dibujo no establece un alcance electrónico ni una profundidad de piel.}
+\end{figure}
+La equivalencia aproximada entre dosis y kerma de colisión necesita condiciones físicas y un volumen de evaluación compatibles. La salida superficial de agua del prototipo debe compararse con una referencia que conserve estas definiciones. Cambiar su etiqueta a piel no añade composición tisular ni resuelve transporte electrónico.
+
+\section{La no conmutatividad de los promedios}
+Para pesos normalizados, la identidad
+\begin{equation}
+\langle Bf\rangle_w=\langle B\rangle_w\langle f\rangle_w+
+\operatorname{Cov}_w(B,f)
+\end{equation}
+explica por qué multiplicar promedios no reproduce en general el promedio del producto. La covarianza no representa aquí incertidumbre experimental: es una propiedad algebraica de dos funciones de energía bajo un mismo peso espectral. Si los pesos de los promedios son diferentes, esa identidad ya no basta para relacionarlos.
+\begin{figure}[H]\centering
+\input{figuras/promedios}
+\caption{Orden de operaciones del cálculo derivado. Alterar el orden de producto, interpolación y promedio define otro procedimiento entre nodos.}
+\end{figure}
+De manera análoga, interpolar $B$ y $f_{\rm eff}$ por separado no equivale exactamente a interpolar su producto. La discrepancia se estudia numéricamente en esta memoria y motiva la política de interpolación directa de $C$ incorporada en el perfil refinado (capítulo siguiente). Una separación de columnas útil para compatibilidad no debe ocultar la dependencia entre ellas.
+
+\section{Atenuación polienergética y capa hemirreductora}
+Para un filtro de espesor $x$ en geometría estrecha, el kerma relativo se representa idealmente mediante
+\begin{equation}
+R(x)=\frac{\int w(E)e^{-\mu(E)x}dE}{\int w(E)dE}.
+\end{equation}
+La suma de exponenciales de pendientes distintas no es en general una exponencial única. Al filtrar se eliminan preferentemente componentes de menor energía; cambia la pendiente efectiva de la curva y suele aumentar el espesor adicional necesario para pasar de la mitad al cuarto.
+\begin{figure}[H]\centering
+\input{figuras/hvl}
+\caption{Atenuación conceptual: dos curvas con la misma primera HVL pueden tener distinta segunda HVL. La segunda es un espesor adicional. Espesores y coeficientes ilustrativos, sin datos del Azurion.}
+\end{figure}
+La HVL resume esta curva en puntos específicos. Dos curvas pueden cruzar el nivel de la mitad en el mismo espesor y diferir después. Medir también la segunda HVL y otras calidades ayuda a discriminar modelos, pero no garantiza una reconstrucción espectral única. El ajuste debe incorporar restricciones físicas y validación con observaciones reservadas.
+
+\section{Tres errores distintos en una superficie triangular}
+La discretización de la forma aproxima el contorno real mediante planos. El muestreo del campo asigna un valor representativo a cada cara. El registro coloca el contorno en el marco del equipo. Estos tres mecanismos pueden producir mapas distintos aun usando exactamente los mismos factores espectrales.
+\begin{figure}[H]\centering
+\input{figuras/discretizacion}
+\caption{Error de forma y error de muestreo son distintos. Dividir una cara plana mejora el muestreo, pero no recupera la curva anatómica original.}
+\end{figure}
+La simplificación puede modificar forma y distancias; la subdivisión mantiene el poliedro y cambia el muestreo. Un error de registro desplaza toda la anatomía y altera superposición. Por ello las pruebas de convergencia deben medir máximo, posición y áreas, mientras que el registro requiere referencias geométricas externas.
+
+\section{Síntesis de las dependencias físicas}
+El resultado absoluto está condicionado por cuatro relaciones: el indicador con la referencia de kerma; la referencia con la superficie por geometría; el haz con su respuesta superficial; y el contorno representado con la posición real. La caracterización espectral fortalece la tercera relación, pero no sustituye las otras.
+
+La prioridad experimental es medir parámetros que permitan discriminar hipótesis, no solo obtener un mapa visualmente convincente. El acuerdo de HVL controla parte de la calidad; la calibración controla escala; la transmisión controla trayectos; y los marcadores controlan registro. La validación conjunta debe realizarse después de identificar y contrastar esas relaciones por separado.
+\FloatBarrier

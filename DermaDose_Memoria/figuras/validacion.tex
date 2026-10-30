@@ -1,0 +1,7 @@
+\begin{tikzpicture}[font=\small]
+\foreach \y/\n/\titre/\txt in {0/1/{Verificación del cálculo}/{Unidades, ecuaciones, máscaras e interpolación.},-1.7/2/{Caracterización del modelo de equipo}/{Calidad espectral, escala de kerma, transmisión y coordenadas.},-3.4/3/{Comparación independiente en fantoma}/{Dosis y distribución espacial en condiciones definidas.},-5.1/4/{Evaluación para el uso previsto}/{Casos representativos, incertidumbre y cambios de versión.}}{
+\node[circle,draw=turquesa,fill=turquesa!10,minimum size=9mm,font=\bfseries,text=turquesa]at(0,\y){\n};
+\node[panel,text width=12cm,anchor=west]at(.9,\y){\textbf{\titre}\\\txt};}
+\foreach \y in {0,-1.7,-3.4}\draw[flujo,turquesa](0,\y-.55)--(0,\y-1.15);
+\node[nota,text width=13cm,anchor=north west]at(-.4,-6.1){Programa de evaluación propuesto. Superar una etapa no acredita automáticamente la siguiente.};
+\end{tikzpicture}

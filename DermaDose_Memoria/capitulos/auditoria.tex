@@ -1,0 +1,33 @@
+\chapter{Revisión crítica y correcciones}
+\label{chap:auditoria}
+\section{Alcance de la evidencia}
+La revisión del 29 de octubre de 2026 contrasta la copia disponible del código Python, las rutinas VTK del módulo de Slicer, las tablas y la memoria. Se distinguen errores reproducidos y límites físicos pendientes. No constituye certificación exhaustiva ni validación clínica: faltan recursos originales de fantoma y no se ha ejecutado la interfaz completa dentro de 3D Slicer o en Windows.
+
+La ecuación 13 se contrastó con el informe de Benmakhlouf aportado y la semántica de filtración con DICOM \citep{benreport,dicomfilters}. La disponibilidad de una tabla calculada no demuestra que el espectro real esté caracterizado. El ajuste de un parámetro efectivo a HVL puede no ser identificable si se desconoce la filtración añadida.
+
+\section{Errores confirmados y correcciones}
+\begin{enumerate}
+\item \textbf{Sustituciones de modelo.} El ejecutable podía reemplazar geometría ante un equipo diferente y sustituir todos los factores por valores sintéticos al salir del dominio publicado. Ahora ambas vías requieren booleanos explícitos independientes, falsos por defecto. Permanecen prohibidas para el perfil Azurion. No se mezclan factores de distinta procedencia por evento.
+\item \textbf{Filtración.} La media de espesores mínimo y máximo no determina un espectro transmitido. Se rechazan intervalos no uniformes; se conservan materiales y la distinción entre filtro ausente y dato desconocido. Una etiqueta sintética ya no permite eludir el rechazo de Al añadido.
+\item \textbf{Interpolación.} El generador de datasets pasa a versión 1.1 y declara \codigo{interpolation_quantity=combined_C}. Interpola el producto nodal y conserva $f_{\mathrm{eff}}=C/B$. Las tablas históricas no se reescriben; sus políticas permanecen identificadas. El cambio afecta a nuevas tablas y consultas interiores.
+\item \textbf{API Python.} Las comprobaciones del perfil Azurion se aplican en el motor, también en llamadas directas. La referencia de mesa de investigación se prepara sobre una copia de configuración, sin mutar la del llamante.
+\item \textbf{Máximo promediado.} La búsqueda sobre mallas solo consideraba centros con dosis positiva. Una región de máximo promedio puede estar centrada en una zona nula. Se incluyen todos los centros: dosis $(10,0,10)$ con áreas $(33,34,33)$ mm$^2$ recuperan una media de 6,6 Gy. La vecindad por adyacencia sigue siendo una aproximación discreta. Una elipse sin muestreo longitudinal suficiente ya no devuelve esa métrica.
+\item \textbf{Incertidumbre.} Se rechazan incertidumbres RDSR negativas o no finitas y referencias comerciales no finitas. La combinación cuadrática de máximos de componentes declara su hipótesis de covarianza nula: no constituye propagación de incertidumbre de PSD.
+\item \textbf{Empaquetado y procedencia.} La distribución instalable incluye los CSV y metadatos del conjunto espectral ampliado. Se elimina la afirmación genérica que identificaba cualquier malla como fantoma de referencia no específico.
+\end{enumerate}
+
+\section{Comprobaciones ejecutadas}
+La batería disponible produjo \textbf{119 pruebas superadas y 7 fallos}. Los fallos necesitan recursos originales ausentes: \codigo{xcat_wholebody_body.stl}, \codigo{pyskindose_adult_female.stl} y configuraciones asociadas. No se sustituyeron por anatomías inventadas ni se declararon superados. Las pruebas VTK independientes sí se ejecutaron; no verifican toda la interfaz de Slicer.
+
+De 13 casos nuevos, 12 fallan contra la copia anterior y los 13 pasan contra la revisada. Las pruebas antiguas de sustitución se actualizaron para exigir autorización explícita. El caso de filtros homogéneos se separó del caso de intervalo no uniforme.
+
+Se regeneraron 260 espectros: 78 históricos y 182 del conjunto condicionado. Un contraste con interpolación de SciPy de los productos nodales y suma explícita ponderada por kerma reprodujo los 1300 factores combinados almacenados. La máxima diferencia relativa fue menor que $10^{-15}$ y las HVL coincidieron a la precisión numérica disponible. El contraste comparte SpekPy y los datos monoenergéticos: demuestra reproducibilidad algebraica, no independencia física ni una comprobación integral de la transcripción bibliográfica.
+
+Se conservan las tablas originales y sus huellas. La reproducción de cuatro nodos clínicos sigue siendo una comprobación parcial; no acota globalmente el error en todas las geometrías.
+
+\section{Interpretación y límites pendientes}
+El factor combinado convierte kerma en aire libre en kerma en agua superficial. Su interpretación como dosis absorbida está condicionada al formalismo y no define dosis a 0,07 mm. El anexo corrige el significado de \codigo{thickness_mm}, que es un argumento de factores y no transporte dentro del paciente. Las inclinaciones y desplazamientos también actúan sobre mallas; el origen local precede a la colocación sobre la mesa. Se explicitan las matrices de rotación sin cambiar signos sin evidencia experimental.
+
+Siguen pendientes la identidad y configuración exactas del tubo, la calidad espectral independiente, transmisión y endurecimiento de mesa, oblicuidad y borde de campo, registro anatómico y comparación dosimétrica externa. Una superficie cerrada puede contener errores anatómicos o autointersecciones no detectadas. El refinamiento no recupera anatomía perdida por segmentación o simplificación. La primera entrada y los factores locales no sustituyen transporte de radiación.
+
+Las correcciones aumentan la trazabilidad y consistencia. No permiten afirmar que todo RDSR de Azurion sea procesable ni que un cálculo terminado esté clínicamente validado.

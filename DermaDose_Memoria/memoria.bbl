@@ -1,0 +1,201 @@
+\begin{thebibliography}{22}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Andersson et~al.(2021)Andersson, Bednarek, Bolch, et~al.]{aapm2021}
+Jonas Andersson, Daniel~R. Bednarek, Wesley Bolch, et~al.
+\newblock Estimation of patient skin dose in fluoroscopy: summary of a joint
+  report by aapm tg357 and efomp.
+\newblock \emph{Medical Physics}, 48\penalty0 (7):\penalty0 e671--e696, 2021.
+\newblock \doi{10.1002/mp.14910}.
+\newblock Texto completo aportado; recomendaciones y límites de la estimación
+  superficial.
+
+\bibitem[Malchair et~al.(2020)Malchair, Dabin, Deleu, Sans~Merce, Ciraj~Bjelac,
+  Gallagher, and Maccia]{malchair2020}
+Françoise Malchair, Jérémie Dabin, Marine Deleu, Marta Sans~Merce, Olivera
+  Ciraj~Bjelac, Aoife Gallagher, and Carlo Maccia.
+\newblock Review of skin dose calculation software in interventional
+  cardiology.
+\newblock \emph{Physica Medica}, 80:\penalty0 75--83, 2020.
+\newblock \doi{10.1016/j.ejmp.2020.09.023}.
+\newblock Revisión aportada; no se presenta esta memoria como revisión
+  sistemática.
+
+\bibitem[{ICRU}(1998)]{icru60}
+{ICRU}.
+\newblock Fundamental quantities and units for ionizing radiation, 1998.
+
+\bibitem[{ICRU}(2011)]{icru85a}
+{ICRU}.
+\newblock Fundamental quantities and units for ionizing radiation, 2011.
+\newblock Sustituye al ICRU Report 60.
+
+\bibitem[Hubbell and Seltzer()]{nist}
+J.~H. Hubbell and S.~M. Seltzer.
+\newblock Tables of x-ray mass attenuation coefficients and mass
+  energy-absorption coefficients.
+\newblock NIST.
+\newblock URL
+  \url{https://physics.nist.gov/PhysRefData/XrayMassCoef/cover.html}.
+\newblock Sección 3 y tablas; consulta 24-10-2026. En el cálculo se usa el
+  recurso NIST distribuido por SpekPy.
+
+\bibitem[Benmakhlouf et~al.(2011{\natexlab{a}})Benmakhlouf, Fransson, and
+  Andreo]{benreport}
+Hamza Benmakhlouf, Annette Fransson, and Pedro Andreo.
+\newblock Backscatter factors and mass energy-absorption coefficient ratios for
+  surface dose determination in diagnostic radiology.
+\newblock Technical Report KS-ASF-201101-IR, Karolinska University Hospital,
+  Department of Hospital Physics, 4 2011{\natexlab{a}}.
+\newblock 7 de abril. Fuente primaria aportada; secciones 3.1--3.3, ecuaciones
+  11--13 y tablas 1--3.
+
+\bibitem[{DICOM Standards Committee}()]{dicom}
+{DICOM Standards Committee}.
+\newblock Dicom ps3.3 information object definitions and ps3.16 content mapping
+  resource.
+\newblock URL
+  \url{https://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_xrayradiationdosesriodtemplates.html}.
+\newblock TID 10001, 10002, 10003, 10003B, 10003C y CID 10008 para informes de
+  dosis de rayos X; edición vigente consultada el 26-10-2026. El lector del
+  proyecto implementa un subconjunto y no es un validador DICOM completo.
+
+\bibitem[{DICOM Standards Committee}(2026)]{dicomfilters}
+{DICOM Standards Committee}.
+\newblock Ps3.17, uuuu.4.7: Encoding of x-ray filters, collimator, x-ray grid,
+  and x-ray attenuators, 2026.
+\newblock URL
+  \url{https://dicom.nema.org/medical/dicom/current/output/chtml/part17/sect_uuuu.4.7.html}.
+\newblock Consultado el 29 de octubre de 2026; apartado Traditional RDSR.
+
+\bibitem[Benmakhlouf et~al.(2011{\natexlab{b}})Benmakhlouf, Bouchard, Fransson,
+  and Andreo]{benarticle}
+Hamza Benmakhlouf, Hugo Bouchard, Annette Fransson, and Pedro Andreo.
+\newblock Backscatter factors and mass energy-absorption coefficient ratios for
+  diagnostic radiology dosimetry.
+\newblock \emph{Physics in Medicine \& Biology}, 56\penalty0 (22):\penalty0
+  7179--7204, 2011{\natexlab{b}}.
+\newblock \doi{10.1088/0031-9155/56/22/012}.
+\newblock Artículo asociado; se distingue del informe de tres autores que
+  proporciona los datos utilizados.
+
+\bibitem[{Philips}({\natexlab{a}})]{philipsifu}
+{Philips}.
+\newblock \emph{Philips Azurion Release 1.2: Instructions for Use}.
+\newblock Philips, {\natexlab{a}}.
+\newblock URL
+  \url{https://www.documents.philips.com/assets/Instruction%20for%20Use/20201222/c122581e1172411b8c0eac9900949a77.pdf}.
+\newblock Documento 4523 001 01901, sección 16.21.5, pp. impresas 355--356.
+  Consulta 24-10-2026. No se presupone identidad entre esta versión y la
+  instalación.
+
+\bibitem[{Philips}({\natexlab{b}})]{clarity}
+{Philips}.
+\newblock Clarityiq technology.
+\newblock Technical report, Philips, {\natexlab{b}}.
+\newblock URL
+  \url{https://www.philips.com/c-dam/b2bhc/master/landing-pages/queen-alexandra/philips-igt-azurion-clarityiq-whitepaper.pdf}.
+\newblock White paper; nota 41. Documento del fabricante consultado el
+  24-10-2026; no es una caracterización independiente de la instalación.
+
+\bibitem[Bujila et~al.(2020)Bujila, Omar, and Poludniowski]{spek2020}
+Robert Bujila, Artur Omar, and Gavin Poludniowski.
+\newblock A validation of spekpy: A software toolkit for modelling x-ray tube
+  spectra.
+\newblock \emph{Physica Medica}, 75:\penalty0 44--54, 2020.
+\newblock \doi{10.1016/j.ejmp.2020.04.026}.
+\newblock URL \url{https://pubmed.ncbi.nlm.nih.gov/32512239/}.
+\newblock Metadatos y resumen primario consultados el 24-10-2026.
+
+\bibitem[Poludniowski et~al.(2021)Poludniowski, Omar, Bujila, and
+  Andreo]{spek2021}
+Gavin Poludniowski, Artur Omar, Robert Bujila, and Pedro Andreo.
+\newblock Technical note: Spekpy v2.0---a software toolkit for modeling x-ray
+  tube spectra.
+\newblock \emph{Medical Physics}, 48\penalty0 (7):\penalty0 3630--3637, 2021.
+\newblock \doi{10.1002/mp.14945}.
+\newblock URL \url{https://pubmed.ncbi.nlm.nih.gov/33993511/}.
+\newblock Consulta de publicación primaria y metadatos el 24-10-2026; la
+  versión ejecutada en el proyecto es 2.5.4.
+
+\bibitem[{Philips}(2011)]{mrcservice}
+{Philips}.
+\newblock \emph{MRC 200 0407 ROT-GS1004 Service Information}, 2011.
+\newblock URL \url{https://www.scribd.com/document/896599296/Tube}.
+\newblock 4512-988-00132 REV AC, abril; sección 4.4 y dibujos Z-1 y Z-2. Copia
+  pública consultada 30-10-2026.
+
+\bibitem[{Philips}(2021)]{azurion22}
+{Philips}.
+\newblock \emph{Azurion Release 2.2 Instructions for Use}, 2021.
+\newblock URL
+  \url{https://www.documents.philips.com/assets/Instruction%20for%20Use/20210730/853843a4c24546639f5aad7500d34a2a.pdf}.
+\newblock 4523 001 01511; filtros p.403 y etiquetas p.416.
+
+\bibitem[{Proyecto DermaDose}(2026)]{memoria2026}
+{Proyecto DermaDose}.
+\newblock Memoria del calculador de dosis en piel: memoria técnica y
+  científica del prototipo skindose-verifier 0.5.3.
+\newblock Technical report, Documentación interna aportada, 2026.
+\newblock 28 de septiembre de 2026. Archivo
+  Memoria\_Calculador\_Dosis\_Piel.pdf. Resultados históricos atribuidos, no
+  repetidos íntegramente en esta edición.
+
+\bibitem[{JCGM}(2008)]{jcgm101}
+{JCGM}.
+\newblock Evaluation of measurement data---supplement 1 to the guide to the
+  expression of uncertainty in measurement: Propagation of distributions using
+  a monte carlo method.
+\newblock Technical Report JCGM 101:2008, BIPM, 2008.
+\newblock Marco para propagación; no implica conformidad certificada de la
+  implementación.
+
+\bibitem[Dabin et~al.(2020)Dabin, Deleu, Feghali, Gallagher, Maccia, Malchair,
+  and Sans~Merce]{veridic2020}
+Jérémie Dabin, Marine Deleu, Joëlle~Ann Feghali, Aoife Gallagher, Carlo
+  Maccia, Françoise Malchair, and Marta Sans~Merce.
+\newblock Acceptance and quality control protocols for skin dose calculating
+  software solutions in interventional cardiology.
+\newblock Technical Report D9.143; SCK CEN/37888447 Rev. 1.0, EJP-CONCERT,
+  VERIDIC, 2020.
+\newblock Informe aportado, versión 1, 47 páginas.
+
+\bibitem[Gañán~Mora et~al.(2024)Gañán~Mora, Sánchez~Casanueva, and
+  Fernández~Soto]{ganan2024}
+Antonio Gañán~Mora, Roberto~M. Sánchez~Casanueva, and José~Miguel
+  Fernández~Soto.
+\newblock Metodología para la validación de programas de cálculo de dosis en
+  piel.
+\newblock \emph{Revista de Física Médica}, 25\penalty0 (2):\penalty0 25--34,
+  2024.
+\newblock \doi{10.37004/sefm/2024.25.2.002}.
+\newblock Texto completo aportado.
+
+\bibitem[Rana et~al.(2012)Rana, Rudin, and Bednarek]{rana2012}
+Vijay Rana, Stephen Rudin, and Daniel~R. Bednarek.
+\newblock Use of a graphics processing unit (gpu) to facilitate real-time 3d
+  graphic presentation of the patient skin-dose distribution.
+\newblock In \emph{Proceedings of SPIE}, volume 8313, page 831343, 2012.
+\newblock \doi{10.1117/12.911344}.
+\newblock Manuscrito aportado.
+
+\bibitem[Takata et~al.(2018)Takata, Kotoku, Maejima, et~al.]{takata2018}
+Takeshi Takata, Jun'ichi Kotoku, Hideyuki Maejima, et~al.
+\newblock Fast skin dose estimation system for interventional radiology.
+\newblock \emph{Journal of Radiation Research}, 59\penalty0 (2):\penalty0
+  233--239, 2018.
+\newblock \doi{10.1093/jrr/rrx062}.
+\newblock Texto completo aportado.
+
+\bibitem[{Philips}({\natexlab{c}})]{product0407}
+{Philips}.
+\newblock \emph{Product Data: Azurion 7 C20 with FlexArm}, {\natexlab{c}}.
+\newblock Documento aportado, sección 3.2: MRC 200+ GS 0407 y ángulo 11
+  grados. Documento de producto de C20; su correspondencia completa con M20 no
+  se presupone. Revisión 26-10-2026.
+
+\end{thebibliography}

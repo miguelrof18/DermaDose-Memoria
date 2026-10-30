@@ -1,0 +1,15 @@
+\begin{tikzpicture}[x=1cm,y=1cm,font=\small]
+\foreach \x/\titre in {0/{Evento 1},5.2/{Evento 2},10.4/{Suma espacial}}{
+\node[rotulo,anchor=west]at(\x,3.1){\titre};
+\draw[azul!65,rounded corners=5pt,fill=gris](\x,0)rectangle++(4.4,2.6);}
+\fill[turquesa!50](.4,.4)rectangle(2.6,2.2);
+\fill[ocre!50](6.8,.4)rectangle(9.2,2.2);
+\fill[turquesa!50](10.8,.4)rectangle(13,2.2);
+\fill[ocre!50](12,.4)rectangle(14.4,2.2);
+\fill[azul!80](12,.4)rectangle(13,2.2);
+\node at(1.5,1.3){$2$};\node at(8,1.3){$3$};
+\node at(11.4,1.3){$2$};\node[text=white]at(12.5,1.3){$5$};\node at(13.7,1.3){$3$};
+\node[font=\Large,text=azul]at(4.8,1.3){$+$};\node[font=\Large,text=azul]at(10,1.3){$=$};
+\node[proceso,text width=14cm,anchor=north west]at(0,-.5){\textbf{Primero se suman las contribuciones en cada elemento; después se busca el máximo.}\\En este ejemplo, $\max(D_1+D_2)=5$. Si las huellas no se solapan, el máximo es $3$, aunque $\max D_1+\max D_2=5$.};
+\node[nota,anchor=north west]at(0,-2.65){Valores adimensionales inventados para docencia; superficie desplegada y campos uniformes.};
+\end{tikzpicture}

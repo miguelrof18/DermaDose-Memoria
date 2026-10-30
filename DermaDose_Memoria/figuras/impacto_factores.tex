@@ -1,0 +1,6 @@
+\begin{tikzpicture}
+\begin{axis}[dermaplot,height=6.2cm,xlabel={Tensión nominal (kVp)},ylabel={Cambio de $C$ (\%)},xmin=45,xmax=130,ymin=0,ymax=3.3,xtick={50,60,80,100,125}]
+\addplot[turquesa,mark=*,thick]coordinates{(50,2.6432)(60,2.8138)(80,2.7555)(100,2.4453)(125,1.9823)};
+\node[nota,anchor=south west]at(axis cs:51,.3){Lado: 10 cm; Cu añadido: 0.\\Comparación con perfil histórico $12^\circ$, $3{,}1$ mm Al.};
+\end{axis}
+\end{tikzpicture}

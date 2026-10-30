@@ -1,0 +1,14 @@
+\begin{tikzpicture}[font=\small,node distance=9mm and 7mm]
+\node[panel,text width=4cm](r){\textbf{1 · RDSR}\\Eventos, unidades, exposición y geometría};
+\node[panel,text width=4cm,right=of r](j){\textbf{2 · Configuración JSON}\\Equipo, convenciones y políticas físicas};
+\node[panel,text width=4cm,right=of j](m){\textbf{3 · Superficie}\\STL, unidades, ejes y transformación};
+\node[proceso,text width=8cm,below=12mm of j](n){\textbf{Normalización y aplicabilidad}\\Conservar datos originales; rechazar contradicciones y entradas inválidas.};
+\draw[flujo](r.south)--++(0,-4mm)-|(n.north west);
+\draw[flujo](j)--(n);\draw[flujo](m.south)--++(0,-4mm)-|(n.north east);
+\node[proceso,text width=5.9cm,anchor=north west] (g) at ($(r.south west)+(0,-3.6)$){\textbf{Geometría por evento}\\Campo, primera entrada, distancia y cruce de mesa};
+\node[proceso,text width=5.9cm,anchor=north east] (q) at ($(m.south east)+(0,-3.6)$){\textbf{Factores por evento y elemento}\\Calidad $Q$, campo local y dominio tabulado};
+\draw[flujo](n.south)--++(0,-4mm)-|(g.north);\draw[flujo](n.south)--++(0,-4mm)-|(q.north);\draw[flujo](g.east)--(q.west)node[midway,above,font=\footnotesize]{$A_\perp$};
+\node[proceso,text width=9cm,below=12mm of $(g.south)!.5!(q.south)$](d){\textbf{Contribuciones $D_{e,i}$ y suma $D_i=\sum_eD_{e,i}$}\\Métricas por área · archivos numéricos · visor};
+\draw[flujo](g.south)--++(0,-4mm)-|(d.north west);\draw[flujo](q.south)--++(0,-4mm)-|(d.north east);
+\node[nota,text width=13.5cm,below=7mm of d]{La auditoría conserva origen, hipótesis, nodos consultados y advertencias. El visor representa el mapa calculado; no modifica sus valores.};
+\end{tikzpicture}

@@ -1,0 +1,15 @@
+\begin{tikzpicture}
+\begin{axis}[dermaplot,name=mono,height=6.2cm,title={A · Retrodispersión en aire},xlabel={Energía incidente monoenergética (keV)},ylabel={$B(E,s)$},xmin=5,xmax=150,legend style={at={(.98,.98)},anchor=north east}]
+\addplot[azul,solid,mark=*,mark size=.8pt]table[x=energy_kev,y=B,col sep=comma]{datos/mono_s5.csv};
+\addlegendentry{$s=5$ cm}
+\addplot[turquesa,dashed,mark=*,mark size=.8pt]table[x=energy_kev,y=B,col sep=comma]{datos/mono_s20.csv};
+\addlegendentry{$s=20$ cm}
+\addplot[ocre,dash dot,mark=*,mark size=.8pt]table[x=energy_kev,y=B,col sep=comma]{datos/mono_s35.csv};
+\addlegendentry{$s=35$ cm}
+\end{axis}
+\begin{axis}[dermaplot,at={(mono.below south west)},anchor=north west,yshift=-1.25cm,height=6.2cm,title={B · Corrección combinada superficial},xlabel={Energía incidente monoenergética (keV)},ylabel={$C(E,s)$},xmin=5,xmax=150,legend style={at={(.98,.98)},anchor=north east}]
+\addplot[azul,solid,mark=*,mark size=.8pt]table[x=energy_kev,y=C,col sep=comma]{datos/mono_s5.csv};
+\addplot[turquesa,dashed,mark=*,mark size=.8pt]table[x=energy_kev,y=C,col sep=comma]{datos/mono_s20.csv};
+\addplot[ocre,dash dot,mark=*,mark size=.8pt]table[x=energy_kev,y=C,col sep=comma]{datos/mono_s35.csv};
+\end{axis}
+\end{tikzpicture}

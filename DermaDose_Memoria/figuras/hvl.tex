@@ -1,0 +1,14 @@
+\begin{tikzpicture}
+\begin{axis}[dermaplot,height=7cm,xlabel={Espesor adimensional $x$},ylabel={$K(x)/K(0)$},xmin=0,xmax=4,ymin=0,ymax=1.02,legend style={at={(.98,.98)},anchor=north east},xtick={0,1,2.63030,4},xticklabels={0,$H_1=1$,$H_1+H_2$,4}]
+\addplot[azul,domain=0:4,samples=101]{exp(-ln(2)*x)};\addlegendentry{Una energía (ilustrativa)}
+\addplot[turquesa,dashed,domain=0:4,samples=101]{.5*exp(-1.4*x)+.5*exp(-0.283154953923*x)};\addlegendentry{Dos componentes (ilustrativas)}
+\draw[gray,densely dotted](axis cs:0,.5)--(axis cs:4,.5);
+\draw[gray,densely dotted](axis cs:0,.25)--(axis cs:4,.25);
+\draw[ocre,dashed](axis cs:1,0)--(axis cs:1,.5);
+\draw[ocre,dashed](axis cs:2.63030,0)--(axis cs:2.63030,.25);
+\draw[cota](axis cs:0,.12)--(axis cs:1,.12)node[midway,fill=white,font=\footnotesize]{$H_1$};
+\draw[cota](axis cs:1,.12)--(axis cs:2.63030,.12)node[midway,fill=white,font=\footnotesize]{$H_2$};
+\node[font=\footnotesize,anchor=south west]at(axis cs:2.8,.5){Mitad};
+\node[font=\footnotesize,anchor=south west]at(axis cs:2.8,.25){Cuarto};
+\end{axis}
+\end{tikzpicture}

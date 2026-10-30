@@ -1,0 +1,12 @@
+\begin{tikzpicture}[font=\small,x=1cm,y=1cm]
+\node[rotulo,anchor=west]at(0,3.3){A · Plano normal al eje};
+\draw[azul,fill=turquesa!15](0,0)rectangle(4.2,2.6);
+\draw[cota](0,-.35)--(4.2,-.35)node[midway,fill=white]{$a$};
+\draw[cota](-.35,0)--(-.35,2.6)node[midway,left]{$b$};
+\node at(2.1,1.3){$A_\perp=ab$};
+\node[rotulo,anchor=west]at(7,3.3){B · Superficie oblicua plana};
+\fill[ocre!15](7,0)--(12.8,1)--(12.8,3)--(7,2)--cycle;
+\draw[ocre,thick](7,0)--(12.8,1)--(12.8,3)--(7,2)--cycle;
+\node[align=center]at(9.8,1.5){Huella idealizada\\$A_{\rm huella}=A_\perp/|\cos\alpha|$};
+\node[proceso,text width=13cm,anchor=north west]at(0,-1){\textbf{Argumento de la tabla:} $s=\sqrt{A_\perp}$ en la política de igual área.\\La huella oblicua y el área de triángulos irradiados son magnitudes distintas. El motor no aplica por este motivo una corrección dosimétrica $1/\cos\alpha$.};
+\end{tikzpicture}

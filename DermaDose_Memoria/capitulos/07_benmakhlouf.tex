@@ -1,0 +1,90 @@
+\chapter{Factores de Benmakhlouf: definición y uso}
+\section{Fuente de los datos y geometría original}
+La fuente directa del dataset es el informe KS-ASF-201101-IR de Benmakhlouf, Fransson y Andreo, de 7 de abril de 2011 \citep{benreport}. Se distingue del artículo de revista asociado, que incluye un autor adicional \citep{benarticle}. Los valores del programa deben atribuirse a la tabla concreta del informe, no a una referencia genérica sin localización.
+
+Los autores calcularon respuestas monoenergéticas con PENELOPE 2008 y PenEasy. La sección de métodos describe una base de 44 energías entre 4 y 150 keV; la tabla 1 imprime 30 nodos de 5 a 150 keV en incrementos de 5 keV. DermaDose conserva esos 30 nodos publicados y no reconstruye los valores no impresos.
+
+La geometría utiliza entrada plana de agua, espesor de 15 cm, distancia foco--superficie de 100 cm y campos cuadrados de lados 5, 10, 20, 25 y 35 cm. La fluencia se evalúa en una región central de $1\times1\times\num{0.01}$ cm$^3$. El transporte electrónico detallado se desactiva para estos cálculos de kerma, suponiendo depósito local; el corte de transporte fotónico se fija en 1 keV. Son condiciones del cálculo original, no parámetros ejecutados por el motor de malla.
+
+Las especificaciones laterales discordantes del informe se conservan en los metadatos. Para una reproducción independiente habría que aclarar la geometría efectivamente utilizada para los campos mayores. No se debe inferir una resolución de esa discrepancia a partir de que el CSV sea legible.
+
+\section{Factor de retrodispersión en aire}
+Se denota por $\Phi^{\mathrm{prim}}_Q(E)$ el espectro incidente y por $\Phi^{\mathrm{sup}}_{Q,s}(E)$ el total superficial, que incorpora primarios y retrodispersados. El factor utilizado por el formalismo es
+\begin{equation}\label{eq:bs}
+B(Q,s)=\frac{\int E\Phi^{\mathrm{sup}}_{Q,s}(E)\muen{\mathrm{aire}}(E)\,\mathrm dE}
+{\int E\Phi^{\mathrm{prim}}_Q(E)\muen{\mathrm{aire}}(E)\,\mathrm dE}.
+\end{equation}
+El numerador corresponde al kerma evaluado en aire en la superficie del fantoma de agua. La palabra ``aire'' identifica la magnitud y su coeficiente, no la ausencia de fantoma en el numerador. El denominador es el haz primario libre en aire en el mismo plano.
+
+El factor depende de calidad y campo, así como de las condiciones del fantoma. El informe proporciona una respuesta central. Aplicarlo uniformemente a cada punto local de una anatomía curva no reproduce de manera explícita la reducción de dispersión cerca de un borde ni la respuesta de materiales internos distintos.
+
+\section{Conversión superficial agua--aire}
+La conversión de medio correspondiente al espectro superficial puede escribirse como
+\begin{equation}\label{eq:ratio}
+f(Q,s)=\frac{\int E\Phi^{\mathrm{sup}}_{Q,s}(E)\muen{\mathrm{agua}}(E)\,\mathrm dE}
+{\int E\Phi^{\mathrm{sup}}_{Q,s}(E)\muen{\mathrm{aire}}(E)\,\mathrm dE}.
+\end{equation}
+No es simplemente el cociente de coeficientes en una energía media. Para un haz incidente monoenergético de energía $E_0$, la radiación retrodispersada contiene otras energías; por eso el valor publicado $f(E_0,s)$ conserva una dependencia con el campo.
+
+El producto $Bf$ convierte el kerma primario en aire a una magnitud superficial de agua bajo las hipótesis del informe. La transferencia a ``piel'' debe mantener esa referencia material. El programa exige aceptar explícitamente la aproximación de fantoma de agua y declarar la base de kerma incidente para reducir el riesgo de doble conteo.
+
+
+La figura~\ref{fig:monoenergeticos} permite distinguir la respuesta monoenergética del espectro clínico: la energía del eje identifica el haz primario de cada cálculo original. No representa las energías de todos los fotones que retornan a la superficie.
+\begin{figure}[p]\centering\input{figuras/monoenergeticos}
+\caption{Factores monoenergéticos de tres campos: $B$ tabulado y producto nodal $C=Bf$. Datos de la tabla 1 del informe de Benmakhlouf, conservados en los CSV del proyecto. Los puntos son nodos publicados; los segmentos guían la lectura. No son factores medidos del Azurion.}\label{fig:monoenergeticos}\end{figure}
+
+\section{Tres integraciones que no deben confundirse}
+La ecuación 11 del informe promedia $B(E,s)$ con pesos de kerma primario en aire:
+\begin{equation}\label{eq:meanB}
+B(Q,s)=\frac{\int K_a(E;Q)B(E,s)\,\mathrm dE}{\int K_a(E;Q)\,\mathrm dE},
+\qquad K_a(E;Q)\propto E\Phi_Q(E)\muen{\mathrm{aire}}(E).
+\end{equation}
+Su ecuación 12 prescribe para el cociente tabulado un promedio con fluencia energética del primario,
+\begin{equation}\label{eq:eq12}
+f_{\mathrm{ec.12}}(Q,s)=\frac{\int E\Phi_Q(E) f(E,s)\,\mathrm dE}{\int E\Phi_Q(E)\,\mathrm dE},
+\end{equation}
+donde $f(E,s)$ ya incorpora la respuesta superficial obtenida para cada irradiación monoenergética. Debe respetarse esa definición al discutir la construcción de las filas clínicas originales.
+
+Para una corrección combinada, el informe ofrece la ecuación 13:
+\begin{equation}\label{eq:eq13}
+C(Q,s)=\frac{\int K_a(E;Q)C(E,s)\,\mathrm dE}{\int K_a(E;Q)\,\mathrm dE},
+\qquad C(E,s)=B(E,s)f(E,s).
+\end{equation}
+La ampliación espectral del proyecto implementa esta última vía. No calcula un promedio independiente de $B$ y otro de $f$ para multiplicarlos posteriormente como sustitución de la ecuación~\eqref{eq:eq13}.
+
+En general, para pesos comunes $w$, $\langle Bf\rangle_w\neq\langle B\rangle_w\langle f\rangle_w$; su diferencia es una covarianza ponderada. Además, la ecuación~\eqref{eq:eq12} utiliza pesos distintos. Por ello no debe exigirse identidad exacta entre la nueva corrección combinada y el producto de dos factores clínicos redondeados obtenidos por el otro procedimiento.
+
+\section{Tablas clínicas publicadas y su dominio}
+Las filas clínicas del informe se obtuvieron mediante espectros de tungsteno generados con SpekCalc. Cubren kVp de 50 a 150 y las cinco dimensiones de campo. Se organizan por familias discretas de Al de \num{2.5}, \num{3.1}, \num{4.1} y \num{5.1} mm, con dominios de Cu distintos.
+\begin{table}[htbp]\centering
+\caption{Nodos de cobre añadido del dataset clínico original para cada familia de Al.}
+\begin{tabular}{ll}\toprule
+Al de la familia (mm) & Cu añadido (mm)\\\midrule
+\num{2.5} & 0; \num{0.3}; \num{0.9}\\
+\num{3.1} & 0; \num{0.1}; \num{0.2}; \num{0.3}; \num{0.6}; \num{0.9}\\
+\num{4.1} & 0; \num{0.1}; \num{0.2}\\
+\num{5.1} & 0\\\bottomrule
+\end{tabular}
+\fuente{CSV clínico del proyecto, contrastado con tabla 3 del informe. Un intervalo permite interpolación únicamente dentro de la familia elegida.}
+\end{table}
+La familia de \num{4.1} mm Al no permite \num{0.4} mm Cu, aunque exista una fila con mayor Cu en otra familia. No se debe trasladar la consulta a otra fila de aluminio sin justificar el espectro. Tampoco es correcto reemplazar Cu por un espesor de Al equivalente fijo para todas las energías.
+
+
+
+\begin{figure}[htbp]\centering\input{figuras/dominio}
+\caption{Dominio de Cu dentro de familias discretas de Al del dataset clínico original. Círculos: nodos publicados; segmentos: interpolación admitida en Cu con el resto de ejes compatibles. No se interpola entre familias de Al.}\label{fig:dominio}\end{figure}
+
+\section{Interpolación y conservación de procedencia}
+Las tablas completas se interpolan de forma multilineal y se rechazan consultas exteriores. En un eje, $F(x)=(1-\lambda)F_0+\lambda F_1$, con $\lambda=(x-x_0)/(x_1-x_0)$. En varios ejes se combinan los pesos de las esquinas. Un nodo exacto conserva el valor original.
+
+El proveedor clínico interpola $B$ y $f$ por separado en kVp, Cu y lado; no interpola entre familias de Al. La base monoenergética interpola energía y lado dentro de sus límites. La generación de $C(E,s)$ introduce una decisión específica: primero calcula el producto en los nodos impresos y luego interpola ese producto. Multiplicar dos interpolantes sería un procedimiento distinto entre nodos.
+
+Se comprueban número de filas, ausencia de duplicados, positividad, finitud, malla cartesiana completa y SHA-256. El informe de consulta conserva filas fuente y estado de interpolación. Las cifras anómalas o advertencias del origen se propagan como metadatos; no se corrigen silenciosamente para embellecer la tabla. En concreto, la transcripción conserva valores impresos del descriptor $h$ mayores que uno en 24 calidades de la familia Al de 3,1 mm y kVp de 120--150. Se marcan como observación de fuente y ese descriptor no se utiliza en la interpolación dosimétrica. No se reinterpretan como nuevas medidas de HVL ni se usan para ajustar el espectro.
+
+\section{Agua, forma del campo y límites de transferencia}
+Para un rectángulo, la opción \codigo{equal_area} utiliza $s=\sqrt{A_\perp}$. Es una aproximación de igual área. No es equivalente a un cuadrado de Sterling $2ab/(a+b)$ ni garantiza igual retrodispersión en campos alargados. La política \codigo{square_only} rechaza esa sustitución si no se acepta explícitamente.
+
+Los límites de 5--35 cm se refieren al lado del campo normal al eje en el plano de entrada. Un cambio de profundidad local puede hacer que una consulta salga del intervalo aun cuando el campo nominal en detector sea admisible. El control debe ejercerse en la superficie realmente evaluada.
+
+El conjunto no cubre de manera independiente espesor anatómico, hueso, curvatura, incidencia oblicua o posiciones fuera del eje. Su aplicación a XCAT conserva esas aproximaciones incluso si todas las coordenadas numéricas quedan dentro de los ejes de la tabla. Estar dentro del dominio de interpolación es necesario, pero no suficiente para establecer validez física.
+\FloatBarrier
