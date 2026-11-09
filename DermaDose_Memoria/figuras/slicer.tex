@@ -7,9 +7,9 @@
 \draw[flujo](c)--(d);
 \node[aviso,text width=4cm,left=of d](e){\textbf{5 · ¿Reducción válida?}\\Cierre, conectividad, degeneración y volumen};
 \draw[flujo](d)--(e);
-\node[proceso,text width=4cm,left=of e](v){\textbf{Sí: malla reducida}\\No: conservar original válida con aviso};
+\node[proceso,text width=4cm,left=of e](v){\textbf{Sí: malla reducida}\\No: revisar el original sin exportar};
 \draw[flujo](e)--(v);
-\node[panel,text width=12.8cm,below=12mm of e](out){\textbf{6 · Revisión visual y exportación}\\STL + JSON de metadatos (RAS, mm, caras reales); lectura de comprobación antes de confirmar.};
+\node[panel,text width=12.8cm,below=12mm of e](out){\textbf{6 · Revisión visual y exportación}\\STL + JSON de metadatos (RAS, mm, caras reales, hash); lectura de comprobación antes de confirmar.};
 \draw[flujo](v.south)--++(0,-5mm)-|(out.north west);
 \node[nota,text width=13cm,below=6mm of out]{Un contorno cerrado puede estar truncado, incluir mesa o excluir una extremidad. La validez topológica no demuestra fidelidad anatómica.};
 \end{tikzpicture}
