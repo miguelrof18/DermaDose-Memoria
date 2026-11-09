@@ -1,0 +1,173 @@
+\babel@toc {spanish}{}\relax 
+\contentsline {chapter}{Resumen}{\es@scroman {i}}{chapter*.1}%
+\contentsline {chapter}{\numberline {1}Contexto científico y objetivos del proyecto}{1}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Necesidad de una estimación espacial}{1}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Familias metodológicas}{1}{section.1.2}%
+\contentsline {section}{\numberline {1.3}Justificación y pregunta del trabajo}{1}{section.1.3}%
+\contentsline {section}{\numberline {1.4}Objetivo general}{2}{section.1.4}%
+\contentsline {section}{\numberline {1.5}Objetivos específicos y resultados evaluables}{2}{section.1.5}%
+\contentsline {chapter}{\numberline {2}Magnitudes y modelo físico de cálculo}{3}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Definición de magnitudes, coeficientes y convención espectral}{3}{section.2.1}%
+\contentsline {paragraph}{Kerma y dosis absorbida.}{3}{paragraph*.5}%
+\contentsline {paragraph}{Coeficientes másicos y espectro.}{3}{paragraph*.6}%
+\contentsline {paragraph}{Unidades y normalización.}{4}{paragraph*.7}%
+\contentsline {section}{\numberline {2.2}Indicadores de exposición y unidades internas}{4}{section.2.2}%
+\contentsline {section}{\numberline {2.3}Traslado del kerma por distancia}{4}{section.2.3}%
+\contentsline {section}{\numberline {2.4}Ecuación operativa por evento}{5}{section.2.4}%
+\contentsline {subsection}{\numberline {2.4.1}Identificación inequívoca de las salidas}{5}{subsection.2.4.1}%
+\contentsline {subsection}{\numberline {2.4.2}Interpretación dosimétrica formal de los factores}{8}{subsection.2.4.2}%
+\contentsline {paragraph}{Indicador y calibración: $K_{\mathrm a,r,e}$ y $CF_e$.}{8}{paragraph*.11}%
+\contentsline {paragraph}{Selección espacial: $M_{e,i}$.}{8}{paragraph*.12}%
+\contentsline {paragraph}{Divergencia geométrica: $(d_{r,e}/r_{e,i})^2$.}{8}{paragraph*.13}%
+\contentsline {paragraph}{No uniformidad transversal: $P_{e,i}$.}{8}{paragraph*.14}%
+\contentsline {paragraph}{Transmisión del soporte: $T_{e,i}$.}{9}{paragraph*.15}%
+\contentsline {paragraph}{Respuesta superficial del agua: $C_{e,i}$.}{9}{paragraph*.16}%
+\contentsline {paragraph}{Acumulación y alcance de la respuesta.}{9}{paragraph*.17}%
+\contentsline {section}{\numberline {2.5}Calibración, perfil y mesa}{9}{section.2.5}%
+\contentsline {section}{\numberline {2.6}Retrodispersión y lo que queda fuera del campo}{10}{section.2.6}%
+\contentsline {section}{\numberline {2.7}Acumulación y máximo}{11}{section.2.7}%
+\contentsline {chapter}{\numberline {3}Geometría del haz y discretización superficial}{12}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Sistemas de referencia}{12}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Foco, eje y campo rectangular divergente}{13}{section.3.2}%
+\contentsline {section}{\numberline {3.3}Orientación y primera intersección}{13}{section.3.3}%
+\contentsline {section}{\numberline {3.4}Malla de cálculo y punto representativo}{14}{section.3.4}%
+\contentsline {section}{\numberline {3.5}Subdivisión frente a simplificación}{15}{section.3.5}%
+\contentsline {section}{\numberline {3.6}Mesa, movimiento y barridos}{15}{section.3.6}%
+\contentsline {section}{\numberline {3.7}Métricas ponderadas por área}{16}{section.3.7}%
+\contentsline {section}{\numberline {3.8}Convención algebraica auditada}{16}{section.3.8}%
+\contentsline {chapter}{\numberline {4}Arquitectura, lectura RDSR y trazabilidad}{17}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Separación de responsabilidades}{17}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Contenido de un evento y normalización}{18}{section.4.2}%
+\contentsline {section}{\numberline {4.3}Estados de filtración que deben permanecer distintos}{18}{section.4.3}%
+\contentsline {section}{\numberline {4.4}Configuración y control de aplicabilidad}{19}{section.4.4}%
+\contentsline {section}{\numberline {4.5}Caché y acumulación}{19}{section.4.5}%
+\contentsline {section}{\numberline {4.6}Salidas y procedencia}{20}{section.4.6}%
+\contentsline {chapter}{\numberline {5}Superficies XCAT y extracción mediante 3D Slicer}{21}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Fantoma de referencia y anatomía individual}{21}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Módulo DermaDose Surface}{21}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Simplificación con objetivo de 150000 triángulos}{21}{section.5.3}%
+\contentsline {section}{\numberline {5.4}Controles de validez y exportación}{22}{section.5.4}%
+\contentsline {section}{\numberline {5.5}Unidades, ejes y dos JSON diferentes}{22}{section.5.5}%
+\contentsline {section}{\numberline {5.6}Rendimiento y elección de resolución}{23}{section.5.6}%
+\contentsline {section}{\numberline {5.7}Justificación del tamaño de los elementos}{23}{section.5.7}%
+\contentsline {chapter}{\numberline {6}Factores de Benmakhlouf: definición y uso}{25}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Fuente de los datos y geometría original}{25}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Factor de retrodispersión en aire}{25}{section.6.2}%
+\contentsline {section}{\numberline {6.3}Conversión superficial agua--aire}{26}{section.6.3}%
+\contentsline {section}{\numberline {6.4}Tres integraciones que no deben confundirse}{26}{section.6.4}%
+\contentsline {section}{\numberline {6.5}Tablas clínicas publicadas y su dominio}{26}{section.6.5}%
+\contentsline {section}{\numberline {6.6}Interpolación y conservación de procedencia}{28}{section.6.6}%
+\contentsline {section}{\numberline {6.7}Agua, forma del campo y límites de transferencia}{28}{section.6.7}%
+\contentsline {chapter}{\numberline {7}Adaptación de investigación a Philips Azurion}{30}{chapter.7}%
+\contentsline {section}{\numberline {7.1}Identidad del equipo y alcance del perfil}{30}{section.7.1}%
+\contentsline {section}{\numberline {7.2}Qué aporta la documentación del fabricante}{30}{section.7.2}%
+\contentsline {section}{\numberline {7.3}Inventario del RDSR de trabajo}{30}{section.7.3}%
+\contentsline {section}{\numberline {7.4}Mapeo de aluminio fijo y añadido}{31}{section.7.4}%
+\contentsline {section}{\numberline {7.5}Por qué la tabla clínica era insuficiente}{32}{section.7.5}%
+\contentsline {section}{\numberline {7.6}Perfil de investigación y plantilla de caracterización}{32}{section.7.6}%
+\contentsline {section}{\numberline {7.7}Alcance real de la compatibilidad conseguida}{32}{section.7.7}%
+\contentsline {chapter}{\numberline {8}Generación espectral y construcción de tablas derivadas}{33}{chapter.8}%
+\contentsline {section}{\numberline {8.1}Justificación de la ampliación}{33}{section.8.1}%
+\contentsline {section}{\numberline {8.2}Particularización al tubo MRC 200 0407 del Azurion}{33}{section.8.2}%
+\contentsline {section}{\numberline {8.3}Parámetros del generador y significado del espectro}{34}{section.8.3}%
+\contentsline {section}{\numberline {8.4}Discretización de la integral}{34}{section.8.4}%
+\contentsline {section}{\numberline {8.5}Por qué se almacena un factor efectivo}{35}{section.8.5}%
+\contentsline {section}{\numberline {8.6}Dominio energético y truncamiento explícito}{36}{section.8.6}%
+\contentsline {section}{\numberline {8.7}Diseño de la tabla calculada}{36}{section.8.7}%
+\contentsline {section}{\numberline {8.8}Calidad del haz y capas hemirreductoras}{37}{section.8.8}%
+\contentsline {section}{\numberline {8.9}Espectros ilustrativos calculados}{37}{section.8.9}%
+\contentsline {section}{\numberline {8.10}Comprobación de referencia antes de ampliar}{37}{section.8.10}%
+\contentsline {chapter}{\numberline {9}Resultados documentados y verificación actual}{40}{chapter.9}%
+\contentsline {section}{\numberline {9.1}Organización de la evidencia}{40}{section.9.1}%
+\contentsline {section}{\numberline {9.2}Antecedente: convergencia espacial del ejemplo XCAT}{40}{section.9.2}%
+\contentsline {section}{\numberline {9.3}Antecedente: rendimiento y límites de comparación}{41}{section.9.3}%
+\contentsline {section}{\numberline {9.4}Pruebas focalizadas repetidas}{41}{section.9.4}%
+\contentsline {section}{\numberline {9.5}Cuatro condiciones clínicas de referencia}{42}{section.9.5}%
+\contentsline {section}{\numberline {9.6}Convergencia con el paso energético}{42}{section.9.6}%
+\contentsline {section}{\numberline {9.7}Error de consulta entre nodos derivados}{43}{section.9.7}%
+\contentsline {section}{\numberline {9.8}Sensibilidad ilustrativa a las hipótesis del tubo}{43}{section.9.8}%
+\contentsline {section}{\numberline {9.9}Cobertura del RDSR y ausencia de un resultado clínico final}{44}{section.9.9}%
+\contentsline {chapter}{\numberline {10}Incertidumbre y programa de validación}{45}{chapter.10}%
+\contentsline {section}{\numberline {10.1}Verificación, caracterización y validación}{45}{section.10.1}%
+\contentsline {section}{\numberline {10.2}Definir el mensurando antes del ensayo}{45}{section.10.2}%
+\contentsline {section}{\numberline {10.3}Presupuesto de incertidumbre}{46}{section.10.3}%
+\contentsline {section}{\numberline {10.4}Propagación paramétrica implementada}{47}{section.10.4}%
+\contentsline {section}{\numberline {10.5}Caracterización experimental del haz}{48}{section.10.5}%
+\contentsline {subsection}{\numberline {10.5.1}Inventario previo de la instalación}{48}{subsection.10.5.1}%
+\contentsline {subsection}{\numberline {10.5.2}HVL y consistencia del generador}{48}{subsection.10.5.2}%
+\contentsline {subsection}{\numberline {10.5.3}Calibración y rendimiento}{48}{subsection.10.5.3}%
+\contentsline {section}{\numberline {10.6}Mesa, colchoneta y cambios de calidad}{49}{section.10.6}%
+\contentsline {section}{\numberline {10.7}Verificación geométrica del equipo y del registro}{49}{section.10.7}%
+\contentsline {section}{\numberline {10.8}Ensayos de validación dosimétrica}{49}{section.10.8}%
+\contentsline {section}{\numberline {10.9}Comparación de valores y mapas}{50}{section.10.9}%
+\contentsline {section}{\numberline {10.10}Referencia de transporte y control de cambios}{50}{section.10.10}%
+\contentsline {chapter}{\numberline {11}Discusión crítica y líneas futuras}{51}{chapter.11}%
+\contentsline {section}{\numberline {11.1}Qué resuelve la ampliación espectral}{51}{section.11.1}%
+\contentsline {section}{\numberline {11.2}Por qué no se adopta una mezcla automática con factores históricos}{51}{section.11.2}%
+\contentsline {section}{\numberline {11.3}Prioridad del registro frente a la apariencia}{51}{section.11.3}%
+\contentsline {section}{\numberline {11.4}Prioridades de desarrollo numérico}{52}{section.11.4}%
+\contentsline {section}{\numberline {11.5}Prioridades de rendimiento}{52}{section.11.5}%
+\contentsline {section}{\numberline {11.6}Programa de caracterización del Azurion}{53}{section.11.6}%
+\contentsline {section}{\numberline {11.7}Extensiones físicas justificadas por evidencia}{53}{section.11.7}%
+\contentsline {section}{\numberline {11.8}Trazabilidad de futuras versiones}{54}{section.11.8}%
+\contentsline {section}{\numberline {11.9}Balance científico del estado actual}{54}{section.11.9}%
+\contentsline {chapter}{\numberline {12}Fundamento teórico ampliado y atlas conceptual}{55}{chapter.12}%
+\contentsline {section}{\numberline {12.1}Del espectro incidente a la respuesta superficial}{55}{section.12.1}%
+\contentsline {section}{\numberline {12.2}Origen de la retrodispersión y aproximación local}{55}{section.12.2}%
+\contentsline {section}{\numberline {12.3}Kerma y dosis: condiciones de identificación}{56}{section.12.3}%
+\contentsline {section}{\numberline {12.4}La no conmutatividad de los promedios}{57}{section.12.4}%
+\contentsline {section}{\numberline {12.5}Atenuación polienergética y capa hemirreductora}{58}{section.12.5}%
+\contentsline {section}{\numberline {12.6}Tres errores distintos en una superficie triangular}{59}{section.12.6}%
+\contentsline {section}{\numberline {12.7}Síntesis de las dependencias físicas}{59}{section.12.7}%
+\contentsline {chapter}{\numberline {13}Refinamiento del modelo espectral y de los factores}{60}{chapter.13}%
+\contentsline {section}{\numberline {13.1}Parámetros documentales del tubo}{60}{section.13.1}%
+\contentsline {section}{\numberline {13.2}Ajuste del aluminio efectivo mediante calidad del haz}{60}{section.13.2}%
+\contentsline {section}{\numberline {13.3}Integración de nuevas calidades}{62}{section.13.3}%
+\contentsline {section}{\numberline {13.4}Interpolación de la corrección conjunta}{62}{section.13.4}%
+\contentsline {section}{\numberline {13.5}Impacto e interpretación}{63}{section.13.5}%
+\contentsline {chapter}{\numberline {14}Revisión crítica y correcciones}{64}{chapter.14}%
+\contentsline {section}{\numberline {14.1}Alcance de la evidencia}{64}{section.14.1}%
+\contentsline {section}{\numberline {14.2}Errores confirmados y correcciones}{64}{section.14.2}%
+\contentsline {section}{\numberline {14.3}Comprobaciones ejecutadas}{65}{section.14.3}%
+\contentsline {section}{\numberline {14.4}Interpretación y límites pendientes}{65}{section.14.4}%
+\contentsline {chapter}{\numberline {15}Caracterización documental del MRC 200 0407}{66}{chapter.15}%
+\contentsline {section}{\numberline {15.1}Identidad, fuentes y jerarquía de evidencia}{66}{section.15.1}%
+\contentsline {section}{\numberline {15.2}Filtración: componentes y equivalencia}{66}{section.15.2}%
+\contentsline {section}{\numberline {15.3}Tablas calculadas y trazabilidad}{67}{section.15.3}%
+\contentsline {section}{\numberline {15.4}Geometría, límites e interpretación}{67}{section.15.4}%
+\contentsline {section}{\numberline {15.5}Comparación numérica y verificación de la entrega}{68}{section.15.5}%
+\contentsline {chapter}{\numberline {16}Conclusiones}{69}{chapter.16}%
+\contentsline {chapter}{Bibliografía}{71}{chapter.16}%
+\contentsline {chapter}{\numberline {A}Símbolos, unidades y definiciones operativas}{73}{appendix.A}%
+\contentsline {section}{\numberline {A.1}Conversiones que requieren control}{74}{appendix.A.1}%
+\contentsline {chapter}{\numberline {B}Configuración y ejecución reproducible}{75}{appendix.B}%
+\contentsline {section}{\numberline {B.1}Organización de carpetas}{75}{appendix.B.1}%
+\contentsline {section}{\numberline {B.2}Fragmento del proveedor superficial}{75}{appendix.B.2}%
+\contentsline {section}{\numberline {B.3}Inspección sin malla y cálculo}{76}{appendix.B.3}%
+\contentsline {section}{\numberline {B.4}Regeneración con procedencia propia}{76}{appendix.B.4}%
+\contentsline {section}{\numberline {B.5}Datos de HVL medida}{76}{appendix.B.5}%
+\contentsline {section}{\numberline {B.6}Clasificación de incidencias}{76}{appendix.B.6}%
+\contentsline {chapter}{\numberline {C}Reproducción de los estudios de esta edición}{78}{appendix.C}%
+\contentsline {section}{\numberline {C.1}Entorno y límites}{78}{appendix.C.1}%
+\contentsline {section}{\numberline {C.2}Estudio espectral}{78}{appendix.C.2}%
+\contentsline {section}{\numberline {C.3}Compilación LaTeX}{79}{appendix.C.3}%
+\contentsline {chapter}{\numberline {D}Matriz de contraste documental}{80}{appendix.D}%
+\contentsline {section}{\numberline {D.1}Fuentes y alcance de lectura}{80}{appendix.D.1}%
+\contentsline {section}{\numberline {D.2}Contraste oficial adicional}{81}{appendix.D.2}%
+\contentsline {chapter}{\numberline {E}Calidades calculadas: extracto de auditoría}{82}{appendix.E}%
+\contentsline {chapter}{\numberline {F}Criterios de coherencia para futuras revisiones}{84}{appendix.F}%
+\contentsline {section}{\numberline {F.1}Afirmaciones sustentadas}{84}{appendix.F.1}%
+\contentsline {section}{\numberline {F.2}Afirmaciones que necesitan nueva evidencia}{84}{appendix.F.2}%
+\contentsline {section}{\numberline {F.3}Condiciones para interpretar una futura PSD}{84}{appendix.F.3}%
+\contentsline {chapter}{\numberline {G}Guía de configuración auxiliar JSON}{85}{appendix.G}%
+\contentsline {section}{\numberline {G.1}Función y relación con las otras entradas}{85}{appendix.G.1}%
+\contentsline {section}{\numberline {G.2}Campos de primer nivel}{85}{appendix.G.2}%
+\contentsline {section}{\numberline {G.3}Geometría del equipo}{87}{appendix.G.3}%
+\contentsline {section}{\numberline {G.4}Paciente, resolución y malla}{88}{appendix.G.4}%
+\contentsline {section}{\numberline {G.5}Factores y tablas}{89}{appendix.G.5}%
+\contentsline {section}{\numberline {G.6}Proveedor superficial y supuestos de calidad}{90}{appendix.G.6}%
+\contentsline {chapter}{\numberline {H}Guía de lectura del informe estructurado de dosis (RDSR)}{92}{appendix.H}%
+\contentsline {section}{\numberline {H.1}Qué representa el RDSR}{92}{appendix.H.1}%
+\contentsline {section}{\numberline {H.2}Campos de evento que interpreta DermaDose}{92}{appendix.H.2}%
+\contentsline {section}{\numberline {H.3}Totales, cabecera y elementos auxiliares}{94}{appendix.H.3}%
+\contentsline {section}{\numberline {H.4}Lo que el RDSR no garantiza y lista de comprobación}{95}{appendix.H.4}%

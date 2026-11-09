@@ -1,4 +1,4 @@
-\begin{thebibliography}{22}
+\begin{thebibliography}{21}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -25,14 +25,13 @@ Françoise Malchair, Jérémie Dabin, Marine Deleu, Marta Sans~Merce, Olivera
 \newblock Revisión aportada; no se presenta esta memoria como revisión
   sistemática.
 
-\bibitem[{ICRU}(1998)]{icru60}
-{ICRU}.
-\newblock Fundamental quantities and units for ionizing radiation, 1998.
-
 \bibitem[{ICRU}(2011)]{icru85a}
 {ICRU}.
-\newblock Fundamental quantities and units for ionizing radiation, 2011.
-\newblock Sustituye al ICRU Report 60.
+\newblock Fundamental quantities and units for ionizing radiation.
+\newblock ICRU Report 85a, International Commission on Radiation Units and
+  Measurements, 2011.
+\newblock URL \url{https://doi.org/10.1093/jicru/ndr001}.
+\newblock Versi\'on revisada del Report 85; sustituye al ICRU Report 60.
 
 \bibitem[Hubbell and Seltzer()]{nist}
 J.~H. Hubbell and S.~M. Seltzer.

@@ -1,0 +1,58 @@
+\babel@toc {spanish}{}\relax 
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {2.1}{\ignorespaces Divergencia e inverso del cuadrado para un campo uniforme ideal. El esquema explica la diferencia entre kerma puntual y producto kerma--área; no incluye atenuación ni dispersión.}}{5}{figure.caption.8}%
+\contentsline {figure}{\numberline {2.2}{\ignorespaces Contribución física de los siete términos de la ecuación operativa. El producto determina la dosis de un evento en un elemento; la suma acumula eventos en ese mismo lugar. Los pictogramas son esquemas didácticos, no simulaciones de transporte.}}{7}{figure.caption.10}%
+\contentsline {figure}{\numberline {2.3}{\ignorespaces La transmisión depende del trayecto antes de la primera entrada. Se distingue el factor escalar implementado de una futura respuesta que incluya endurecimiento; sin espesores ni transmisión medidos en el dibujo.}}{10}{figure.caption.18}%
+\contentsline {figure}{\numberline {2.4}{\ignorespaces Acumulación espacial y superposición. Esquema TikZ, sin valores dosimétricos ni anatomía clínica.}}{11}{figure.caption.19}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Relación entre convenciones de coordenadas. Los triedros son simbólicos: la transformación cambia componentes y unidades; el registro establece la posición física. No se propone una matriz automática para cualquier STL.}}{12}{figure.caption.20}%
+\contentsline {figure}{\numberline {3.2}{\ignorespaces Distancias axial y euclídea en un haz divergente. El contorno es esquemático y no representa el registro XCAT de trabajo.}}{13}{figure.caption.21}%
+\contentsline {figure}{\numberline {3.3}{\ignorespaces Tres áreas con funciones distintas. La relación de proyección de la huella supone un haz localmente paralelo y un plano; no se extrapola directamente a una superficie curva o a un haz de divergencia finita.}}{14}{figure.caption.22}%
+\contentsline {figure}{\numberline {3.4}{\ignorespaces Primera intersección positiva en un corte esquemático. Una normal orientada al foco no basta para excluir oclusión. No se simula transmisión a través de la primera región corporal.}}{14}{figure.caption.23}%
+\contentsline {figure}{\numberline {3.5}{\ignorespaces Ejemplo de muestreo binario en una cara cruzada por el campo. La zona turquesa muestra la porción geométrica iluminada; el punto azul representa el centroide. No se calcula intersección parcial de área en la regla descrita.}}{15}{figure.caption.24}%
+\contentsline {figure}{\numberline {3.6}{\ignorespaces Histograma acumulado dosis--área de un ejemplo adimensional. Los saltos se ponderan con área y el umbral incluye la igualdad. El dibujo no representa una distribución clínica.}}{16}{figure.caption.25}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {4.1}{\ignorespaces Flujo de información de DermaDose. La trazabilidad acompaña a las etapas de cálculo y no se limita a una anotación final.}}{17}{figure.caption.26}%
+\contentsline {figure}{\numberline {4.2}{\ignorespaces Estados de información de filtración. Son alternativas de lectura, no etapas consecutivas; el código y las hipótesis del perfil deben conservar su significado.}}{19}{figure.caption.27}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {5.1}{\ignorespaces Preparación y exportación de una superficie en el módulo de Slicer. El objetivo de reducción está subordinado a los controles geométricos.}}{22}{figure.caption.28}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {6.1}{\ignorespaces Factores monoenergéticos de tres campos: $B$ tabulado y producto nodal $C=Bf$. Datos de la tabla 1 del informe de Benmakhlouf, conservados en los CSV del proyecto. Los puntos son nodos publicados; los segmentos guían la lectura. No son factores medidos del Azurion.}}{27}{figure.caption.29}%
+\contentsline {figure}{\numberline {6.2}{\ignorespaces Dominio de Cu dentro de familias discretas de Al del dataset clínico original. Círculos: nodos publicados; segmentos: interpolación admitida en Cu con el resto de ejes compatibles. No se interpola entre familias de Al.}}{28}{figure.caption.31}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {7.1}{\ignorespaces Construcción de la filtración del espectro de investigación. Los espesores de Al no se convierten a Cu equivalente.}}{31}{figure.caption.33}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {8.1}{\ignorespaces Construcción del dataset espectral. El promedio se aplica al producto monoenergético y mantiene una procedencia distinta de las filas clínicas publicadas.}}{35}{figure.caption.34}%
+\contentsline {figure}{\numberline {8.2}{\ignorespaces Espectros modelados y densidades relativas de kerma a 80 kVp, Al total de \num {4.1} mm y ángulo de $12^\circ $. Curvas calculadas con SpekPy 2.5.4 y representadas mediante PGFPlots/TikZ. Cada curva tiene integral unitaria; no son espectros medidos del Azurion.}}{38}{figure.caption.36}%
+\contentsline {figure}{\numberline {8.3}{\ignorespaces Visualización de la ecuación 13 con un espectro conservado de SpekPy y los productos nodales de Benmakhlouf. La suma usa bins de 0,5 keV e interpolación del producto; las áreas representan normalización de kerma y factor combinado, sin rendimiento absoluto.}}{39}{figure.caption.37}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {9.1}{\ignorespaces Estabilidad numérica histórica del máximo al refinar el mismo poliedro. Figura TikZ/PGFPlots reconstruida desde la tabla del antecedente; la malla más fina es referencia numérica, no dosimétrica.}}{41}{figure.caption.39}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {10.1}{\ignorespaces Niveles de evaluación propuestos. Cada nivel necesita evidencia propia y no se obtiene automáticamente del anterior.}}{45}{figure.caption.45}%
+\contentsline {figure}{\numberline {10.2}{\ignorespaces Fuentes de variación y adecuación que condicionan el resultado. Los cuatro bloques no se suponen estadísticamente independientes.}}{47}{figure.caption.47}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {12.1}{\ignorespaces Cuatro niveles de ponderación. Cada paso cambia la magnitud descrita; una curva de fotones no es una distribución de kerma.}}{55}{figure.caption.49}%
+\contentsline {figure}{\numberline {12.2}{\ignorespaces Retrodispersión esquemática. Las flechas ilustran direcciones posibles, sin representar trayectorias simuladas ni probabilidades de interacción.}}{56}{figure.caption.50}%
+\contentsline {figure}{\numberline {12.3}{\ignorespaces Distinción conceptual entre transferencia y depósito. El dibujo no establece un alcance electrónico ni una profundidad de piel.}}{57}{figure.caption.51}%
+\contentsline {figure}{\numberline {12.4}{\ignorespaces Orden de operaciones del cálculo derivado. Alterar el orden de producto, interpolación y promedio define otro procedimiento entre nodos.}}{58}{figure.caption.52}%
+\contentsline {figure}{\numberline {12.5}{\ignorespaces Atenuación conceptual: dos curvas con la misma primera HVL pueden tener distinta segunda HVL. La segunda es un espesor adicional. Espesores y coeficientes ilustrativos, sin datos del Azurion.}}{58}{figure.caption.53}%
+\contentsline {figure}{\numberline {12.6}{\ignorespaces Error de forma y error de muestreo son distintos. Dividir una cara plana mejora el muestreo, pero no recupera la curva anatómica original.}}{59}{figure.caption.54}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {13.1}{\ignorespaces Compatibilidad del modelo condicionado con HVL1: valores y residuos $100(H_{\rm calc}/H_{\rm obs}-1)$. El grupo de 125 kVp se reserva; los cuatro registros de 80 kVp se agrupan. Sin barras de error porque no se dispone de incertidumbres. Las líneas solo guían la lectura entre calidades.}}{61}{figure.caption.56}%
+\contentsline {figure}{\numberline {13.2}{\ignorespaces Cambio del factor combinado al pasar al perfil condicionado de $11^\circ $ y Al efectivo ajustado. Son diferencias entre modelos, no incertidumbres ni mejoras de exactitud demostradas. Se reutilizan los cinco resultados tabulados de esta memoria.}}{62}{figure.caption.57}%
+\contentsline {figure}{\numberline {13.3}{\ignorespaces Estructura de la tabla calculada ampliada. Se separan el número de espectros y el número de filas, que incluyen el eje de campo. La cobertura de la rejilla no establece validez experimental para cada combinación.}}{62}{figure.caption.58}%
+\contentsline {figure}{\numberline {13.4}{\ignorespaces Políticas de interpolación conservadas explícitamente por dataset. La vía combinada opera sobre $C$, manteniendo $f_{\rm eff}=C/B$ por compatibilidad del motor. No sustituye una evaluación del error entre nodos.}}{63}{figure.caption.59}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {15.1}{\ignorespaces Contabilidad física de filtración. Las equivalencias nominales no sustituyen una caracterización espectral y geométrica del equipo instalado.}}{67}{figure.caption.61}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }

@@ -11,20 +11,16 @@ Pueden distinguirse modelos basados en traslado del kerma y correcciones, recons
 
 DermaDose pertenece actualmente a la primera. Su malla es una frontera geométrica donde se evalúa la entrada. No es una discretización volumétrica de tejidos. El factor de retrodispersión resume una respuesta calculada en agua; no genera trayectorias en el cuerpo representado.
 
-\begin{table}[htbp]\centering\small
-\caption{Comparación conceptual de enfoques. No expresa un ranking de exactitud.}
-\begin{tabularx}{\textwidth}{p{30mm}YYY}\toprule
-Enfoque & Representación & Fortalezas & Condiciones que exige\\\midrule
-Factores y superficie & Contorno y rayos geométricos. & Trazabilidad algebraica, acumulación sencilla. & Factores compatibles y registro fiable.\\
-Transporte anatómico & Materiales, volúmenes y espectro. & Dispersión y dosis en profundidad. & Física, geometría y puntuación validadas; coste computacional.\\
-Dosimetría directa & Detector sobre fantoma o superficie. & Referencia experimental localizada. & Calibración, dependencia energética y angular, perturbación y registro.\\\bottomrule
-\end{tabularx}
-\end{table}
+
 
 
 \section{Justificación y pregunta del trabajo}
-Los indicadores de exposición disponibles en un procedimiento no describen por sí solos la distribución espacial sobre la piel. La pregunta del trabajo es cómo reconstruir, de manera trazable y reproducible, la contribución de cada evento y su acumulación sobre una superficie anatómica, manteniendo explícitas las hipótesis de geometría y respuesta dosimétrica. El caso de aplicación es el angiógrafo Philips Azurion del Hospital Universitario Marqués de Valdecilla, identificado con tubo MRC 200 0407.
 
+En los procedimientos intervencionistas guiados por fluoroscopia, una dosis absorbida local en piel del orden de 2~Gy puede dar lugar a reacciones tisulares tempranas, como el eritema transitorio. Cuando varias proyecciones irradian una misma región cutánea, sus contribuciones se acumulan y pueden generar un máximo localizado. Sin embargo, los indicadores de exposición disponibles en el procedimiento, como el kerma en aire acumulado en el punto de referencia, no describen por sí solos la distribución espacial de la dosis sobre la piel ni permiten determinar la localización y magnitud de ese máximo.
+
+Esta limitación motiva el desarrollo de DermaDose, cuyo objetivo es reconstruir la distribución de dosis sobre la superficie cutánea para estimar la dosis pico en piel (PSD) y localizar las regiones más expuestas. La pregunta del trabajo es cómo reconstruir, de manera trazable y reproducible, la contribución de cada evento de irradiación y su acumulación sobre una superficie anatómica, manteniendo explícitas las hipótesis de geometría y respuesta dosimétrica.
+
+El caso de aplicación es el angiógrafo Philips Azurion del Hospital Universitario Marqués de Valdecilla, equipado con un tubo MRC 200 0407.
 \section{Objetivo general}
 Desarrollar y verificar un calculador de dosis superficial independiente del fabricante que utilice informes RDSR, una superficie tridimensional y una descripción complementaria del equipo, y adaptarlo documental y computacionalmente al Philips Azurion con MRC 200 0407 para sustentar el estudio de procedimientos intervencionistas del hospital.
 
@@ -42,7 +38,3 @@ La independencia se refiere a la implementación y a la trazabilidad del cálcul
 \item Establecer una metodología para analizar datos de procedimientos de Valdecilla: comprobar elegibilidad y calidad de las entradas, describir indicadores y máximos estimados, y estudiar su variabilidad según el procedimiento. La aplicación a una cohorte y las conclusiones estadísticas requieren datos y resultados propios documentados.
 \end{enumerate}
 
-\section{Alcance e interpretación de los resultados}
-El cálculo se basa en una superficie, geometría de rayos y factores de referencia en agua. No incorpora transporte anatómico de partículas ni un modelo radiobiológico de lesión. El máximo obtenido es una magnitud del modelo y depende del registro anatómico, la calibración, la filtración, la transmisión y la resolución. La verificación de software no establece por sí sola exactitud clínica.
-
-Los resultados que se presentan como alcanzados son las capacidades implementadas y las verificaciones documentadas. La aplicación hospitalaria constituye el contexto de uso y un objetivo evaluable; no se atribuyen a una cohorte inexistente tasas de superación de umbrales ni conclusiones clínicas. La separación entre resultados y requisitos pendientes permite presentar una herramienta técnicamente definida sin ocultar sus límites.

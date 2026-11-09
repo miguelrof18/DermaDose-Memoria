@@ -81,20 +81,17 @@
 \draw[turquesa,line width=5pt] ($(current page.north west)+(2.6cm,-4.4cm)$)--($(current page.north west)+(6cm,-4.4cm)$);
 \end{tikzpicture}
 \vspace*{.7cm}
-{\color{white}\Large PROYECTO DERMADOSE\par}
+{\color{white}\LARGE PROYECTO DERMADOSE\par}
 \vspace{3.6cm}
-{\Huge\bfseries\color{azul}Memoria técnica\par y científica ampliada\par}
+{\Huge\bfseries\color{azul}Memoria técnica\par y científica \par}
 \vspace{1cm}
 {\Large Reconstrucción de dosis superficial a partir de RDSR,\par modelado geométrico y adaptación de investigación\par a Philips Azurion\par}
 \vspace{1cm}
-{\large Formalismo de Benmakhlouf, espectros SpekPy\par y construcción de tablas derivadas trazables\par}
 \vfill
 \begin{criterio}{Estado del trabajo}
-Prototipo de investigación. Se documentan implementación, comprobaciones numéricas y limitaciones. Los espectros calculados no equivalen a una caracterización experimental de la instalación ni establecen exactitud clínica.
+Prototipo de investigación.
 \end{criterio}
 \vspace{.5cm}
-{\large Edición revisada de 30 de octubre de 2026\par}
-{\small Base del paquete: versión declarada 0.5.3, con ampliaciones posteriores revisadas en la copia de trabajo.\par}
 \end{titlepage}
 \pagenumbering{roman}
 \chapter*{Resumen}\addcontentsline{toc}{chapter}{Resumen}
@@ -106,27 +103,8 @@ La adaptación al angiógrafo Philips Azurion con tubo MRC 200 0407 incorpora la
 
 La verificación disponible comprende 136 pruebas de software y propiedades físicas, así como un caso sintético reproducible con entradas, configuración, factores y resultados identificados. El sistema permite generar mapas, estimar máximos y estudiar la sensibilidad a las hipótesis del modelo. Estas comprobaciones respaldan su coherencia interna y reproducibilidad; la exactitud dosimétrica clínica requiere una validación experimental independiente. La magnitud calculada se refiere al modelo superficial en agua y no se identifica sin justificación con dosis absorbida en piel a una profundidad clínica específica.
 
-El trabajo establece una base técnica para el análisis de procedimientos realizados en el Hospital Universitario Marqués de Valdecilla. La explotación de una cohorte hospitalaria, la caracterización completa de la instalación y la validación del uso clínico se delimitan como objetivos de aplicación, sin presentarlos como resultados ya obtenidos.
+El trabajo establece una base técnica para el análisis de procedimientos realizados en el Hospital Universitario Marqués de Valdecilla. La explotación de una cohorte hospitalaria, la caracterización completa de la instalación y la validación del uso clínico se delimitan como objetivos de aplicación.
 
-\chapter*{Guía de lectura y convención de evidencia}\addcontentsline{toc}{chapter}{Guía de lectura y convención de evidencia}
-La memoria presenta el contexto científico y los objetivos, el fundamento físico, la reconstrucción geométrica y la implementación. Desarrolla el formalismo dosimétrico, la adaptación al Azurion y la caracterización del MRC 200 0407; después expone resultados, verificación, incertidumbres y limitaciones. Los anexos reúnen símbolos, configuración y procedimientos de reproducción. Las comparaciones entre modelos se conservan como análisis de sensibilidad, sin equipararlas a una demostración de exactitud clínica.
-
-Se utiliza \emph{dosis superficial modelada} para la salida de la etapa \codigo{skin_dose}. En la vía estudiada, el medio de referencia es agua; la identificación con dosis absorbida en piel a una profundidad clínica concreta requiere una justificación adicional. \emph{Validación} se reserva para comparación externa respecto al uso previsto; las pruebas de software y la reproducción de una fórmula se denominan \emph{verificación}.
-
-\begin{tabularx}{\textwidth}{p{29mm}Y}
-\toprule
-Categoría & Significado en esta memoria\\\midrule
-Publicado & Valor o método localizable en una fuente identificada; no implica que se haya medido en el hospital.\\
-Implementado & Comportamiento comprobable en el código disponible de la copia revisada.\\
-Verificado aquí & Comprobación ejecutada para esta edición, con salida conservada.\\
-Antecedente & Resultado de la memoria previa; se atribuye a esa auditoría y no se presenta como repetido ahora.\\
-Hipótesis & Parámetro o aproximación elegido para investigación y todavía no caracterizado.\\
-Propuesto & Desarrollo o medida futura; no es una capacidad actual del programa.\\\bottomrule
-\end{tabularx}
-
-La edición gráfica organiza las figuras mediante paneles, etiquetas y estilos de línea consistentes. Azul identifica entradas y geometría; turquesa, cálculo; ocre, condiciones o decisiones. El texto y la forma duplican el color para facilitar lectura en escala de grises. Los dibujos didácticos se distinguen de los gráficos obtenidos con resultados numéricos.
-
-Las figuras se han realizado con TikZ y PGFPlots, sin imágenes generadas ni reproducciones de capturas clínicas. Los esquemas geométricos no representan la colocación real del paciente. Los gráficos numéricos identifican su origen y mantienen separados los datos históricos y los nuevos estudios.
 \tableofcontents
 \listoffigures
 \listoftables

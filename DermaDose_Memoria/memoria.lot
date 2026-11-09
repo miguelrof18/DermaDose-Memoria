@@ -1,0 +1,51 @@
+\babel@toc {spanish}{}\relax 
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {2.1}{\ignorespaces Etapas de cálculo y significado de su salida.}}{6}{table.caption.9}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {6.1}{\ignorespaces Nodos de cobre añadido del dataset clínico original para cada familia de Al.}}{27}{table.caption.30}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {7.1}{\ignorespaces Filtración añadida observada en el RDSR de trabajo.}}{31}{table.caption.32}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {8.1}{\ignorespaces Características del dataset derivado suministrado.}}{36}{table.caption.35}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {9.1}{\ignorespaces Convergencia espacial histórica del ejemplo sintético XCAT.}}{40}{table.caption.38}%
+\contentsline {table}{\numberline {9.2}{\ignorespaces Comparación parcial del factor combinado con productos clínicos publicados.}}{42}{table.caption.40}%
+\contentsline {table}{\numberline {9.3}{\ignorespaces Comparación de HVL1 en las mismas cuatro condiciones.}}{42}{table.caption.41}%
+\contentsline {table}{\numberline {9.4}{\ignorespaces Sensibilidad del factor combinado al paso energético. Referencia numérica: \num {0.125} keV.}}{42}{table.caption.42}%
+\contentsline {table}{\numberline {9.5}{\ignorespaces Consulta interpolada frente a integración directa en nueve puntos interiores.}}{43}{table.caption.43}%
+\contentsline {table}{\numberline {9.6}{\ignorespaces Escenarios de ángulo y filtración fija. Diferencia respecto a $12^\circ $ y \num {3.1} mm Al.}}{44}{table.caption.44}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {10.1}{\ignorespaces Componentes que deben evaluarse para el uso de investigación en Azurion.}}{46}{table.caption.46}%
+\contentsline {table}{\numberline {10.2}{\ignorespaces Secuencia propuesta para aislar mecanismos de discrepancia.}}{49}{table.caption.48}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {11.1}{\ignorespaces Plan de continuación propuesto y evidencia para avanzar.}}{53}{table.11.1}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {13.1}{\ignorespaces Ajuste condicionado de HVL1 (mm Al) y cambio del factor combinado a 10 cm de lado.}}{61}{table.caption.55}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {15.1}{\ignorespaces Datos documentales del MRC 200 0407 y uso efectivo. El material del ánodo se describe como compuesto de tungsteno aleado con renio RT/TZM; SpekPy utiliza aquí una aproximación de blanco W.}}{66}{table.caption.60}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {A.1}{\ignorespaces Notación principal de la memoria.}}{73}{table.A.1}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {B.1}{\ignorespaces Diagnóstico conceptual de incidencias observadas.}}{77}{table.B.1}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {C.1}{\ignorespaces Archivos de evidencia incluidos.}}{78}{table.C.1}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {D.1}{\ignorespaces Función de las diecinueve fuentes aportadas. Numeración de archivos de trabajo.}}{80}{table.D.1}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {E.1}{\ignorespaces Extracto verificable de las 78 calidades calculadas, para lado 10 cm. Espesores en mm y HVL1 en mm Al. No son medidas del equipo.}}{82}{table.E.1}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {G.1}{\ignorespaces Claves de primer nivel del perfil auxiliar.}}{85}{table.G.1}%
+\contentsline {table}{\numberline {G.2}{\ignorespaces Contenido del objeto \nolinkurl {geometry}. Las longitudes se expresan en mm.}}{87}{table.G.2}%
+\contentsline {table}{\numberline {G.3}{\ignorespaces Campos del objeto \nolinkurl {patient}.}}{88}{table.G.3}%
+\contentsline {table}{\numberline {G.4}{\ignorespaces Factores reconocidos y ejes tabulares disponibles.}}{89}{table.G.4}%
+\contentsline {table}{\numberline {G.5}{\ignorespaces Claves del bloque \nolinkurl {surface\_factors}.}}{90}{table.G.5}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {H.1}{\ignorespaces Elementos por evento relevantes para DermaDose.}}{92}{table.H.1}%
