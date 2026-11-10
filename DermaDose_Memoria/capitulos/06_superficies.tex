@@ -16,6 +16,18 @@ El módulo emplea un proceso auxiliar \codigo{PythonSlicer} para operaciones de 
 
 La aceptación de la superficie considera coordenadas finitas, caras degeneradas, conectividad, bordes abiertos, aristas no manifold y volumen. La reducción se comprueba también frente a la geometría original. Si no se acepta un candidato, el original queda disponible para revisión y se bloquea la exportación reducida. El módulo relee el STL temporal antes de guardar la pareja definitiva, sin sobrescribir archivos existentes. Un contorno cerrado puede seguir incluyendo la mesa o estar truncado por el campo de visión.
 
+\subsection{Cómo se optimizan los triángulos}
+La reducción parte de la malla a resolución completa. El módulo limpia la geometría y orienta las normales antes de probar dos métodos de VTK:
+
+\begin{itemize}
+\item \codigo{vtkDecimatePro} elimina vértices y retriangula sus vecindades. Se configura para preservar la topología y evitar la eliminación de vértices de borde.
+\item \codigo{vtkQuadricDecimation} contrae aristas según una métrica de error cuadrático. Se activa la preservación de volumen y se incorpora la desviación de las normales a la métrica. Si la versión de VTK lo admite, se regulariza la métrica cuadrática.
+\end{itemize}
+
+El modo de velocidad prueba primero \codigo{vtkDecimatePro} y acepta el primer candidato que cumple los controles. El modo compacto invierte el orden de los métodos y compara los candidatos válidos, priorizando menos caras, menor proporción de triángulos alargados y menor desviación geométrica, en ese orden. Cada intento parte de la malla original limpia. En esta etapa no se aplica suavizado ni se rellenan agujeros.
+
+Además del recuento de caras, se verifica que la malla mantenga la característica de Euler y supere los controles de cierre y conectividad. El candidato debe conservar el volumen y el área dentro de las tolerancias, mantener una calidad de forma mínima y superar una comparación de distancias entre las superficies original y reducida. Los límites por defecto de la rutina son 1 mm de desviación geométrica muestreada, 1\,\% de cambio de volumen y 5\,\% de cambio de área. La desviación muestreada es un control de fidelidad geométrica; su cumplimiento no garantiza por sí solo la convergencia de la PSD.
+
 \section{Metadatos y colocación durante el procedimiento}
 La exportación genera un STL en coordenadas RAS y milímetros y un JSON homónimo con el hash del STL, la transformación del volumen, los parámetros de extracción y los controles de la malla. Cuando la TC permite identificar dos regiones pulmonares plausibles, el módulo registra su punto medio como anclaje torácico estimado.
 
