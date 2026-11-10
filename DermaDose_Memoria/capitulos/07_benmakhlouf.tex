@@ -8,8 +8,8 @@ La geometría utiliza entrada plana de agua, espesor de 15 cm, distancia foco--s
 
 Las especificaciones laterales discordantes del informe se conservan en los metadatos. Para una reproducción independiente habría que aclarar la geometría efectivamente utilizada para los campos mayores. No se debe inferir una resolución de esa discrepancia a partir de que el CSV sea legible.
 
-\section{Ejemplo monoenergético: qué se compara}
-Considérese un haz incidente de fotones de $E_0=50$ keV con un campo cuadrado de $10\times10$ cm$^2$ en el plano de entrada. Para interpretar los datos de la tabla 1 del informe, se comparan dos situaciones en el mismo punto central y con la misma normalización del haz incidente \citep{benreport,benarticle}:
+\section{Cálculo de los factores monoenergéticos}
+Para cada energía incidente $E_0$ y cada lado de campo cuadrado $s$ en el plano de entrada, los autores compararon dos situaciones en el mismo punto del eje central y con la misma normalización del haz incidente \citep{benreport,benarticle}:
 
 \begin{enumerate}
 \item \textbf{Referencia libre en aire.} Se evalúa el kerma de colisión en aire debido al haz primario en el punto donde se situaría la superficie del fantoma, $K_{\mathrm{aire}}^{p}$.
@@ -24,7 +24,7 @@ Se denota por $\Phi^{\mathrm{prim}}_Q(E)$ el espectro incidente y por $\Phi^{\ma
 B(Q,s)=\frac{\int E\Phi^{\mathrm{sup}}_{Q,s}(E)\muen{\mathrm{aire}}(E)\,\mathrm dE}
 {\int E\Phi^{\mathrm{prim}}_Q(E)\muen{\mathrm{aire}}(E)\,\mathrm dE}.
 \end{equation}
-En el ejemplo, $B(E_0,s)=K_{\mathrm{aire}}^{p+s}/K_{\mathrm{aire}}^{p}$, con $s=10$ cm. Se mantiene el aire como medio de evaluación y se compara el campo total superficial con el primario libre en aire. El aumento respecto a la unidad cuantifica la contribución relativa de la dispersión al kerma en aire.
+Para un haz monoenergético, $B(E_0,s)=K_{\mathrm{aire}}^{p+s}/K_{\mathrm{aire}}^{p}$. Se mantiene el aire como medio de evaluación y se compara el campo total superficial con el primario libre en aire. El aumento respecto a la unidad cuantifica la contribución relativa de la dispersión al kerma en aire.
 
 El factor depende de calidad y campo, así como de las condiciones del fantoma. El informe proporciona una respuesta central. Aplicarlo uniformemente a cada punto local de una anatomía curva no reproduce de manera explícita la reducción de dispersión cerca de un borde ni la respuesta de materiales internos distintos.
 
