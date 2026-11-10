@@ -1,18 +1,20 @@
 \chapter{Adaptación de investigación a Philips Azurion}
-\section{Identidad del equipo y alcance del perfil}
-El trabajo reciente utiliza un RDSR que declara fabricante Philips y modelo Azurion. El perfil incorpora controles de identidad y políticas específicas de lectura y configuración. Esto permite trabajar con las particularidades observadas sin cambiar el informe original ni extender una suposición a cualquier equipo de la misma marca.
 
-La denominación Azurion identifica una familia, no un único espectro. La instalación puede diferir por tubo, configuración de limitador, versión, mantenimiento y programa clínico. Para construir un perfil físico se necesita identificar esos elementos. Una configuración denominada ``Azurion'' que conserva factores sintéticos sigue siendo de investigación.
+\section{Equipo y alcance del perfil}
+El perfil \codigo{azurion_benmakhlouf_spekpy.json} modela un Philips Azurion con conjunto de tubo MRC 200 0407. Usa tungsteno como aproximación del blanco, un ángulo de ánodo de $11^\circ$ y una filtración fija nominal de \num{2.5} mm Al equivalentes. La documentación del fabricante respalda este valor como mínimo del conjunto tubo--carcasa, mientras que la filtración efectiva de la instalación queda pendiente de caracterización. Los escenarios de \num{3.1} mm Al y $12^\circ$ pertenecen a configuraciones históricas \citep{philipsifu,clarity}.
 
-\section{Qué aporta la documentación del fabricante}
-La documentación oficial consultada para Release 1.2 describe una filtración mínima del conjunto tubo--carcasa equivalente a \num{2.5} mm Al. También identifica filtros añadidos de \num{0.1}, \num{0.4} y \num{0.9} mm Cu, cada uno con 1 mm Al, para el limitador de haz especificado \citep{philipsifu}. La nota 41 del documento ClarityIQ confirma la presencia del aluminio acompañante al cobre \citep{clarity}.
+Los parámetros de geometría y las correcciones de kerma y transmisión de mesa del perfil son valores de investigación. DermaDose registra la identidad declarada en el RDSR y la identidad configurada para hacer visible su concordancia. La mesa puede referenciarse a la posición del primer evento para reproducir desplazamientos relativos. El origen absoluto de sala y la posición anatómica del paciente requieren una referencia independiente.
 
-Esta información fundamenta conservar ambos materiales. No determina la filtración fija efectiva total de la instalación ni justifica por sí sola \num{3.1} mm Al. Los espesores equivalentes se refieren a condiciones de calidad del haz declaradas; no representan una equivalencia espectral universal. La versión y el limitador descritos deben contrastarse con los de la sala.
+\section{Filtración registrada y selección de factores}
+La documentación consultada describe filtros de \num{0.1}, \num{0.4} y \num{0.9} mm Cu acompañados de 1 mm Al para el limitador especificado \citep{philipsifu,clarity}. El lector conserva ambos materiales. Una declaración explícita de filtro no insertado equivale a cero filtración añadida; una filtración que el informe no identifica se conserva como desconocida.
 
-Por tanto, el parámetro de \num{3.1} mm Al de la configuración se clasifica como hipótesis. El ángulo de $12^\circ$ pertenece exclusivamente al dataset histórico. Para el MRC 200 0407 identificado se documentan $11^\circ$; véase el capítulo de caracterización actualizado. El blanco de tungsteno es parte del modelo espectral utilizado y requiere esa misma coherencia de identificación.
+Con la política \codigo{fixed_plus_event}, se consulta la familia de aluminio total y el cobre añadido del evento:
+\begin{equation}\label{eq:al}
+a_{\mathrm{total},e}=a_{\mathrm{fijo}}+a_{\text{añadido},e},\qquad
+c_e=c_{\text{añadido},e}.
+\end{equation}
+La clave \codigo{inherent_al_mm} representa el Al fijo efectivo del escenario. En el perfil nominal, los eventos sin filtro añadido usan \num{2.5} mm Al y los eventos con 1 mm Al añadido usan \num{3.5} mm Al. La tabla~\ref{tab:groups} ilustra esta distinción con un RDSR de trabajo.
 
-\section{Inventario del RDSR de trabajo}
-La inspección agregada repetida para esta edición obtiene 101 eventos y tres grupos de filtración añadida. La tabla~\ref{tab:groups} no contiene datos identificativos del procedimiento ni pretende representar la frecuencia de uso del equipo en general.
 \begin{table}[htbp]\centering
 \caption{Filtración añadida observada en el RDSR de trabajo.}\label{tab:groups}
 \begin{tabular}{lrrr}\toprule
@@ -25,42 +27,13 @@ Total & & & 101\\\bottomrule
 \fuente{Inspección de \codigo{0_anon.dcm} mediante \codigo{inspect_azurion}; salida agregada conservada, sin exportar el DICOM.}
 \end{table}
 
-El error original ``material filtrante indeterminado'' no demostraba que el tubo careciera de aluminio. Se producía al tratar una declaración de filtro no insertado como si siempre debiera contener material y espesor. La corrección de lectura resuelve esa condición, manteniendo desconocido un filtro realmente no informado.
+La tabla clínica original dejaba fuera algunas combinaciones registradas, entre ellas un evento de 46 kVp frente al límite publicado de 50 kVp. El perfil nominal consulta tablas derivadas de los factores monoenergéticos de Benmakhlouf. El procedimiento espectral se describe en el capítulo siguiente. En la consulta se comprueban la familia de aluminio, la tensión, el cobre y el lado equivalente del campo en la superficie. Los valores fuera del dominio se notifican y no se extrapolan.
 
-Hay un evento con kerma no nulo y las tres distancias SID, SOD y SRP nulas. Una distancia cero no permite aplicar el modelo geométrico. No se puede deducir la geometría de ese evento únicamente porque los anteriores tengan valores válidos o porque pertenezca a la misma sala. La sustitución por un valor típico necesita declararse como hipótesis.
+\section{Distancias ausentes y recuperación trazable}
+DermaDose conserva las distancias válidas del RDSR. En el perfil de investigación puede recuperar una SID ausente o no positiva cuando las otras distancias son válidas y hay eventos cercanos concordantes del mismo plano. Si faltan la distancia foco--isocentro o foco--referencia, la recuperación requiere que los eventos inmediatamente anterior y posterior coincidan con el evento en plano, sistema y posición de mesa y angulación, y que sus tres distancias sean válidas y concordantes. Los valores válidos del propio evento se conservan. Si la geometría sigue siendo indeterminada, el cálculo se detiene.
 
-\section{Mapeo de aluminio fijo y añadido}
-La política \codigo{fixed_plus_event} selecciona una familia según
-\begin{equation}\label{eq:al}
-a_{\mathrm{total},e}=a_{\mathrm{fijo}}+a_{\text{añadido},e},\qquad
-c_e=c_{\text{añadido},e}.
-\end{equation}
-Con la hipótesis $a_{\mathrm{fijo}}=\num{3.1}$ mm, los eventos explícitamente sin filtro añadido utilizan \num{3.1} mm Al y 0 Cu; los demás utilizan \num{4.1} mm Al y conservan su cobre. El audit registra los tres valores de aluminio: fijo, añadido y familia elegida.
-\begin{figure}[htbp]\centering\input{figuras/filtracion}
-\caption{Construcción de la filtración del espectro de investigación. Los espesores de Al no se convierten a Cu equivalente.}\end{figure}
+En el RDSR de la tabla~\ref{tab:groups}, esta regla recuperó para un evento con tres distancias nulas una SID de \num{996.7} mm, una distancia foco--isocentro de 810 mm y una distancia foco--referencia de 660 mm. Se verificó la preparación de los 101 eventos, conservando su kerma original. Los resultados distinguen los valores registrados de los estimados e identifican los eventos utilizados como referencia. El DICOM de origen se conserva.
 
-La clave heredada \codigo{inherent_al_mm} representa bajo esta política la hipótesis de Al fijo efectivo, aunque su nombre sugiera una interpretación más restringida. Es necesario documentarlo para no sumar otra vez componentes ya incluidos. Al generar una fila del dataset, el argumento de Al es el total de esa fila; no se añade de nuevo el Al del evento.
-
-Solo se seleccionan familias presentes, con tolerancia numérica para igualdad de flotantes. No se interpola entre familias ni se modifica una tabla original para alojar una combinación nueva. El proveedor comprueba también kVp, Cu y lado de campo local.
-
-\section{Por qué la tabla clínica era insuficiente}
-Los 24 eventos de \num{0.4} mm Cu seleccionan, con la hipótesis anterior, la familia de \num{4.1} mm Al. La tabla clínica original de esa familia termina en \num{0.2} mm Cu. El fallo indica falta de cobertura, no un error aritmético ni una imposibilidad de que ese filtro exista en el equipo.
-
-El RDSR contiene además un evento de 46 kVp, por debajo del límite clínico publicado de 50 kVp. Aunque el eje de filtración se resolviera, ese kVp seguiría fuera de la tabla clínica. El campo local introduce una tercera condición independiente: su lado equivalente debe quedar entre 5 y 35 cm.
-
-Usar constantes históricas en los eventos restantes permitiría obtener un número, pero mezclaría dos modelos físicos y ocultaría un cambio de calidad. La decisión implementada para Azurion es mantener un proveedor espectral derivado con procedencia propia y bloquear lo que aún quede fuera, sin sustitución automática por constantes.
-
-\section{Perfil de investigación y plantilla de caracterización}
-La configuración de investigación activa \codigo{allow_research_assumptions}. Utiliza distancias configuradas de 810 mm foco--isocentro, \num{1044.3} mm foco--detector y 660 mm foco--referencia cuando se autoriza reemplazar una distancia ausente o no positiva. Son valores de trabajo, derivados de valores habituales válidos del archivo examinado; no son medidas del evento inválido ni especificaciones universales Azurion.
-
-El perfil conserva las distancias válidas de cada evento. También puede tomar las coordenadas de mesa del primer evento como referencia relativa. Esto permite estudiar cambios respecto al inicio, pero no determina dónde se sitúan cabeza, tronco o pelvis respecto al isocentro. El registro anatómico continúa pendiente.
-
-La plantilla de caracterización no permite esas hipótesis por defecto y exige estados de filtración, geometría y calibración caracterizadas. Su función es hacer visible la preparación necesaria. El cambio de indicadores debe acompañarse de nuevos parámetros y evidencia; una modificación del JSON por sí sola no transforma el modelo de investigación en uno validado.
-
-\section{Alcance real de la compatibilidad conseguida}
-Se ha conseguido leer las tres categorías de filtros observadas, seleccionar Al total de forma trazable y disponer de una tabla calculada que incluye sus combinaciones de calidad bajo hipótesis. El perfil detecta fabricante/modelo incompatible y no ignora silenciosamente los errores de dominio.
-
-No se ha demostrado que cualquier RDSR Azurion pueda procesarse sin incidencias. Podrían aparecer materiales no soportados, cuñas, campos fuera de rango, otro limitador, barridos o datos geométricos insuficientes. La tabla histórica de 390 filas no contiene \num{0.9} mm Cu, aunque ese filtro figure entre las opciones documentadas del fabricante: ese dataset se construyó para las calidades de trabajo. La alternativa posterior de 910 filas amplía este eje a 0,9 mm Cu, sin demostrar compatibilidad con toda la familia Azurion.
-
-La respuesta científicamente correcta a la pregunta de si ``ya trabaja con Azurion'' es condicional: hay soporte específico de investigación, con lectura y cálculo ampliados, pero faltan caracterización de instalación, registro y validación independiente. La condición debe acompañar al resultado y no quedar solo en una nota de desarrollo.
+\section{Caracterización pendiente}
+Para interpretar la dosis como representativa de la instalación deben comprobarse la filtración o calidad del haz, las referencias de mesa, la calibración del kerma y la transmisión del tablero. La recuperación de distancias y la ampliación de las tablas mejoran la cobertura del cálculo de investigación. La colocación anatómica y la validación dosimétrica siguen requiriendo comprobaciones independientes.
 \FloatBarrier
