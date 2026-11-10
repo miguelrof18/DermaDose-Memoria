@@ -1,10 +1,10 @@
 \chapter{Generación espectral y construcción de tablas derivadas}
-\section{Justificación de la ampliación}
-Extrapolar directamente una tabla clínica en filtración no conserva necesariamente la dependencia espectral de la respuesta. La vía elegida utiliza datos monoenergéticos y un espectro calculado para cada combinación de kVp y filtros. La ecuación~\eqref{eq:eq13} permite construir nuevas correcciones dentro del dominio energético de la base, sin presentar esas correcciones como nuevas mediciones.
+\section{Qué se particulariza y para qué}
+El capítulo anterior describe el perfil de equipo. Aquí se desarrolla cómo se obtiene, para cada calidad de haz de ese perfil, el factor que transforma el kerma primario en aire a la altura de la piel en una estimación de dosis superficial en agua. La particularización combina dos elementos: la respuesta monoenergética de Benmakhlouf, que describe la retrodispersión y la conversión agua--aire para distintos tamaños de campo, y el espectro incidente calculado para la tensión y la filtración del equipo \citep{benreport,benarticle,spek2020,spek2021}.
 
-SpekPy proporciona el espectro incidente; la respuesta de retrodispersión procede de los cálculos de Benmakhlouf. 
+La justificación física es la superposición. Para una geometría fija, las contribuciones al kerma de colisión superficial en agua de los distintos intervalos de energía son aditivas. Si el intervalo $i$ aporta un kerma primario en aire $K_{\mathrm{aire},i}^{p}$, su contribución en agua es $K_{\mathrm{aire},i}^{p}C(E_i,s)$, donde $C(E_i,s)=B(E_i,s)f(E_i,s)$ y $s$ es el lado de campo. Dividir la suma de esas contribuciones por el kerma primario total da el factor efectivo $C(Q,s)$ de la ecuación~\eqref{eq:eq13}. La ponderación se hace por kerma incidente: dos intervalos con el mismo número de fotones pueden transferir distinta energía por unidad de masa al aire.
 
-Los trabajos de validación de SpekPy y su versión 2.0 respaldan el uso de la herramienta como generador de espectros de tubo \citep{spek2020,spek2021}. Esa evidencia no sustituye la caracterización de la instalación utilizada por DermaDose. Además, la versión fijada para reproducir este proyecto es 2.5.4; los parámetros y el modelo físico quedan registrados en sus metadatos.
+El procedimiento permite calcular factores para calidades de haz que no figuran como filas clínicas en el informe original, siempre que las energías relevantes y los tamaños de campo estén cubiertos por la base monoenergética. La particularización adapta la calidad del haz; las condiciones de retrodispersión siguen siendo las del fantoma de agua de referencia.
 
 \section{Particularización al tubo MRC 200 0407 del Azurion}
 Sí se han calculado tablas específicas bajo la identidad documental MRC 200 0407 ROT-GS1004 aportada para el equipo. El dataset \codigo{derived_mrc200_nominal} contiene 1400 filas calculadas con $11^\circ$, blanco W como aproximación del ánodo aleado, paso de 0,5 keV y tensiones de 46 a 125 kV. El límite de 125 kV corresponde al conjunto; no se adopta la tensión superior del inserto aislado. Su construcción y sensibilidad se detallan en el capítulo de caracterización del tubo.
@@ -13,12 +13,14 @@ Se incluyen las familias Al de 2,5 y 2,6 mm para dos escenarios nominales, y de 
 
 El perfil de conjunto usa 2,5 mm Al equivalente mínimo; la contribución inherente de 0,8 mm equivalente y la placa de 1,7 mm ya están incluidas. El escenario de 2,6 mm incorpora aproximadamente la contribución de 0,1 mm Al equivalente de la etiqueta de ejemplo del limitador. Es necesario confirmar el limitador instalado y la calidad de referencia de esas equivalencias \citep{mrcservice,azurion22}. No se añade nuevamente el total equivalente de un filtro a sus espesores materiales.
 
-Los perfiles \codigo{equipo_mrc200_conjunto_investigacion.json} y \codigo{equipo_mrc200_conjunto_colimador_investigacion.json} seleccionan estas tablas. La existencia del dataset no activa su uso en cualquier JSON: la configuración efectiva debe apuntar a él y declarar Al y ángulo coherentes. Se conservan los modelos históricos y el ajuste condicionado previo para comparación; no se reemplazan automáticamente las configuraciones del usuario.
+El perfil vigente \codigo{azurion_benmakhlouf_spekpy.json} selecciona estas tablas con el escenario fijo de \num{2.5} mm Al. El escenario con colimador permanece disponible como variante del conjunto de datos para estudios de sensibilidad. La existencia del dataset no activa su uso en cualquier JSON: la configuración efectiva debe apuntar a él y declarar Al y ángulo coherentes. Se conservan los modelos históricos y el ajuste condicionado previo para comparación; no se reemplazan automáticamente las configuraciones del usuario.
 
 \textbf{Particularización documental no equivale a caracterización completa de la instalación.} Las tablas incorporan datos propios del tipo de tubo, pero no acreditan una filtración efectiva medida, orientación ánodo--cátodo, perfil talón, calibración del indicador ni registro anatómico de la sala. Los datos documentales permiten eliminar supuestos incorrectos y estudiar sensibilidad; no demuestran por sí solos mayor exactitud clínica. Los escenarios nominales no sustituyen automáticamente un ajuste basado en medidas compatibles.
 
 \section{Parámetros del generador y significado del espectro}
-La función \codigo{generate_spectrum} crea un modelo con blanco W, kVp solicitado, ángulo de ánodo y anchura de bin. Para el MRC 200 0407 se utiliza $11^\circ$ y $\Delta E=\num{0.5}$ keV. El valor de $12^\circ$ corresponde exclusivamente a una configuración histórica de comparación y no caracteriza este tubo. Se aplica filtración de Al total y Cu mediante las herramientas de SpekPy. El espectro se obtiene como fluencia diferencial en energía, no como kerma por bin.
+La tensión de tubo determina la energía cinética máxima de los electrones incidentes y, con ella, el extremo del espectro continuo de frenado. La interacción con el blanco también da lugar a emisión característica. El material del ánodo, su ángulo y la autoabsorción en el blanco condicionan el espectro que emerge. La filtración posterior modifica su forma porque la transmisión de Al y Cu depende de la energía. SpekPy modela estos procesos para obtener la distribución de fluencia incidente que se utilizará en la ponderación \citep{spek2020,spek2021}.
+
+La función \codigo{generate_spectrum} crea un modelo con blanco W, kVp solicitado, ángulo de ánodo y anchura de bin. Para el MRC 200 0407 se utiliza $11^\circ$ y $\Delta E=\num{0.5}$ keV. El valor de $12^\circ$ corresponde exclusivamente a una configuración histórica de comparación y no caracteriza este tubo. Se aplica filtración de Al total y Cu mediante las herramientas de SpekPy. El espectro se obtiene como fluencia diferencial en energía. La conversión a contribuciones de kerma por bin se realiza en el paso siguiente.
 
 La forma general del efecto de filtros homogéneos sobre el primario puede expresarse, de manera ilustrativa, como
 \begin{equation}
@@ -66,12 +68,12 @@ La base impresa cubre 5--150 keV. No se asignan factores inventados a energías 
 \end{equation}
 La tolerancia explícita de trabajo es $10^{-4}$, equivalente a \num{0.01}\,\% del kerma. Si se supera, se rechaza el espectro. Si se admite la fracción, se integra sobre los bins retenidos y se renormaliza, registrando la exclusión. El API permite tolerancia cero para exigir cobertura completa.
 
-Esta política es una aproximación controlada por kerma excluido, no una demostración de error acotado de $C$ en las energías ausentes: sin conocer su respuesta no puede establecerse una cota universal del sesgo del factor. En los 78 espectros del dataset actual, la fracción máxima registrada es aproximadamente $6{,}09\times10^{-81}$, despreciable numéricamente en las condiciones generadas.
+Esta política es una aproximación controlada por kerma excluido, no una demostración de error acotado de $C$ en las energías ausentes: sin conocer su respuesta no puede establecerse una cota universal del sesgo del factor. En los 78 espectros del dataset histórico, la fracción máxima registrada es aproximadamente $6{,}09\times10^{-81}$, despreciable numéricamente en las condiciones generadas.
 
 Incluir 46 kVp es posible porque su espectro se integra con nodos monoenergéticos dentro del dominio permitido. No se extrapola la tabla clínica desde 50 kVp. Esta distinción es una de las ventajas de la vía espectral, aunque sigue dependiendo de la fidelidad del generador para esa calidad.
 
-\section{Diseño de la tabla calculada}
-La malla utiliza 13 tensiones: 46, 50, 60, 70, 80, 90, 100, 110, 120, 125, 130, 140 y 150 kVp. Se combinan dos familias de Al total, \num{3.1} y \num{4.1} mm, con tres de Cu, 0, \num{0.1} y \num{0.4} mm. Para cada una se calculan cinco lados: 5, 10, 20, 25 y 35 cm.
+\section{Diseño de la tabla histórica de comparación}
+La malla histórica utiliza 13 tensiones: 46, 50, 60, 70, 80, 90, 100, 110, 120, 125, 130, 140 y 150 kVp. Se combinan dos familias de Al total, \num{3.1} y \num{4.1} mm, con tres de Cu, 0, \num{0.1} y \num{0.4} mm. Para cada una se calculan cinco lados: 5, 10, 20, 25 y 35 cm.
 \begin{equation}
 N_Q=13\times2\times3=78,\qquad
 N_{\mathrm{filas}}=N_Q\times5=390.
@@ -79,7 +81,7 @@ N_{\mathrm{filas}}=N_Q\times5=390.
 No hay 390 espectros independientes: el mismo espectro de cada calidad se combina con cinco respuestas de campo. Esta separación reduce trabajo y clarifica la procedencia de los factores.
 
 \begin{table}[htbp]\centering\small
-\caption{Características del dataset derivado suministrado.}
+\caption{Características del dataset derivado histórico.}
 \begin{tabularx}{\textwidth}{p{49mm}Y}\toprule
 Propiedad & Valor o condición\\\midrule
 Identificador & \codigo{DERIVED-SPEKPY-BENMAKHLOUF-EQ13}\\
@@ -97,6 +99,11 @@ Validación clínica & Falsa en metadatos; pendiente.\\\bottomrule
 \end{table}
 
 El dataset se guarda en una carpeta nueva con \codigo{derived_clinical.csv} y \codigo{metadata.json}. La función de construcción rechaza un destino existente para proteger datos originales y resultados previos. La huella del CSV derivado en la copia revisada es \codigo{fb6740fd06f408c8fb0768bdb52ce7c547394214225d1f75cd6da1d07906b7d9}. El inventario conserva también las huellas de las fuentes.
+
+\section{Uso de la tabla en DermaDose}
+La generación de espectros y la integración se realizan al construir el conjunto de datos. Durante un cálculo, DermaDose consulta el factor combinado para la tensión y filtración del evento y para el lado equivalente del campo proyectado a la profundidad de la superficie. En el perfil nominal se representa el campo por un cuadrado de igual área en el plano perpendicular al haz. Se selecciona la familia de aluminio correspondiente y se interpola dentro del dominio de tensión, cobre y tamaño de campo. Una consulta fuera del dominio se rechaza.
+
+Para cada elemento de superficie alcanzado, el motor aplica $C(Q_e,s_e)$ al kerma primario en aire estimado en ese punto. La estimación del kerma parte del valor de referencia del RDSR y considera la distancia y las correcciones de equipo y mesa configuradas. El producto representa la contribución del evento a la dosis superficial estimada en agua. La suma sobre los eventos produce el mapa acumulado, cuyo máximo puntual es la PSD del modelo. La tabla aporta la conversión dosimétrica; la geometría y la distribución espacial proceden del cálculo sobre la malla.
 
 \section{Calidad del haz y capas hemirreductoras}
 La primera capa hemirreductora $H_1$ es el espesor adicional de Al que reduce a la mitad el kerma del haz en una geometría de medida definida. Si $K(x)$ representa kerma tras espesor $x$, se cumple $K(H_1)=K(0)/2$. La segunda capa $H_2$ es el espesor adicional para pasar de la mitad al cuarto: $K(H_1+H_2)=K(0)/4$. No debe confundirse $H_2$ con el espesor total hasta el cuarto.
