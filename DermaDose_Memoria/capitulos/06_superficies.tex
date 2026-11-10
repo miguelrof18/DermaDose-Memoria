@@ -1,50 +1,29 @@
 \chapter{Superficie del paciente a partir de TC con 3D Slicer}
 
-\section{Flujo de trabajo actual}
-DermaDose utiliza como superficie de entrada el contorno externo del paciente extraído de una TC con el módulo \textit{DermaDose Surface} de 3D Slicer. La ejecución de ejemplos utiliza el STL aportado en la carpeta del caso. XCAT se conserva como referencia histórica para las demostraciones y comparaciones anteriores, pero ha dejado de ser una opción del lanzador de casos. Este cambio permite trabajar con la forma individual de la región irradiada y documentar la procedencia de cada superficie.
+\section{Obtención del contorno externo}
+El flujo actual utiliza la malla STL del caso, obtenida del volumen de TC con \textit{DermaDose Surface}. El lanzador de ejemplos selecciona el STL aportado y lee la configuración de equipo de la misma carpeta. XCAT queda como referencia histórica de las demostraciones y comparaciones del proyecto.
 
-La geometría del contorno y su colocación durante la intervención son problemas distintos. Una TC puede representar la forma del paciente en el momento de la adquisición, mientras que el apoyo, la postura de los brazos, la respiración y la posición sobre la mesa pueden cambiar en la sala intervencionista. El contorno externo sirve para localizar la entrada del haz. Para calcular transporte en órganos haría falta representar además la anatomía interna y los materiales.
+En 3D Slicer se selecciona el volumen que cubre la región intervenida y se extrae el contorno mediante umbralización, selección de la mayor componente con conectividad de seis vecinos y relleno de cavidades. El umbral inicial de $-350$ HU se puede ajustar. Antes de preparar y exportar la malla se revisa el segmento en los cortes y en la vista 3D, especialmente en zonas de contacto con soportes, extremidades y extremos del volumen. El relleno permite representar una envolvente externa para el cálculo de entrada del haz; la malla resultante no representa los tejidos internos.
 
-\section{Extracción y revisión en DermaDose Surface}
-La versión \codigo{1.8.0-anclaje-toracico} toma como entrada un volumen de TC seleccionado en 3D Slicer. El procedimiento de trabajo es el siguiente:
+\begin{figure}[htbp]
+\centering
+\input{figuras/slicer}
+\caption{Extracción, comprobación y exportación del contorno del paciente.}
+\end{figure}
 
-\begin{enumerate}
-\item Seleccionar el volumen y comprobar que cubre la región intervenida. El umbral inicial de $-350$ HU es orientativo y puede ajustarse a partir de los cortes.
-\item Extraer el contorno externo mediante umbralización, selección de la mayor componente con conectividad de seis vecinos y relleno de cavidades internas. Revisar y, si procede, editar el segmento antes de preparar la superficie.
-\item Preparar la malla, revisar el resultado de los controles y comprobar visualmente el contorno en los cortes y en la vista 3D. Prestar atención al contacto con la mesa, las extremidades y los extremos del volumen.
-\item Exportar el STL y su JSON homónimo después de confirmar la revisión. Conservar ambos archivos juntos para el cálculo.
-\end{enumerate}
+\section{Preparación y exportación}
+El módulo emplea un proceso auxiliar \codigo{PythonSlicer} para operaciones de extracción y preparación. La simplificación parte de un objetivo de \num{150000} caras. El modo de selección por intervalo busca una malla entre \num{100000} y \num{200000} caras; el modo de velocidad puede probar presupuestos mayores en pasos de \num{100000} caras cuando falla el objetivo inicial. Si el original ya tiene menos caras de las requeridas, se conserva su resolución.
 
-Las operaciones de extracción y preparación que usan el proceso auxiliar se ejecutan mediante \codigo{PythonSlicer}, con indicación de progreso en la interfaz. Esto separa el trabajo pesado de la interacción con la ventana de Slicer. La edición del segmento y la revisión de la superficie siguen siendo parte del flujo.
+La aceptación de la superficie considera coordenadas finitas, caras degeneradas, conectividad, bordes abiertos, aristas no manifold y volumen. La reducción se comprueba también frente a la geometría original. Si no se acepta un candidato, el original queda disponible para revisión y se bloquea la exportación reducida. El módulo relee el STL temporal antes de guardar la pareja definitiva, sin sobrescribir archivos existentes. Un contorno cerrado puede seguir incluyendo la mesa o estar truncado por el campo de visión.
 
-\begin{figure}[htbp]\centering\input{figuras/slicer}
-\caption{Preparación y exportación del contorno del paciente en DermaDose Surface. La reducción está subordinada a los controles geométricos y a la revisión visual.}\end{figure}
+\section{Metadatos y colocación durante el procedimiento}
+La exportación genera un STL en coordenadas RAS y milímetros y un JSON homónimo con el hash del STL, la transformación del volumen, los parámetros de extracción y los controles de la malla. Cuando la TC permite identificar dos regiones pulmonares plausibles, el módulo registra su punto medio como anclaje torácico estimado.
 
-\section{Simplificación, controles y exportación}
-El objetivo inicial es de \num{150000} caras. El módulo ofrece preparación con un intervalo de \num{100000} a \num{200000} caras y un modo de velocidad que puede probar un objetivo mayor cuando el primero falla. También permite exportar un par de superficies con objetivos de \num{150000} y \num{300000} caras para estudiar la sensibilidad a la resolución. Si una superficie ya tiene menos caras, se conserva sin subdividirla artificialmente. Si la preparación no admite una reducción, el original queda disponible para revisión y la exportación reducida se bloquea.
+Para el cálculo se reúnen el RDSR, el STL, el JSON de Slicer y un único JSON de equipo. El RDSR describe las irradiaciones; el JSON de equipo aporta la geometría y el modelo dosimétrico; la pareja de Slicer identifica y describe la superficie. DermaDose comprueba la correspondencia del STL con sus metadatos y estima la orientación con la postura de la intervención registrada en el RDSR. La posición inicial se estima mediante el apoyo sobre la mesa y un haz de referencia. Si hay un anclaje anatómico compatible con la región diana se utiliza ese punto; de lo contrario, se usa el centro de los límites de la malla. El origen del anclaje y la transformación efectiva quedan registrados en los resultados.
 
-Se comprueban coordenadas finitas, degeneración, componentes, bordes abiertos, aristas no manifold y volumen. La simplificación se somete a controles de conservación geométrica. Antes de publicar la pareja de archivos se relee el STL temporal para verificar la geometría exportada. Los archivos se crean sin sobrescribir una pareja existente. Un contorno cerrado puede estar truncado, incluir parte del tablero o excluir una extremidad; por eso la inspección visual sigue siendo necesaria.
+La colocación es una estimación geométrica. La forma obtenida de la TC puede diferir de la del paciente durante el procedimiento por la postura, el apoyo o la respiración. La orientación, la lateralidad y la cobertura de la región irradiada requieren revisión antes de interpretar la localización del máximo.
 
-\section{Metadatos y colocación respecto al angiógrafo}
-El STL se exporta en milímetros y coordenadas RAS. El JSON de superficie documenta, entre otros datos, el nombre y el hash del STL, la transformación de índices de vóxel a RAS, el umbral, el resultado de la reducción y los controles de geometría. El módulo intenta extraer un anclaje torácico estimado a partir de dos regiones pulmonares plausibles cuando la TC lo permite. Esta referencia es opcional y queda identificada en el JSON.
+\section{Resolución y evaluación}
+El número de caras es un presupuesto computacional. Para triángulos aproximadamente equiláteros de lado $h$ sobre un área $S$, se cumple $N\simeq4S/(\sqrt{3}h^2)$. Por ejemplo, un área de $1{,}8$ m$^2$ requeriría unas \num{166000} caras de lado 5 mm. La resolución local depende de la distribución y forma de los triángulos.
 
-La carpeta de cálculo contiene el RDSR, el STL, su JSON de Slicer y un único JSON de equipo. El primero aporta los eventos de irradiación; el segundo y su archivo asociado describen la superficie; el perfil de equipo aporta la geometría de sala y el modelo dosimétrico. El lanzador selecciona el STL del caso y puede estimar la transformación con la postura registrada en el RDSR, la geometría de mesa y un evento de referencia. Si existe un anclaje compatible con la región del estudio, lo utiliza. En su ausencia puede recurrir al centro de los límites de la malla como aproximación. La configuración efectiva y la procedencia del anclaje se guardan con los resultados.
-
-La colocación obtenida es una estimación. Antes de interpretar la localización de la dosis se deben comprobar lateralidad, sentido cabeza--pies, apoyo y cobertura de la región irradiada. El motor de dosis se ejecuta fuera de Slicer y la exportación del STL y sus metadatos constituye la interfaz entre ambos.
-
-\section{Rendimiento y elección de resolución}
-Reducir caras puede disminuir preparación geométrica, candidatos de intersección, mapas y tamaño del HTML. No garantiza una disminución proporcional del tiempo total, porque pueden dominar consultas al índice, métricas locales o exportación. La interacción entre tamaño de caras y número de rayos debe medirse en una carga representativa.
-
-La selección de resolución debería basarse en diferencias de PSD, posición del máximo, áreas e integral entre representaciones. Si la simplificación desplaza la superficie, también se modifica la distancia física del cálculo. En cambio, refinar un triángulo plano solo cambia los puntos de muestreo. Confundir estas operaciones puede atribuir al rendimiento un cambio dosimétrico que procede de anatomía alterada.
-\FloatBarrier
-
-\section{Justificación del tamaño de los elementos}
-Se propone, como criterio inicial de investigación, una longitud característica de aproximadamente 5 mm y un objetivo de exportación de \num{150000}--\num{200000} caras para una superficie de cuerpo completo. El objetivo combina fidelidad geométrica, muestreo dosimétrico y coste computacional; no es un requisito normativo ni una resolución clínicamente validada. El número total no garantiza el tamaño local: deben registrarse distribuciones de áreas y longitudes de arista, además de la forma de los triángulos.
-
-Para triángulos aproximadamente equiláteros de lado $h$ sobre una superficie de área $S$, la estimación $N\simeq4S/(\sqrt{3}h^2)$ permite relacionar resolución y número de caras. Tomando $S=1{,}8$ m$^2$ únicamente como ejemplo, $h=5$ mm requiere unas \num{166000} caras, frente a \num{462000} para 3 mm y \num{1040000} para 2 mm. Una segmentación anatómica parcial necesita menos caras para una misma resolución. Por tanto, \num{150000} caras representan un presupuesto inicial, no una garantía universal de suficiencia.
-
-La evaluación por cara hace especialmente sensibles los bordes de campo y los solapamientos estrechos: el centro de una cara parcialmente irradiada puede no representar su fracción realmente expuesta. Se propone comprobar los máximos mediante refinamiento local a 2--3 mm en regiones irradiadas, incluyendo sus bordes. En el ejemplo regular, un área de 1 cm$^2$ contiene unas nueve caras de lado 5 mm y unas 26 de lado 3 mm; aumentar ese muestreo mejora la descripción discreta, sin convertir la vecindad implementada en un dosímetro exacto de 1 cm$^2$. La bibliografía describe el beneficio de refinar para delimitar el haz; ello no establece una resolución obligatoria para DermaDose.
-
-El coste crece al aumentar muestras, intersecciones y vecindades. Solo almacenar un valor de doble precisión por cara y evento exige $8NE$ bytes: para 101 eventos, unas \num{150000} caras requieren 121 MB y un millón, 808 MB, sin contar geometría, cachés, copias o visor. No se asignan tiempos concretos sin medirlos en el equipo de ejecución.
-
-La selección definitiva debe basarse en convergencia con anatomía fija: comparar, por ejemplo, 7, 5, 3 y 2 mm, evaluando PSD puntual, máximo promediado sobre 1 cm$^2$, región de alta dosis, tiempo y memoria. Una variación inferior al 2--3\,\% entre refinamientos sucesivos puede utilizarse como objetivo interno inicial, explícitamente propuesto y no como tolerancia clínica publicada. La fidelidad de la simplificación debe comprobarse por separado frente a la superficie original: subdividir caras no recupera anatomía perdida. Estas decisiones tampoco sustituyen la caracterización del equipo, el registro anatómico o la validación dosimétrica externa.
+El módulo permite exportar un par con objetivos de \num{150000} y \num{300000} caras. Para evaluar la resolución interesa comparar la PSD, la localización del máximo, el área irradiada y el coste de cálculo. La convergencia del muestreo y la fidelidad al contorno original deben comprobarse por separado: subdividir caras aumenta el muestreo, mientras que simplificar puede modificar la geometría y la distancia foco--piel. La reducción del número de caras puede aliviar el coste del trazado y del visor, con una ganancia que depende del caso.
