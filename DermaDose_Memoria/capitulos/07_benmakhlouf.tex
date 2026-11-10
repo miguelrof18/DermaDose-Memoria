@@ -8,13 +8,23 @@ La geometría utiliza entrada plana de agua, espesor de 15 cm, distancia foco--s
 
 Las especificaciones laterales discordantes del informe se conservan en los metadatos. Para una reproducción independiente habría que aclarar la geometría efectivamente utilizada para los campos mayores. No se debe inferir una resolución de esa discrepancia a partir de que el CSV sea legible.
 
+\section{Ejemplo monoenergético: qué se compara}
+Considérese un haz incidente de fotones de $E_0=50$ keV con un campo cuadrado de $10\times10$ cm$^2$ en el plano de entrada. Para interpretar los datos de la tabla 1 del informe, se comparan dos situaciones en el mismo punto central y con la misma normalización del haz incidente \citep{benreport,benarticle}:
+
+\begin{enumerate}
+\item \textbf{Referencia libre en aire.} Se evalúa el kerma de colisión en aire debido al haz primario en el punto donde se situaría la superficie del fantoma, $K_{\mathrm{aire}}^{p}$.
+\item \textbf{Fantoma de agua presente.} En la superficie se evalúa el espectro total de fotones, con la contribución primaria y la dispersada por el fantoma. A partir de ese mismo espectro se calculan dos magnitudes: $K_{\mathrm{aire}}^{p+s}$, al ponderarlo con los coeficientes del aire, y $K_{\mathrm{agua}}^{p+s}$, al ponderarlo con los del agua.
+\end{enumerate}
+
+Para un medio $m$, la evaluación se realiza integrando la fluencia energética diferencial $E\Phi(E)$ multiplicada por el coeficiente másico de absorción de energía $\muen{m}(E)$. El medio de evaluación define el coeficiente empleado. Por tanto, el kerma superficial evaluado en aire se obtiene del campo de fotones calculado con el fantoma de agua presente.
+
 \section{Factor de retrodispersión en aire}
 Se denota por $\Phi^{\mathrm{prim}}_Q(E)$ el espectro incidente y por $\Phi^{\mathrm{sup}}_{Q,s}(E)$ el total superficial, que incorpora primarios y retrodispersados. El factor utilizado por el formalismo es
 \begin{equation}\label{eq:bs}
 B(Q,s)=\frac{\int E\Phi^{\mathrm{sup}}_{Q,s}(E)\muen{\mathrm{aire}}(E)\,\mathrm dE}
 {\int E\Phi^{\mathrm{prim}}_Q(E)\muen{\mathrm{aire}}(E)\,\mathrm dE}.
 \end{equation}
-El numerador corresponde al kerma evaluado en aire en la superficie del fantoma de agua. La palabra ``aire'' identifica la magnitud y su coeficiente, no la ausencia de fantoma en el numerador. El denominador es el haz primario libre en aire en el mismo plano.
+En el ejemplo, $B(E_0,s)=K_{\mathrm{aire}}^{p+s}/K_{\mathrm{aire}}^{p}$, con $s=10$ cm. Se mantiene el aire como medio de evaluación y se compara el campo total superficial con el primario libre en aire. El aumento respecto a la unidad cuantifica la contribución relativa de la dispersión al kerma en aire.
 
 El factor depende de calidad y campo, así como de las condiciones del fantoma. El informe proporciona una respuesta central. Aplicarlo uniformemente a cada punto local de una anatomía curva no reproduce de manera explícita la reducción de dispersión cerca de un borde ni la respuesta de materiales internos distintos.
 
@@ -24,9 +34,16 @@ La conversión de medio correspondiente al espectro superficial puede escribirse
 f(Q,s)=\frac{\int E\Phi^{\mathrm{sup}}_{Q,s}(E)\muen{\mathrm{agua}}(E)\,\mathrm dE}
 {\int E\Phi^{\mathrm{sup}}_{Q,s}(E)\muen{\mathrm{aire}}(E)\,\mathrm dE}.
 \end{equation}
-No es simplemente el cociente de coeficientes en una energía media. Para un haz incidente monoenergético de energía $E_0$, la radiación retrodispersada contiene otras energías; por eso el valor publicado $f(E_0,s)$ conserva una dependencia con el campo.
+En este caso, $f(E_0,s)=K_{\mathrm{agua}}^{p+s}/K_{\mathrm{aire}}^{p+s}$. Se mantiene el mismo campo de fotones superficial y se cambia el medio de evaluación. Aunque el haz incidente sea monoenergético, los fotones dispersados pueden llegar a la superficie con otras energías. Por ello, el cociente se evalúa sobre el espectro completo y puede depender del tamaño del campo.
 
-El producto $Bf$ convierte el kerma primario en aire a una magnitud superficial de agua bajo las hipótesis del informe. La transferencia a ``piel'' debe mantener esa referencia material. El programa exige aceptar explícitamente la aproximación de fantoma de agua y declarar la base de kerma incidente para reducir el riesgo de doble conteo.
+Los dos factores son adimensionales. Su producto cancela el kerma superficial en aire:
+\begin{equation}
+C(E_0,s)=B(E_0,s)\,f(E_0,s)
+=\frac{K_{\mathrm{aire}}^{p+s}}{K_{\mathrm{aire}}^{p}}
+ \frac{K_{\mathrm{agua}}^{p+s}}{K_{\mathrm{aire}}^{p+s}}
+=\frac{K_{\mathrm{agua}}^{p+s}}{K_{\mathrm{aire}}^{p}}.
+\end{equation}
+Así, $C$ transforma el kerma primario en aire a la altura de la piel en kerma de colisión superficial en agua, incluida la retrodispersión. DermaDose interpreta esta magnitud como una estimación de dosis superficial en agua bajo las hipótesis de depósito local del informe. El programa exige aceptar la aproximación de fantoma de agua y declarar la base del kerma incidente para evitar contabilizar dos veces la retrodispersión. Los autores repitieron la evaluación para las distintas energías y tamaños de campo de la tabla.
 
 
 La figura~\ref{fig:monoenergeticos} permite distinguir la respuesta monoenergética del espectro clínico: la energía del eje identifica el haz primario de cada cálculo original. No representa las energías de todos los fotones que retornan a la superficie.
