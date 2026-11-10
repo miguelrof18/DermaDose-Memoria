@@ -1,4 +1,9 @@
 \chapter{Factores de Benmakhlouf: definición y uso}
+
+El trabajo de Benmakhlouf y colaboradores proporciona factores para estimar la dosis de entrada en la superficie de un fantoma de agua a partir del kerma primario en aire. Mediante simulaciones Monte Carlo, los autores evaluaron la respuesta para distintas energías incidentes y tamaños de campo. En el plano de entrada compararon el haz primario libre en aire con el campo de fotones en la superficie del fantoma, donde también contribuye la radiación dispersada. De esa comparación se obtiene el factor de retrodispersión $B$. Al evaluar ese mismo campo superficial en agua y en aire se obtiene el factor de conversión $f$. Su producto $C=Bf$ relaciona el kerma primario en aire con el kerma de colisión superficial en agua, que se emplea como estimación de la dosis bajo las hipótesis del modelo \citep{benreport,benarticle}.
+
+Para aplicar estas respuestas monoenergéticas a un haz del Azurion, DermaDose genera con SpekPy espectros para las tensiones y filtraciones del modelo de equipo. A partir de cada espectro se pondera el producto $Bf$ por la contribución de cada intervalo de energía al kerma primario en aire, siguiendo la ecuación 13 del informe. Los factores combinados se tabulan previamente para distintas calidades de haz y tamaños de campo. Durante el cálculo, DermaDose consulta estas tablas para convertir el kerma incidente estimado a la altura de la piel en dosis superficial en agua.
+
 \section{Fuente de los datos y geometría original}
 La fuente directa del dataset es el informe KS-ASF-201101-IR de Benmakhlouf, Fransson y Andreo, de 7 de abril de 2011 \citep{benreport}. Se distingue del artículo de revista asociado, que incluye un autor adicional \citep{benarticle}. Los valores del programa deben atribuirse a la tabla concreta del informe, no a una referencia genérica sin localización.
 
